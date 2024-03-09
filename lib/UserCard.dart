@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nerdi/UserData.dart';
+import 'package:nerdi/UserDescPage.dart';
 import 'package:nerdi/UserIcon.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -38,7 +40,16 @@ class UserCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        UserIcon(ImageURL: User.ProfilePictureURL),
+                        CupertinoButton(
+                          child: UserIcon(ImageURL: User.ProfilePictureURL),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserDescPage(User: User)));
+                          },
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(

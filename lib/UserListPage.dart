@@ -44,23 +44,25 @@ class _UserListPageState extends State<UserListPage> {
           final images =
               Supabase.instance.client.storage.from("ProfilePictures");
           return Scaffold(
-            body: SizedBox(
-              width: 400,
-              child: ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return UserCard(
-                    User: new UserData(
-                        data[index]["UserUID"],
-                        data[index]["Username"],
-                        DateTime.parse(data[index]["Birthday"]),
-                        data[index]["Gender"],
-                        data[index]["Description"],
-                        images.getPublicUrl(
-                          data[index]["ProfilePictureName"],
-                        )),
-                  );
-                },
+            body: Center(
+              child: SizedBox(
+                width: 400,
+                child: ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    return UserCard(
+                      User: new UserData(
+                          data[index]["UserUID"],
+                          data[index]["Username"],
+                          DateTime.parse(data[index]["Birthday"]),
+                          data[index]["Gender"],
+                          data[index]["Description"],
+                          images.getPublicUrl(
+                            data[index]["ProfilePictureName"],
+                          )),
+                    );
+                  },
+                ),
               ),
             ),
           );
