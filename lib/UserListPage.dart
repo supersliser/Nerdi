@@ -23,7 +23,9 @@ class UserListPage extends StatefulWidget {
 }
 
 class _UserListPageState extends State<UserListPage> {
-  final _users = Supabase.instance.client.from('UserInfo').select();
+  final _users = Supabase.instance.client
+      .from('UserInfo')
+      .select("*");
 
   @override
   Widget build(BuildContext context) {
@@ -34,38 +36,38 @@ class _UserListPageState extends State<UserListPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
 
-    return FutureBuilder<List<Map<String, dynamic>>>(
-        future: _users,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final data = snapshot.data!;
-          final images =
-              Supabase.instance.client.storage.from("ProfilePictures");
-          return Scaffold(
-            body: Center(
-              child: SizedBox(
-                width: 400,
-                child: ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return UserCard(
-                      User: new UserData(
-                          data[index]["UserUID"],
-                          data[index]["Username"],
-                          DateTime.parse(data[index]["Birthday"]),
-                          data[index]["Gender"],
-                          data[index]["Description"],
-                          images.getPublicUrl(
-                            data[index]["ProfilePictureName"],
-                          )),
-                    );
-                  },
+    return Scaffold(
+        body: FutureBuilder<List<Map<String, dynamic>>>(
+            future: _users,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final data = snapshot.data!;
+              final images =
+                  Supabase.instance.client.storage.from("ProfilePictures");
+              return Center(
+                child: SizedBox(
+                  width: 400,
+                  child: ListView.builder(
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return UserCard(
+                        User: UserData(
+                            UUID: data[index]["UserUID"],
+                            Username: data[index]["Username"],
+                            Birthday: DateTime.parse(data[index]["Birthday"]),
+                            Gender: data[index]["Gender"],
+                            Description: data[index]["Description"],
+                            ProfilePictureURL: images.getPublicUrl(
+                              data[index]["ProfilePictureName"],
+                            ),
+                            InterestCount: data[index]["Interests"]),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ),
-          );
-        });
+              );
+            }));
   }
 }
