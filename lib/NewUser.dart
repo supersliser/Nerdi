@@ -14,13 +14,16 @@ class NewUser extends StatefulWidget {
 
 class _NewUserState extends State<NewUser> {
   final NameController = TextEditingController();
+  final DescController = TextEditingController();
   var User = UserData(Birthday: DateTime.now());
   bool NameSet = false;
   bool BirthdaySet = false;
   bool GendersSet = false;
+  bool DescriptionSet = false;
   @override
   void dispose() {
     NameController.dispose();
+    DescController.dispose();
     super.dispose();
   }
 
@@ -29,6 +32,12 @@ class _NewUserState extends State<NewUser> {
       return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(getHello(), style: const TextStyle(color: Color(0xFFCCCCCC))),
         TextField(
+          onSubmitted: (text) {
+            setState(() {
+              User.Username = NameController.text;
+              NameSet = true;
+            });
+          },
           controller: NameController,
           style: const TextStyle(color: Color(0xFFCCCCCC)),
           decoration: const InputDecoration(
@@ -267,6 +276,63 @@ class _NewUserState extends State<NewUser> {
           )
         ],
       );
+    } else if (!DescriptionSet) {
+      return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text("Hmm, sounds like fun.\nWhy dont you tell us some stuff about you?", style: const TextStyle(color: Color(0xFFCCCCCC))),
+        TextField(
+          enableSuggestions: false,
+          maxLength: 5000,
+          maxLines: null,
+          onSubmitted: (text) {
+            setState(() {
+              User.Description = DescController.text;
+              DescriptionSet = true;
+            });
+          },
+          controller: DescController,
+          style: const TextStyle(color: Color(0xFFCCCCCC)),
+          decoration: const InputDecoration(
+            label: Text("Enter some stuff about you",
+                style: TextStyle(color: Color(0xFFCCCCCC))),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                    style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    onPressed: () {
+                      setState(() {
+                        GendersSet = false;
+                        DescriptionSet = false;
+                      });
+                    },
+                    child: Text("Back",
+                        style: TextStyle(color: Color(0xFF181818)))),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                    style:
+                    ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    onPressed: () {
+                      setState(() {
+                        User.Description = DescController.text;
+                        DescriptionSet = true;
+                      });
+                    },
+                    child: Text("Next",
+                        style: TextStyle(color: Color(0xFF181818)))),
+              )
+            ],
+          ),
+        )
+      ],);
     }
 
     return (const Text("Test"));

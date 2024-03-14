@@ -37,14 +37,14 @@ class _UserListPageState extends State<UserListPage> {
     // than having to individually change instances of widgets.
 
     return Scaffold(
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
                 builder: (context) =>
                     const NewUser()));
           },
           backgroundColor: const Color(0xEEC78FFF),
-          child: const Text("Create new user"),
+          label: const Text("Create new user"),
         ),
         body: FutureBuilder<List<Map<String, dynamic>>>(
             future: _users,
