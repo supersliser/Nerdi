@@ -1,24 +1,40 @@
 import 'package:nerdi/InterestData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+enum GenderEnum {
+  Null,
+  Male,
+  Female,
+  NonBinary,
+}
+
 class UserData {
   UserData(
-      {required this.UUID,
+      {this.UUID = "",
       this.Username = "UNNAMED_USER",
       required this.Birthday,
-      this.Gender = "UNKNOWN",
+      this.Gender = 0,
       this.Description = "NONE",
       this.ProfilePictureURL =
-          "https://www.svgrepo.com/show/508699/landscape-placeholder.svg",
-      this.InterestCount = 0});
+          "https://www.svgrepo.com/show/508699/landscape-placeholder.svg",});
 
-  final String UUID;
-  final String Username;
-  final DateTime Birthday;
-  final String Gender;
-  final String Description;
-  final String ProfilePictureURL;
-  final int InterestCount;
+  String UUID;
+  String Username;
+  DateTime Birthday;
+  int Gender;
+  String Description;
+  String ProfilePictureURL;
+  List<bool> GendersLookingFor = List.filled(3, false);
+
+  Future<List<bool>> getGendersLookingFor() async {
+    final Genders = await Supabase.instance.client.from("UserLookingForGender").select().eq("User", UUID);
+
+    for (int i = 0; i < Genders.length; i++) {
+      GendersLookingFor[Genders[i]["GenderLookingFor"]] = true;
+    }
+
+    return GendersLookingFor;
+  }
 
   Future<List<Interest>> getInterests() async {
     List<Interest> Interests = List.empty(growable: true);
@@ -34,7 +50,7 @@ class UserData {
           .from("Interest")
           .select()
           .eq("ID", UserInterests[i]["InterestID"]);
-      if (!tempInterest.first["ImageName"].toString().isEmpty) {
+      if (tempInterest.first["ImageName"].toString().isNotEmpty) {
         Interests.add(Interest(
             ID: tempInterest.first["ID"],
             Name: tempInterest.first["Name"],
@@ -73,6 +89,7 @@ class UserData {
   }
 
   int getAge() {
-    return (DateTime.now().difference(this.Birthday).inDays / 365).floor();
+    return (DateTime.now().difference(Birthday).inDays / 365)
+        .floor();
   }
 }

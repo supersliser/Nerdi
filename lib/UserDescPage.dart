@@ -1,14 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'dart:math';
 
 class UserDescPage extends StatelessWidget {
-  UserDescPage({super.key, required this.User});
+  const UserDescPage({super.key, required this.User});
   final UserData User;
 
   Future<List<Widget>> generateTiles(UserData User, double width) async {
@@ -17,7 +15,7 @@ class UserDescPage extends StatelessWidget {
     final List<Interest> Interests = await User.getInterests();
 
     Output.add(LargeUserIcon(ImageURL: User.ProfilePictureURL, Width: width));
-    Output.add(UserItem(Data: User.Gender, Width: width));
+    Output.add(UserItem(Data: GenderEnum.values[User.Gender].name, Width: width));
     Output.add(UserItem(
         Data:
             "Age: ${User.getAge()}, Birthday in ${User.Birthday.difference(DateTime.now()).inDays} Days",
@@ -43,8 +41,8 @@ class UserDescPage extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: Text("Back"),
-          backgroundColor: Color(0xEEC78FFF),
+          backgroundColor: const Color(0xEEC78FFF),
+          child: const Text("Back"),
         ),
         body: ListView(children: [
           FutureBuilder<List<Widget>>(
@@ -77,7 +75,7 @@ class InterestItem extends StatelessWidget {
     return SizedBox(
       width: Width,
       child: Card.filled(
-        color: Color(0xFFC78FFF),
+        color: const Color(0xFFC78FFF),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Center(
@@ -85,7 +83,7 @@ class InterestItem extends StatelessWidget {
             children: [
               Text(
                 "$username is interested in ${interest.Name}",
-                style: TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20),
               ),
               Text(interest.Description)
             ],
@@ -111,7 +109,7 @@ class UserItem extends StatelessWidget {
     return SizedBox(
       width: Width,
       child: Card.filled(
-        color: Color(0xFFC78FFF),
+        color: const Color(0xFFC78FFF),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Center(child: Text(Data)),
@@ -135,7 +133,7 @@ class LargeUserIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card.outlined(
       clipBehavior: Clip.hardEdge,
-      color: Color(0xFFC78FFF),
+      color: const Color(0xFFC78FFF),
       child: FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
         image: ImageURL,

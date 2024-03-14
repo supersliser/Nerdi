@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nerdi/NewUser.dart';
 import 'package:nerdi/UserData.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserCard.dart';
 
 class UserListPage extends StatefulWidget {
-  UserListPage({super.key, required this.title});
+  const UserListPage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -37,6 +37,15 @@ class _UserListPageState extends State<UserListPage> {
     // than having to individually change instances of widgets.
 
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+                builder: (context) =>
+                    const NewUser()));
+          },
+          backgroundColor: const Color(0xEEC78FFF),
+          child: const Text("Create new user"),
+        ),
         body: FutureBuilder<List<Map<String, dynamic>>>(
             future: _users,
             builder: (context, snapshot) {
@@ -61,8 +70,7 @@ class _UserListPageState extends State<UserListPage> {
                             Description: data[index]["Description"],
                             ProfilePictureURL: images.getPublicUrl(
                               data[index]["ProfilePictureName"],
-                            ),
-                            InterestCount: data[index]["Interests"]),
+                            ),),
                       );
                     },
                   ),

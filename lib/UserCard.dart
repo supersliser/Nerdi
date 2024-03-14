@@ -6,7 +6,7 @@ import 'package:nerdi/UserIcon.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class UserCard extends StatelessWidget {
-  UserCard({super.key, required this.User});
+  const UserCard({super.key, required this.User});
 
   final UserData User;
 
@@ -25,7 +25,7 @@ class UserCard extends StatelessWidget {
                 clipBehavior: Clip.hardEdge,
                 child: FadeInImage.memoryNetwork(
                   placeholder: kTransparentImage,
-                  image: this.User.ProfilePictureURL,
+                  image: User.ProfilePictureURL,
                   width: 300,
                   fit: BoxFit.cover,
                 ),
@@ -53,8 +53,8 @@ class UserCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            this.User.Username,
-                            style: TextStyle(color: Color(0xFFCCCCCC)),
+                            User.Username,
+                            style: const TextStyle(color: Color(0xFFCCCCCC)),
                           ),
                         ),
                       ],
@@ -66,15 +66,15 @@ class UserCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            this.User.Gender,
-                            style: TextStyle(color: Color(0xFFCCCCCC)),
+                            GenderEnum.values[User.Gender].name,
+                            style: const TextStyle(color: Color(0xFFCCCCCC)),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
-                            this.User.getAge().toString(),
-                            style: TextStyle(color: Color(0xFFCCCCCC)),
+                            User.getAge().toString(),
+                            style: const TextStyle(color: Color(0xFFCCCCCC)),
                           ),
                         ),
                       ],

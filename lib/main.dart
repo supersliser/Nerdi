@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserListPage.dart';
 
@@ -11,7 +10,7 @@ Future<void> main() async {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0aWV3ZmZxdGR0amRjZ25vb295Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3NjU1MjUsImV4cCI6MjAyNTM0MTUyNX0._SAKLsM8MliNfZtKOnGnAM_uIqrwbv1C-ZZ69HSBBeU",
   );
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF151515),
         useMaterial3: true,
       ),
-      home: UserListPage(title: 'Flutter Demo Home Page'),
+      home: const UserListPage(title: 'Flutter Demo Home Page'),
     );
   }
 }
