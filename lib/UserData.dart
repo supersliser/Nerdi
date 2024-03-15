@@ -33,7 +33,7 @@ class UserData {
 
   String getImageUUID() {
     var UUIDgen = const Uuid();
-    return UUID;
+    return UUIDgen.v4();
   }
 
   Future<void> upload(String PPname, String? Email, String? Password) async {
@@ -60,15 +60,15 @@ class UserData {
     }
   }
 
-  Future<String> uploadImage(XFile Image) async {
+  Future<String> uploadImage(XFile Image, String imageName) async {
     await Supabase.instance.client.storage
         .from('ProfilePictures')
-        .upload('$UUID.${Image.path.split('.').last}', File(Image.path), fileOptions: FileOptions(
+        .upload('$imageName.${Image.path.split('.').last}', File(Image.path), fileOptions: FileOptions(
       contentType: 'image/${Image.path.split('.').last}',
       upsert: false,
     ));
-    ProfilePictureURL = Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl('$UUID.${Image.path.split('.').last}');
-    return '$UUID.${Image.path.split('.').last}';
+    ProfilePictureURL = Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl('$imageName.${Image.path.split('.').last}');
+    return '$imageName.${Image.path.split('.').last}';
   }
 
   Future<List<bool>> getGendersLookingFor() async {

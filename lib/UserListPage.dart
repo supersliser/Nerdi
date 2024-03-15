@@ -23,7 +23,7 @@ class UserListPage extends StatefulWidget {
 }
 
 class _UserListPageState extends State<UserListPage> {
-  final _users = Supabase.instance.client
+  var _users = Supabase.instance.client
       .from('UserInfo')
       .select("*");
 
@@ -46,36 +46,45 @@ class _UserListPageState extends State<UserListPage> {
           backgroundColor: const Color(0xEEC78FFF),
           label: const Text("Create new user"),
         ),
-        body: FutureBuilder<List<Map<String, dynamic>>>(
-            future: _users,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final data = snapshot.data!;
-              final images =
-                  Supabase.instance.client.storage.from("ProfilePictures");
-              return Center(
-                child: SizedBox(
-                  width: 400,
-                  child: ListView.builder(
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      return UserCard(
-                        User: UserData(
-                            UUID: data[index]["UserUID"],
-                            Username: data[index]["Username"],
-                            Birthday: DateTime.parse(data[index]["Birthday"]),
-                            Gender: data[index]["Gender"],
-                            Description: data[index]["Description"],
-                            ProfilePictureURL: images.getPublicUrl(
-                              data[index]["ProfilePictureName"],
-                            ),),
-                      );
-                    },
+        body: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {
+              _users = Supabase.instance.client
+                  .from('UserInfo')
+                  .select("*");
+            });
+          },
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _users,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final data = snapshot.data!;
+                final images =
+                    Supabase.instance.client.storage.from("ProfilePictures");
+                return Center(
+                  child: SizedBox(
+                    width: 400,
+                    child: ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return UserCard(
+                          User: UserData(
+                              UUID: data[index]["UserUID"],
+                              Username: data[index]["Username"],
+                              Birthday: DateTime.parse(data[index]["Birthday"]),
+                              Gender: data[index]["Gender"],
+                              Description: data[index]["Description"],
+                              ProfilePictureURL: images.getPublicUrl(
+                                data[index]["ProfilePictureName"],
+                              ),),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              );
-            }));
+                );
+              }),
+        ));
   }
 }

@@ -40,10 +40,10 @@ class _NewUserState extends State<NewUser> {
   }
 
   Future<void> pickImage() async {
-    User.getImageUUID();
+    String imageName = User.getImageUUID();
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var temp = await User.uploadImage(image);
+      var temp = await User.uploadImage(image, imageName);
       setState(() {
         ImageName = temp;
       });
@@ -57,15 +57,28 @@ class _NewUserState extends State<NewUser> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(getHello(), style: const TextStyle(color: Color(0xFFCCCCCC))),
           TextField(
+            scribbleEnabled: false,
             onSubmitted: (text) {
               setState(() {
-                User.Username = NameController.text;
-                NameSet = true;
+                if (NameController.text.isEmpty) {
+                  NameSet = false;
+                } else {
+                  User.Username = NameController.text;
+                  NameSet = true;
+                }
               });
+            },
+            onChanged: (text) {
+              setState(() {});
             },
             controller: NameController,
             style: const TextStyle(color: Color(0xFFCCCCCC)),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
+              focusColor: Colors.green,
+              error: NameController.text.isEmpty
+                  ? Text("Cmon, you gotta give me something",
+                      style: TextStyle(color: Color(0xFFCCCCCC)))
+                  : null,
               label: Text("Enter your name",
                   style: TextStyle(color: Color(0xFFCCCCCC))),
             ),
@@ -82,8 +95,12 @@ class _NewUserState extends State<NewUser> {
                           backgroundColor: Colors.green),
                       onPressed: () {
                         setState(() {
-                          User.Username = NameController.text;
-                          NameSet = true;
+                          if (NameController.text.isEmpty) {
+                            NameSet = false;
+                          } else {
+                            User.Username = NameController.text;
+                            NameSet = true;
+                          }
                         });
                       },
                       child: const Text("Next",
@@ -189,6 +206,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
+                        backgroundColor: Color(0xFFFF82FF),
+                        selectedColor: Color(0xFFFF82FF),
                         label: Text(GenderEnum.Female.name),
                         selected: User.Gender == 2,
                         onSelected: (bool selected) {
@@ -201,6 +220,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
+                        backgroundColor: Color(0xFFFFEF63),
+                        selectedColor: Color(0xFFFFEF63),
                         label: Text(GenderEnum.NonBinary.name),
                         selected: User.Gender == 3,
                         onSelected: (bool selected) {
@@ -213,6 +234,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
+                        backgroundColor: Color(0xFF63EDFF),
+                        selectedColor: Color(0xFF63EDFF),
                         label: Text(GenderEnum.Male.name),
                         selected: User.Gender == 1,
                         onSelected: (bool selected) {
@@ -235,6 +258,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
+                        backgroundColor: Color(0xFFFF82FF),
+                        selectedColor: Color(0xFFFF82FF),
                         label: Text(GenderEnum.Female.name),
                         selected:
                             User.GendersLookingFor[GenderEnum.Female.index - 1],
@@ -250,6 +275,8 @@ class _NewUserState extends State<NewUser> {
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
                         label: Text(GenderEnum.NonBinary.name),
+                        backgroundColor: Color(0xFFFFEF63),
+                        selectedColor: Color(0xFFFFEF63),
                         selected: User
                             .GendersLookingFor[GenderEnum.NonBinary.index - 1],
                         onSelected: (bool selected) {
@@ -264,6 +291,8 @@ class _NewUserState extends State<NewUser> {
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
                         label: Text(GenderEnum.Male.name),
+                        backgroundColor: Color(0xFF63EDFF),
+                        selectedColor: Color(0xFF63EDFF),
                         selected:
                             User.GendersLookingFor[GenderEnum.Male.index - 1],
                         onSelected: (bool selected) {
@@ -302,7 +331,10 @@ class _NewUserState extends State<NewUser> {
                             backgroundColor: Colors.green),
                         onPressed: () {
                           setState(() {
-                            GendersSet = true;
+                            if (User.Gender != 0 &&
+                                User.GendersLookingFor.contains(true)) {
+                              GendersSet = true;
+                            }
                           });
                         },
                         child: const Text("Next",
@@ -329,13 +361,22 @@ class _NewUserState extends State<NewUser> {
               maxLines: null,
               onSubmitted: (text) {
                 setState(() {
-                  User.Description = DescController.text;
-                  DescriptionSet = true;
+                  if (DescController.text.isEmpty) {
+                    DescriptionSet = false;
+                  } else {
+                    User.Description = DescController.text;
+                    DescriptionSet = true;
+                  }
                 });
+              },
+              onChanged: (text) {
+                setState(() {});
               },
               controller: DescController,
               style: const TextStyle(color: Color(0xFFCCCCCC)),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                error: DescController.text.isEmpty ? Text("Bro I promise you're not that boring",
+                    style: TextStyle(color: Color(0xFFCCCCCC))) : null,
                 label: Text("Enter some stuff about you",
                     style: TextStyle(color: Color(0xFFCCCCCC))),
               ),
@@ -366,8 +407,12 @@ class _NewUserState extends State<NewUser> {
                             backgroundColor: Colors.green),
                         onPressed: () {
                           setState(() {
-                            User.Description = DescController.text;
-                            DescriptionSet = true;
+                            if (DescController.text.isEmpty) {
+                              DescriptionSet = false;
+                            } else {
+                              User.Description = DescController.text;
+                              DescriptionSet = true;
+                            }
                           });
                         },
                         child: const Text("Next",
@@ -386,8 +431,9 @@ class _NewUserState extends State<NewUser> {
             const Text(
                 "We sound like we would be great friends.\nFinally, why dont you show us your beautiful face?",
                 style: TextStyle(color: Color(0xFFCCCCCC))),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Card.outlined(
                   clipBehavior: Clip.hardEdge,
@@ -449,89 +495,107 @@ class _NewUserState extends State<NewUser> {
           ]));
     } else if (!EmailSet) {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-                textAlign: TextAlign.center,
-                "OK OK last thing I promise\nPlease enter your email and password \n(were not gonna send you any emails its literally just so supabase agrees w me)",
-                style: TextStyle(color: Color(0xFFCCCCCC))),
-            TextField(
-              onSubmitted: (text) {
-                setState(() {
-                  Email = EmailController.text;
-                });
-              },
-              controller: EmailController,
-              style: const TextStyle(color: Color(0xFFCCCCCC)),
-              decoration: const InputDecoration(
-                label: Text("Enter your email",
-                    style: TextStyle(color: Color(0xFFCCCCCC))),
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                  textAlign: TextAlign.center,
+                  "OK OK last thing I promise\nPlease enter your email and password \n(were not gonna send you any emails its literally just so supabase agrees w me)",
+                  style: TextStyle(color: Color(0xFFCCCCCC))),
+              TextField(
+                onSubmitted: (text) {
+                  setState(() {
+                    if (EmailController.text.isNotEmpty) {
+                      Email = EmailController.text;
+                    }
+                  });
+                },
+                onChanged: (text) {
+                  setState(() {});
+                },
+                controller: EmailController,
+                style: const TextStyle(color: Color(0xFFCCCCCC)),
+                decoration: InputDecoration(
+                  error: EmailController.text.isEmpty ? Text("like at least give us something plz",
+                      style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+                  label: Text("Enter your email",
+                      style: TextStyle(color: Color(0xFFCCCCCC))),
+                ),
               ),
-            ),
-            TextField(
-              obscureText: true,
-              onSubmitted: (text) {
-                setState(() {
-                  Password = PassController.text;
-                });
-              },
-              controller: PassController,
-              style: const TextStyle(color: Color(0xFFCCCCCC)),
-              decoration: const InputDecoration(
-                label: Text("Enter your password",
-                    style: TextStyle(color: Color(0xFFCCCCCC))),
+              TextField(
+                obscureText: true,
+                onSubmitted: (text) {
+                  setState(() {
+                    if (PassController.text.isNotEmpty) {
+                      Password = PassController.text;
+                    }
+                  });
+                },
+                onChanged: (text) {
+                  setState(() {});
+                },
+                controller: PassController,
+                style: const TextStyle(color: Color(0xFFCCCCCC)),
+                decoration: InputDecoration(
+                  error: PassController.text.isEmpty ? Text("*closes eyes* i promise im not peeking",
+                      style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+                  label: Text("Enter your password",
+                      style: TextStyle(color: Color(0xFFCCCCCC))),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red),
-                        onPressed: () {
-                          setState(() {
-                            ProfilePictureSet = false;
-                            EmailSet = false;
-                          });
-                        },
-                        child: const Text("Back",
-                            style: TextStyle(color: Color(0xFF181818)))),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
-                        onPressed: () {
-                          setState(() {
-                            Email = EmailController.text;
-                            Password = PassController.text;
-                            EmailSet = true;
-                          });
-                        },
-                        child: const Text("Next",
-                            style: TextStyle(color: Color(0xFF181818)))),
-                  )
-                ],
-              ),
-            )
-          ],
-        )
-      );
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              ProfilePictureSet = false;
+                              EmailSet = false;
+                            });
+                          },
+                          child: const Text("Back",
+                              style: TextStyle(color: Color(0xFF181818)))),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green),
+                          onPressed: () {
+                            setState(() {
+                              if (EmailController.text.isEmpty || PassController.text.isEmpty) {
+                                EmailSet = false;
+                              } else {
+                                Email = EmailController.text;
+                                Password = PassController.text;
+                                EmailSet = true;
+                              }
+                            });
+                          },
+                          child: const Text("Next",
+                              style: TextStyle(color: Color(0xFF181818)))),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ));
     } else if (NameSet &&
         BirthdaySet &&
         GendersSet &&
         DescriptionSet &&
-        ProfilePictureSet && EmailSet) {
+        ProfilePictureSet &&
+        EmailSet) {
       return Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
+          alignment: WrapAlignment.center,
           children: [
             UserCard(User: User),
             Column(
@@ -567,7 +631,6 @@ class _NewUserState extends State<NewUser> {
         ),
       );
     }
-
 
     return Center(
         child: Column(

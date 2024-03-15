@@ -24,15 +24,16 @@ class UserCard extends StatelessWidget {
                   placeholder: kTransparentImage,
                   image: User.ProfilePictureURL,
                   width: 300,
+                  height: 400,
                   fit: BoxFit.cover,
                 ),
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   IconButton(
                       onPressed: () {
