@@ -1,5 +1,9 @@
+
 import 'package:nerdi/InterestData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 enum GenderEnum {
   Null,
@@ -9,25 +13,69 @@ enum GenderEnum {
 }
 
 class UserData {
-  UserData(
-      {this.UUID = "",
-      this.Username = "UNNAMED_USER",
-      required this.Birthday,
-      this.Gender = 0,
-      this.Description = "NONE",
-      this.ProfilePictureURL =
-          "https://www.svgrepo.com/show/508699/landscape-placeholder.svg",});
+  UserData({
+    this.UUID = "",
+    this.Username = "UNNAMED_USER",
+    this.Birthday,
+    this.Gender = 0,
+    this.Description = "NONE",
+    this.ProfilePictureURL =
+        "https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg",
+  });
 
   String UUID;
   String Username;
-  DateTime Birthday;
+  DateTime? Birthday;
   int Gender;
   String Description;
   String ProfilePictureURL;
   List<bool> GendersLookingFor = List.filled(3, false);
 
+  String getImageUUID() {
+    var UUIDgen = const Uuid();
+    return UUID;
+  }
+
+  Future<void> upload(String PPname, String? Email, String? Password) async {
+    if (ProfilePictureURL.isEmpty) {
+      PPname = ProfilePictureURL;
+    }
+    if (Email == Null && Password == Null) {
+      await Supabase.instance.client.auth.signUp(email: Email!, password: Password!);
+    }
+    await Supabase.instance.client.from("UserInfo").upsert({
+      "UserUID": UUID,
+      "Username": Username,
+      "Birthday": Birthday.toString(),
+      "Description": Description,
+      "ProfilePictureName": PPname,
+      "Gender": Gender
+    });
+    for (int i = 0; i < GendersLookingFor.length; i++) {
+      if (GendersLookingFor[i]) {
+        await Supabase.instance.client
+            .from("UserLookingForGender")
+            .upsert({"User": UUID, "GenderLookingFor": i});
+      }
+    }
+  }
+
+  Future<String> uploadImage(XFile Image) async {
+    await Supabase.instance.client.storage
+        .from('ProfilePictures')
+        .upload('$UUID.${Image.path.split('.').last}', File(Image.path), fileOptions: FileOptions(
+      contentType: 'image/${Image.path.split('.').last}',
+      upsert: false,
+    ));
+    ProfilePictureURL = Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl('$UUID.${Image.path.split('.').last}');
+    return '$UUID.${Image.path.split('.').last}';
+  }
+
   Future<List<bool>> getGendersLookingFor() async {
-    final Genders = await Supabase.instance.client.from("UserLookingForGender").select().eq("User", UUID);
+    final Genders = await Supabase.instance.client
+        .from("UserLookingForGender")
+        .select()
+        .eq("User", UUID);
 
     for (int i = 0; i < Genders.length; i++) {
       GendersLookingFor[Genders[i]["GenderLookingFor"]] = true;
@@ -89,7 +137,6 @@ class UserData {
   }
 
   int getAge() {
-    return (DateTime.now().difference(Birthday).inDays / 365)
-        .floor();
+    return (DateTime.now().difference(Birthday!).inDays / 365).floor();
   }
 }

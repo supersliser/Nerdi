@@ -18,7 +18,7 @@ class UserDescPage extends StatelessWidget {
     Output.add(UserItem(Data: GenderEnum.values[User.Gender].name, Width: width));
     Output.add(UserItem(
         Data:
-            "Age: ${User.getAge()}, Birthday in ${User.Birthday.difference(DateTime.now()).inDays} Days",
+            "Age: ${User.getAge()}, Birthday in ${User.Birthday!.difference(DateTime.now()).inDays} Days",
         Width: width));
     Output.add(UserItem(Data: User.Description, Width: width));
 
