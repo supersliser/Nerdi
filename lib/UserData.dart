@@ -103,6 +103,7 @@ class UserData {
             ID: tempInterest.first["ID"],
             Name: tempInterest.first["Name"],
             Description: tempInterest.first["Description"],
+            ImageName: tempInterest.first["ImageName"],
             ImageURL: images.getPublicUrl(tempInterest.first["ImageName"])));
       } else {
         Interests.add(Interest(

@@ -53,9 +53,15 @@ class UserCard extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(5),
-                    child: Text(
-                      GenderEnum.values[User.Gender].name,
-                      style: const TextStyle(color: Color(0xFFCCCCCC)),
+                    child: Card.filled(
+                      color: User.Gender == 1 ? Colors.lightBlue : User.Gender == 2 ? Colors.yellow : Colors.pinkAccent,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Text(
+                          GenderEnum.values[User.Gender].name,
+                          style: const TextStyle(color: Color(0xFF161616)),
+                        ),
+                      ),
                     ),
                   ),
                   Padding(
