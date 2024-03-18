@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nerdi/InterestData.dart';
+import 'package:nerdi/Login.dart';
+import 'package:nerdi/NavBar.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:nerdi/InterestPage.dart';
 import 'dart:math';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class UserDescPage extends StatelessWidget {
   const UserDescPage({super.key, required this.User});
@@ -46,18 +50,24 @@ class UserDescPage extends StatelessWidget {
           backgroundColor: const Color(0xEEC78FFF),
           child: const Text("Back"),
         ),
-        body: ListView(children: [
-          FutureBuilder<List<Widget>>(
-              future: generateTiles(User, width),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final data = snapshot.data!;
-                return (StaggeredGrid.count(
-                    crossAxisCount: (appSize.width / 300).floor(),
-                    children: data));
-              })
+        body: Row(
+          children: [
+            NavBar(),
+            Expanded(
+            child: ListView(children: [
+              FutureBuilder<List<Widget>>(
+                  future: generateTiles(User, width),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final data = snapshot.data!;
+                    return (StaggeredGrid.count(
+                        crossAxisCount: (appSize.width / 300).floor(),
+                        children: data));
+                  })
+            ]),
+          ),
         ]));
   }
 }
