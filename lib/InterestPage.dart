@@ -1,14 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NavBar.dart';
 import 'package:nerdi/UserCard.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/UserData.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -72,7 +68,7 @@ class _InterestPageState extends State<InterestPage> {
           Birthday: DateTime.parse(tempUser.first["Birthday"]),
           Description: tempUser.first["Description"],
           Gender: tempUser.first["Gender"],
-          ProfilePictureURL: await Supabase.instance.client.storage
+          ProfilePictureURL: Supabase.instance.client.storage
               .from("ProfilePictures")
               .getPublicUrl(tempUser.first["ProfilePictureName"])));
     }
@@ -142,14 +138,14 @@ class _InterestPageState extends State<InterestPage> {
     } else {
       return Row(
         children: [
-          NavBar(),
+          const NavBar(),
           Expanded(
             child: Scaffold(
               floatingActionButton: FloatingActionButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text("Back"),
+                child: const Text("Back"),
               ),
               body: SingleChildScrollView(
                 child: Column(children: [
@@ -214,7 +210,7 @@ class _InterestPageState extends State<InterestPage> {
                                                                       data[i])));
                                                 },
                                                 child: Card.outlined(
-                                                    color: Color(0xFFC78FFF),
+                                                    color: const Color(0xFFC78FFF),
                                                     clipBehavior: Clip.antiAlias,
                                                     child: Row(
                                                       mainAxisAlignment:
@@ -252,7 +248,7 @@ class _InterestPageState extends State<InterestPage> {
                       ),
                       Column(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 300,
                             child: Text(
                               "Others interested in this",
@@ -264,7 +260,7 @@ class _InterestPageState extends State<InterestPage> {
                               future: getUsersWithInterest(),
                               builder: (context, snapshot) {
                                 if (!snapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
+                                  return const Center(child: CircularProgressIndicator());
                                 }
                                 return Column(
                                   children: [
@@ -297,7 +293,7 @@ class _InterestPageState extends State<InterestPage> {
                 TextFormField(
                   controller: _NameController,
                   initialValue: widget.interest.Name,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Interest Title",
                   ),
                   validator: (value) {
@@ -312,7 +308,7 @@ class _InterestPageState extends State<InterestPage> {
                   expands: true,
                   maxLength: 20000,
                   initialValue: widget.interest.Description,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Description",
                   ),
                   validator: (value) {
@@ -357,7 +353,7 @@ class _InterestPageState extends State<InterestPage> {
                       var data = snapshot.data!;
                       return Row(children: [
                         Column(children: [
-                          Text("Parents"),
+                          const Text("Parents"),
                           Wrap(
                             children: [
                               for (int i = 0; i < data.length; i++)
@@ -378,7 +374,7 @@ class _InterestPageState extends State<InterestPage> {
                           )
                         ]),
                         Column(children: [
-                          Text("Children"),
+                          const Text("Children"),
                           Wrap(
                             children: [
                               for (int i = 0; i < data.length; i++)
@@ -409,7 +405,7 @@ class _InterestPageState extends State<InterestPage> {
                             widget.interest.upload(parentInterests, childInterests, snapshot.data!);
                           }
                         },
-                        child: Text("Publish Changes"));
+                        child: const Text("Publish Changes"));
                   }
                 )
               ],

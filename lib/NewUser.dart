@@ -76,10 +76,10 @@ class _NewUserState extends State<NewUser> {
             decoration: InputDecoration(
               focusColor: Colors.green,
               error: NameController.text.isEmpty
-                  ? Text("Cmon, you gotta give me something",
+                  ? const Text("Cmon, you gotta give me something",
                       style: TextStyle(color: Color(0xFFCCCCCC)))
                   : null,
-              label: Text("Enter your name",
+              label: const Text("Enter your name",
                   style: TextStyle(color: Color(0xFFCCCCCC))),
             ),
           ),
@@ -127,6 +127,9 @@ class _NewUserState extends State<NewUser> {
             padding: const EdgeInsets.all(8.0),
             child: CalendarDatePicker2(
               config: CalendarDatePicker2Config(
+                lastMonthIcon: const Icon(Icons.arrow_circle_left_outlined, color: Colors.white),
+                  nextMonthIcon: const Icon(Icons.arrow_circle_right_outlined, color: Colors.white),
+
                   currentDate: User.Birthday,
                   controlsTextStyle: const TextStyle(
                     color: Color(0xFFCCCCCC),
@@ -206,8 +209,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
-                        backgroundColor: Color(0xFFFF82FF),
-                        selectedColor: Color(0xFFFF82FF),
+                        backgroundColor: const Color(0xFFFF82FF),
+                        selectedColor: const Color(0xFFFF82FF),
                         label: Text(GenderEnum.Female.name),
                         selected: User.Gender == 2,
                         onSelected: (bool selected) {
@@ -220,8 +223,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
-                        backgroundColor: Color(0xFFFFEF63),
-                        selectedColor: Color(0xFFFFEF63),
+                        backgroundColor: const Color(0xFFFFEF63),
+                        selectedColor: const Color(0xFFFFEF63),
                         label: Text(GenderEnum.NonBinary.name),
                         selected: User.Gender == 3,
                         onSelected: (bool selected) {
@@ -234,8 +237,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
-                        backgroundColor: Color(0xFF63EDFF),
-                        selectedColor: Color(0xFF63EDFF),
+                        backgroundColor: const Color(0xFF63EDFF),
+                        selectedColor: const Color(0xFF63EDFF),
                         label: Text(GenderEnum.Male.name),
                         selected: User.Gender == 1,
                         onSelected: (bool selected) {
@@ -258,8 +261,8 @@ class _NewUserState extends State<NewUser> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
-                        backgroundColor: Color(0xFFFF82FF),
-                        selectedColor: Color(0xFFFF82FF),
+                        backgroundColor: const Color(0xFFFF82FF),
+                        selectedColor: const Color(0xFFFF82FF),
                         label: Text(GenderEnum.Female.name),
                         selected:
                             User.GendersLookingFor[GenderEnum.Female.index - 1],
@@ -275,8 +278,8 @@ class _NewUserState extends State<NewUser> {
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
                         label: Text(GenderEnum.NonBinary.name),
-                        backgroundColor: Color(0xFFFFEF63),
-                        selectedColor: Color(0xFFFFEF63),
+                        backgroundColor: const Color(0xFFFFEF63),
+                        selectedColor: const Color(0xFFFFEF63),
                         selected: User
                             .GendersLookingFor[GenderEnum.NonBinary.index - 1],
                         onSelected: (bool selected) {
@@ -291,8 +294,8 @@ class _NewUserState extends State<NewUser> {
                       padding: const EdgeInsets.all(8.0),
                       child: ChoiceChip(
                         label: Text(GenderEnum.Male.name),
-                        backgroundColor: Color(0xFF63EDFF),
-                        selectedColor: Color(0xFF63EDFF),
+                        backgroundColor: const Color(0xFF63EDFF),
+                        selectedColor: const Color(0xFF63EDFF),
                         selected:
                             User.GendersLookingFor[GenderEnum.Male.index - 1],
                         onSelected: (bool selected) {
@@ -375,9 +378,9 @@ class _NewUserState extends State<NewUser> {
               controller: DescController,
               style: const TextStyle(color: Color(0xFFCCCCCC)),
               decoration: InputDecoration(
-                error: DescController.text.isEmpty ? Text("Bro I promise you're not that boring",
+                error: DescController.text.isEmpty ? const Text("Bro I promise you're not that boring",
                     style: TextStyle(color: Color(0xFFCCCCCC))) : null,
-                label: Text("Enter some stuff about you",
+                label: const Text("Enter some stuff about you",
                     style: TextStyle(color: Color(0xFFCCCCCC))),
               ),
             ),
@@ -517,9 +520,9 @@ class _NewUserState extends State<NewUser> {
                 controller: EmailController,
                 style: const TextStyle(color: Color(0xFFCCCCCC)),
                 decoration: InputDecoration(
-                  error: EmailController.text.isEmpty ? Text("like at least give us something plz",
+                  error: EmailController.text.isEmpty ? const Text("like at least give us something plz",
                       style: TextStyle(color: Color(0xFFCCCCCC))) : null,
-                  label: Text("Enter your email",
+                  label: const Text("Enter your email",
                       style: TextStyle(color: Color(0xFFCCCCCC))),
                 ),
               ),
@@ -538,9 +541,9 @@ class _NewUserState extends State<NewUser> {
                 controller: PassController,
                 style: const TextStyle(color: Color(0xFFCCCCCC)),
                 decoration: InputDecoration(
-                  error: PassController.text.isEmpty ? Text("*closes eyes* i promise im not peeking",
+                  error: PassController.text.isEmpty ? const Text("*closes eyes* i promise im not peeking",
                       style: TextStyle(color: Color(0xFFCCCCCC))) : null,
-                  label: Text("Enter your password",
+                  label: const Text("Enter your password",
                       style: TextStyle(color: Color(0xFFCCCCCC))),
                 ),
               ),
@@ -604,27 +607,33 @@ class _NewUserState extends State<NewUser> {
                 const Text(
                     style: TextStyle(color: Color(0xFFCCCCCC)),
                     "This is you now, hope you're happy\nClick below to let others see you"),
-                ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    onPressed: () {
-                      User.upload(ImageName, Email, Password);
-                      Navigator.pop(context);
-                    },
-                    child: const Text("below",
-                        style: TextStyle(color: Color(0xFFCCCCCC)))),
-                ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    onPressed: () {
-                      setState(() {
-                        ProfilePictureSet = false;
-                      });
-                    },
-                    child: const Text(
-                        style: TextStyle(color: Color(0xFFCCCCCC)),
-                        textAlign: TextAlign.center,
-                        "WAIT NONONO THIS IS WRONG I HAVE\n VERY IMPORTANT CHANGES I MUST MAKE IMMEDIATELY OR ELSE\n THE WORLD SHALL END IN A FIREY PIT OF HELL")),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                      onPressed: () {
+                        User.upload(ImageName, Email, Password);
+                        Navigator.pop(context);
+                      },
+                      child: const Text("below",
+                          style: TextStyle(color: Color(0xFFCCCCCC)))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          ProfilePictureSet = false;
+                        });
+                      },
+                      child: const Text(
+                          style: TextStyle(color: Color(0xFFCCCCCC)),
+                          textAlign: TextAlign.center,
+                          "WAIT NONONO THIS IS WRONG I HAVE\n VERY IMPORTANT CHANGES I MUST MAKE IMMEDIATELY OR ELSE\n THE WORLD SHALL END IN A FIREY PIT OF HELL")),
+                ),
               ],
             ),
           ],

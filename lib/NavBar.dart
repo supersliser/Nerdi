@@ -1,11 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NewUser.dart';
-import 'package:nerdi/UserData.dart';
-import 'package:nerdi/UserIcon.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:nerdi/UserCard.dart';
+import 'package:nerdi/UserListPage.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key, this.CurrentIndex = 0});
@@ -21,13 +17,23 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-      trailing: LoginButton(session: Supabase.instance.client.auth.currentSession,),
+      backgroundColor: const Color(0xFF040404),
+      trailing: const LoginButton(),
       extended: MediaQuery.of(context).size.width >= 700,
       selectedIndex: widget.CurrentIndex,
-      destinations: [
-        NavigationRailDestination(icon: Icon(Icons.home), label: Text("Home")),
-        NavigationRailDestination(icon: Icon(Icons.abc), label: Text("Blank for now"))
+      destinations: const [
+        NavigationRailDestination(icon: Icon(Icons.home), label: Text("Home", style: TextStyle(color: Color(0xFFCCCCCC)),)),
+        NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create New User", style: TextStyle(color: Color(0xFFCCCCCC))))
       ],
+      onDestinationSelected: (index) {
+        switch (index) {
+          case 0:
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
+            break;
+          case 1:
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const NewUser()));
+        }
+      },
     );
   }
 }

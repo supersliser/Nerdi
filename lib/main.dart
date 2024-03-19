@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF151515),
         useMaterial3: true,
       ),
-      home: const UserListPage(title: 'Flutter Demo Home Page'),
+      home: const UserListPage(),
     );
   }
 }

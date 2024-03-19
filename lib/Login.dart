@@ -1,19 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:nerdi/InterestData.dart';
-import 'package:nerdi/UserCard.dart';
 import 'package:nerdi/UserIcon.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/UserData.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:image_picker/image_picker.dart';
 
 Future<UserData> getUserData(Session session) async {
   final temp = await Supabase.instance.client
-      .from("UserData")
+      .from("UserInfo")
       .select()
       .eq("UserUID", session.user.id);
   return UserData(
@@ -28,9 +21,7 @@ Future<UserData> getUserData(Session session) async {
 }
 
 class LoginButton extends StatefulWidget {
-  const LoginButton({super.key, required this.session});
-
-  final Session? session;
+  const LoginButton({super.key});
 
   @override
   State<LoginButton> createState() => _LoginButtonState();
@@ -43,26 +34,31 @@ class _LoginButtonState extends State<LoginButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.session == null) {
+    if (Supabase.instance.client.auth.currentSession == null) {
       return CupertinoButton(
-          child: Text("Login"),
-          onPressed: () => AlertDialog(
-                title: Text("Login"),
+          child: const Text("Login"),
+          onPressed: () => showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                insetPadding: const EdgeInsets.all(10),
+                title: const Text("Login"),
                 content: Column(
                   children: [
                     loginFailed
-                        ? Text("Login failed, try again, or don't, idm")
-                        : Padding(
-                            padding: EdgeInsets.zero,
-                          ),
+                        ? const Text("Login failed, try again, or don't, idm")
+                        : const Padding(
+                      padding: EdgeInsets.zero,
+                    ),
                     TextField(
                       controller: _EmailController,
                       decoration: InputDecoration(
                           labelText: "Email",
                           errorText:
-                              loginFailed ? "Invalid Email, maybe, idk" : null),
+                          loginFailed ? "Invalid Email, maybe, idk" : null),
                     ),
                     TextField(
+                      obscureText: true,
                       controller: _PasswordController,
                       decoration: InputDecoration(
                           labelText: "Password",
@@ -79,26 +75,35 @@ class _LoginButtonState extends State<LoginButton> {
                           Navigator.pop(context, "Cancel");
                         });
                       },
-                      child: Text("Cancel")),
+                      child: const Text("Cancel")),
                   TextButton(
                       onPressed: () {
-                        setState(() => Supabase.instance.client.auth
-                            .signInWithPassword(
-                                password: _PasswordController.text,
-                                email: _EmailController.text));
+                        setState(() async {
+                          var temp = await Supabase.instance.client.auth
+                              .signInWithPassword(
+                              password: _PasswordController.text,
+                              email: _EmailController.text);
+                          if (temp.session == null) {
+                            loginFailed = true;
+                          } else {
+                            Navigator.pop(context, "Submit");
+                          }
+                        });
                       },
-                      child: Text("Login"))
+                      child: const Text("Login"))
                 ],
-              ));
+              );
+            }
+          ));
     } else {
       return FutureBuilder(
-          future: getUserData(widget.session!),
+          future: getUserData(Supabase.instance.client.auth.currentSession!),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Text("Login");
+              return const CircularProgressIndicator();
             }
             final data = snapshot.data!;
-            return Column(
+            return Row(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -106,7 +111,7 @@ class _LoginButtonState extends State<LoginButton> {
                     ImageURL: data.ProfilePictureURL,
                   ),
                 ),
-                Text(data.Username),
+                MediaQuery.of(context).size.width >= 700 ? Text(data.Username, style: const TextStyle(color: Color(0xFFCCCCCC)),):const Padding(padding: EdgeInsets.all(0),),
               ],
             );
           });
