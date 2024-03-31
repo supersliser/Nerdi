@@ -4,6 +4,7 @@ import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:nerdi/InterestData.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage(
@@ -20,6 +21,8 @@ class _AccountPageState extends State<AccountPage> {
   String ImageName = "";
   var UsernameController = TextEditingController();
   var DescriptionController = TextEditingController();
+  List<Interest> UserInterest = List.empty(growable: true);
+  bool userInterestSet = false;
 
   Future<void> pickImage() async {
     String imageName = widget.User.getImageUUID();
@@ -30,6 +33,48 @@ class _AccountPageState extends State<AccountPage> {
         ImageName = temp;
       });
     }
+  }
+
+  Future<List<Interest>> getAllInterests() async {
+    var temp = await Supabase.instance.client.from("Interest").select();
+    var images = Supabase.instance.client.storage.from("Interests");
+
+    if (!userInterestSet) {
+      var userTemp = await Supabase.instance.client
+          .from("UserInterest")
+          .select()
+          .eq("UserID", Supabase.instance.client.auth.currentUser!.id);
+      for (var item in userTemp) {
+        var tempInterest = temp.where((element) {
+          return element["ID"] == item["InterestID"];
+        }).first;
+        UserInterest.add(Interest(
+            ID: tempInterest["ID"],
+            Name: tempInterest["Name"],
+            Description: tempInterest["Description"],
+            ImageName: tempInterest["ImageName"],
+            ImageURL: images.getPublicUrl(tempInterest["ImageName"]),
+            PrimaryColour: Color.fromARGB(
+                0xFF,
+                tempInterest["PrimaryColourRed"],
+                tempInterest["PrimaryColourGreen"],
+                tempInterest["PrimaryColourBlue"])));
+        userInterestSet = true;
+      }
+    }
+    return List.generate(temp.length, (index) {
+      return Interest(
+          ID: temp[index]["ID"],
+          Name: temp[index]["Name"],
+          Description: temp[index]["Description"],
+          ImageName: temp[index]["ImageName"],
+          ImageURL: images.getPublicUrl(temp[index]["ImageName"]),
+          PrimaryColour: Color.fromARGB(
+              0xFF,
+              temp[index]["PrimaryColourRed"],
+              temp[index]["PrimaryColourGreen"],
+              temp[index]["PrimaryColourBlue"]));
+    });
   }
 
   @override
@@ -185,6 +230,59 @@ class _AccountPageState extends State<AccountPage> {
                                   ]),
                             ),
                           ]),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Text(
+                                "Interests",
+                                style: TextStyle(
+                                  color: Color(0xFFCCCCCC),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              FutureBuilder(
+                                  future: getAllInterests(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.data == null) {
+                                      return CircularProgressIndicator();
+                                    }
+                                    return Wrap(
+                                      children: [
+                                        for (var item in snapshot.data!)
+                                          ChoiceChip(
+                                            backgroundColor: item.PrimaryColour,
+                                            label: Text(item.Name),
+                                            selected:
+                                                UserInterest.where((element) {
+                                              return element.ID == item.ID;
+                                            }).isNotEmpty,
+                                            onSelected: (selected) {
+                                              if (UserInterest.where((element) {
+                                                return element.ID == item.ID;
+                                              }).isNotEmpty) {
+                                                setState(() {
+                                                  UserInterest.removeWhere(
+                                                      (element) {
+                                                    return element.ID ==
+                                                        item.ID;
+                                                  });
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  UserInterest.add(item);
+                                                });
+                                              }
+                                            },
+                                          )
+                                      ],
+                                    );
+                                  }),
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   ),
                   Column(
@@ -192,7 +290,23 @@ class _AccountPageState extends State<AccountPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TextButton(
-                            onPressed: () {
+                            onPressed: () async {
+                              await Supabase.instance.client
+                                  .from("UserInterest")
+                                  .delete()
+                                  .eq(
+                                      "UserID",
+                                      Supabase.instance.client.auth.currentUser!
+                                          .id);
+                              for (var item in UserInterest) {
+                                await Supabase.instance.client
+                                    .from("UserInterest")
+                                    .insert({
+                                  "UserID": Supabase
+                                      .instance.client.auth.currentUser!.id,
+                                  "InterestID": item.ID
+                                });
+                              }
                               setState(() {
                                 widget.User.upload(ImageName, null, null);
                               });

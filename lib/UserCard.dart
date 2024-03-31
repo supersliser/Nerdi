@@ -7,9 +7,10 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserCard extends StatefulWidget {
-  const UserCard({super.key, required this.User});
+  const UserCard({super.key, required this.User, required this.parentSetState});
 
   final UserData User;
+  final parentSetState;
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -48,9 +49,9 @@ class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onDoubleTapDown: (details) {
+      onDoubleTapDown: (details) async {
         if (details.localPosition.dx >= 200) {
-          Supabase.instance.client.from("Likes").insert({
+          await Supabase.instance.client.from("Likes").insert({
             "LikerID" : Supabase.instance.client.auth.currentUser!.id,
             "LikedID" : widget.User.UUID,
             "Liked" : 1
@@ -58,8 +59,9 @@ class _UserCardState extends State<UserCard> {
           setState(() {
             liked = !liked;
           });
+          widget.parentSetState(() {});
         } else {
-          Supabase.instance.client.from("Likes").insert({
+          await Supabase.instance.client.from("Likes").insert({
             "LikerID" : Supabase.instance.client.auth.currentUser!.id,
             "LikedID" : widget.User.UUID,
             "Liked" : -1
@@ -67,6 +69,7 @@ class _UserCardState extends State<UserCard> {
           setState(() {
             disliked = !disliked;
           });
+          widget.parentSetState(() {});
         }
       },
       child: Card.filled(

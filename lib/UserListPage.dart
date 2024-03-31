@@ -22,7 +22,9 @@ class _UserListPageState extends State<UserListPage> {
     var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
 
     temp.removeWhere((element) {
-      return likes.contains(element["UserUID"]);
+      return likes.where((elementee) {
+        return elementee["LikedID"] == element["UserUID"];
+      }).isNotEmpty;
     });
     List<UserData> output = List.empty(growable: true);
     for (var item in temp) {
@@ -43,8 +45,7 @@ class _UserListPageState extends State<UserListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Row(
+        body: Row(
         children: [
           const NavBar(
             CurrentIndex: 0,
@@ -67,7 +68,7 @@ class _UserListPageState extends State<UserListPage> {
                         child: ListView.builder(
                           itemCount: data.length,
                           itemBuilder: (context, index) {
-                            return UserCard(User: data[index]);
+                            return UserCard(User: data[index], parentSetState: setState,);
                           },
                         ),
                       ),
@@ -77,6 +78,6 @@ class _UserListPageState extends State<UserListPage> {
           ),
         ],
       ),
-    ));
+    );
   }
 }

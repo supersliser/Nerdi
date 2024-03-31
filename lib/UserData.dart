@@ -66,9 +66,9 @@ class UserData {
     if (ProfilePictureURL.isEmpty) {
       PPname = ProfilePictureURL;
     }
-    if (Email != Null && Password != Null) {
+    if (Email != null && Password != null) {
       var temp = await Supabase.instance.client.auth
-          .signUp(email: Email!, password: Password!);
+          .signUp(email: Email, password: Password);
       UUID = temp.user!.id;
     }
     await Supabase.instance.client.from("UserInfo").upsert({

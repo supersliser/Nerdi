@@ -304,7 +304,7 @@ class _InterestPageState extends State<InterestPage> {
                                           for (int i = 0;
                                               i < snapshot.data!.length;
                                               i++)
-                                            UserCard(User: snapshot.data![i])
+                                            UserCard(User: snapshot.data![i], parentSetState: null,)
                                         ],
                                       );
                                     })
