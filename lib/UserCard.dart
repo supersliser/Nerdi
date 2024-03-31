@@ -50,10 +50,20 @@ class _UserCardState extends State<UserCard> {
     return GestureDetector(
       onDoubleTapDown: (details) {
         if (details.localPosition.dx >= 200) {
+          Supabase.instance.client.from("Likes").insert({
+            "LikerID" : Supabase.instance.client.auth.currentUser!.id,
+            "LikedID" : widget.User.UUID,
+            "Liked" : 1
+          });
           setState(() {
             liked = !liked;
           });
         } else {
+          Supabase.instance.client.from("Likes").insert({
+            "LikerID" : Supabase.instance.client.auth.currentUser!.id,
+            "LikedID" : widget.User.UUID,
+            "Liked" : -1
+          });
           setState(() {
             disliked = !disliked;
           });

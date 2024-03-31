@@ -19,6 +19,11 @@ class _UserListPageState extends State<UserListPage> {
         .select()
         .neq("UserUID", Supabase.instance.client.auth.currentUser == null ? const UuidV4().generate() : Supabase.instance.client.auth.currentUser!.id);
 
+    var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
+
+    temp.removeWhere((element) {
+      return likes.contains(element["UserUID"]);
+    });
     List<UserData> output = List.empty(growable: true);
     for (var item in temp) {
       output.add(UserData(
