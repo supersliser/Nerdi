@@ -28,10 +28,14 @@ class _NavBarState extends State<NavBar> {
       onDestinationSelected: (index) {
         switch (index) {
           case 0:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
+            setState(() {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
+            });
             break;
           case 1:
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const NewUser()));
+            setState(() {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const NewUser()));
+            });
         }
       },
     );

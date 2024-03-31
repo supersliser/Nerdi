@@ -1,8 +1,8 @@
-
 import 'package:nerdi/InterestData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:io';
+import 'dart:ui';
 import 'package:image_picker/image_picker.dart';
 
 enum GenderEnum {
@@ -12,16 +12,26 @@ enum GenderEnum {
   NonBinary,
 }
 
+class SecondaryPicture {
+  SecondaryPicture(
+      {required this.ID,
+      required this.PictureName,
+      required this.Order});
+  String ID;
+  String PictureName;
+  int Order;
+}
+
 class UserData {
-  UserData({
-    this.UUID = "",
-    this.Username = "UNNAMED_USER",
-    this.Birthday,
-    this.Gender = 0,
-    this.Description = "NONE",
-    this.ProfilePictureURL =
-        "https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg",
-  });
+  UserData(
+      {this.UUID = "",
+      this.Username = "UNNAMED_USER",
+      this.Birthday,
+      this.Gender = 0,
+      this.Description = "NONE",
+      this.ProfilePictureURL =
+          "https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg",
+      this.ProfilePictureName = ""});
 
   String UUID;
   String Username;
@@ -30,6 +40,22 @@ class UserData {
   String Description;
   String ProfilePictureURL;
   List<bool> GendersLookingFor = List.filled(3, false);
+  String ProfilePictureName;
+
+  Future<List<SecondaryPicture>> getSecondaryPictures() async {
+    var temp = await Supabase.instance.client
+        .from("SecondaryPictures")
+        .select()
+        .eq("UserID", UUID);
+    List<SecondaryPicture> SecondaryPictures = List.empty(growable: true);
+    for (int i = 0; i < temp.length; i++) {
+      SecondaryPictures.add(SecondaryPicture(
+          ID: temp[i]["PictureID"],
+          PictureName: temp[i]["PictureName"],
+          Order: temp[i]["Order"]));
+    }
+    return SecondaryPictures;
+  }
 
   String getImageUUID() {
     var UUIDgen = const Uuid();
@@ -41,7 +67,8 @@ class UserData {
       PPname = ProfilePictureURL;
     }
     if (Email != Null && Password != Null) {
-      var temp = await Supabase.instance.client.auth.signUp(email: Email!, password: Password!);
+      var temp = await Supabase.instance.client.auth
+          .signUp(email: Email!, password: Password!);
       UUID = temp.user!.id;
     }
     await Supabase.instance.client.from("UserInfo").upsert({
@@ -64,11 +91,14 @@ class UserData {
   Future<String> uploadImage(XFile Image, String imageName) async {
     await Supabase.instance.client.storage
         .from('ProfilePictures')
-        .upload('$imageName.${Image.path.split('.').last}', File(Image.path), fileOptions: FileOptions(
-      contentType: 'image/${Image.path.split('.').last}',
-      upsert: false,
-    ));
-    ProfilePictureURL = Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl('$imageName.${Image.path.split('.').last}');
+        .upload('$imageName.${Image.path.split('.').last}', File(Image.path),
+            fileOptions: FileOptions(
+              contentType: 'image/${Image.path.split('.').last}',
+              upsert: false,
+            ));
+    ProfilePictureURL = Supabase.instance.client.storage
+        .from("ProfilePictures")
+        .getPublicUrl('$imageName.${Image.path.split('.').last}');
     return '$imageName.${Image.path.split('.').last}';
   }
 
@@ -86,7 +116,7 @@ class UserData {
   }
 
   Future<List<Interest>> getInterests() async {
-    List<Interest> Interests = List.empty(growable: true);
+    List<Interest> output = List.empty(growable: true);
     final UserInterests = await Supabase.instance.client
         .from("UserInterest")
         .select("InterestID")
@@ -95,47 +125,23 @@ class UserData {
     final images = Supabase.instance.client.storage.from("Interests");
 
     for (int i = 0; i < UserInterests.length; i++) {
-      final tempInterest = await Supabase.instance.client
+      var tempInterest = await Supabase.instance.client
           .from("Interest")
           .select()
           .eq("ID", UserInterests[i]["InterestID"]);
-      if (tempInterest.first["ImageName"].toString().isNotEmpty) {
-        Interests.add(Interest(
-            ID: tempInterest.first["ID"],
-            Name: tempInterest.first["Name"],
-            Description: tempInterest.first["Description"],
-            ImageName: tempInterest.first["ImageName"],
-            ImageURL: images.getPublicUrl(tempInterest.first["ImageName"])));
-      } else {
-        Interests.add(Interest(
+      output.add(Interest(
           ID: tempInterest.first["ID"],
           Name: tempInterest.first["Name"],
           Description: tempInterest.first["Description"],
-        ));
-      }
+          ImageName: tempInterest.first["ImageName"],
+          ImageURL: images.getPublicUrl(tempInterest.first["ImageName"]),
+          PrimaryColour: Color.fromARGB(
+              0xFF,
+              tempInterest.first["PrimaryColourRed"],
+              tempInterest.first["PrimaryColourGreen"],
+              tempInterest.first["PrimaryColourBlue"])));
     }
-    return Interests;
-  }
-
-  Future<Interest> getInterest(int index) async {
-    var userInterests = await Supabase.instance.client
-        .from('UserInterest')
-        .select()
-        .eq("UserID", UUID)
-        .range(index, index);
-
-    var images = Supabase.instance.client.storage.from("Interests");
-
-    var tempInterest = await Supabase.instance.client
-        .from("Interest")
-        .select("ID, Name, Description, ImageName")
-        .eq("ID", userInterests.first["InterestID"]);
-    return Interest(
-      ID: tempInterest.first["ID"],
-      Name: tempInterest.first["Name"],
-      Description: tempInterest.first["Description"],
-      // ImageURL: images.getPublicUrl(tempInterest.first["ImageName"]),
-    );
+    return output;
   }
 
   int getAge() {

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nerdi/AccountPage.dart';
 import 'package:nerdi/UserIcon.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,7 +18,116 @@ Future<UserData> getUserData(Session session) async {
       Description: temp.first["Description"],
       ProfilePictureURL: Supabase.instance.client.storage
           .from("ProfilePictures")
-          .getPublicUrl(temp.first["ProfilePictureName"]));
+          .getPublicUrl(temp.first["ProfilePictureName"]),
+      ProfilePictureName: temp.first["ProfilePictureName"]);
+}
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _EmailController = TextEditingController();
+
+  final _PasswordController = TextEditingController();
+
+  var loginFailed = false;
+
+  Future<void> attemptLogin() async {
+    if (_EmailController.text.isEmpty && _PasswordController.text.isEmpty) {
+      return;
+    }
+    var temp = await Supabase.instance.client.auth.signInWithPassword(
+        password: _PasswordController.text, email: _EmailController.text);
+    if (temp.user == null) {
+      setState(() {
+        loginFailed = true;
+      });
+    } else {
+      Navigator.pop(context, Supabase.instance.client.auth.currentSession);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: attemptLogin(),
+        builder: (context, snapshot) {
+          return Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 300,
+                height: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    loginFailed
+                        ? const Text("Login failed, try again, or don't, idm")
+                        : const Padding(
+                            padding: EdgeInsets.zero,
+                          ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        onSubmitted: (data) {
+                          attemptLogin();
+                        },
+                        controller: _EmailController,
+                        style: const TextStyle(color: Color(0xFFCCCCCC)),
+                        decoration: InputDecoration(
+                            labelText: "Email",
+                            errorText: loginFailed
+                                ? "Invalid Email, maybe, idk"
+                                : null),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        onSubmitted: (data) {
+                          attemptLogin();
+                        },
+                        obscureText: true,
+                        controller: _PasswordController,
+                        style: const TextStyle(color: Color(0xFFCCCCCC)),
+                        decoration: InputDecoration(
+                            labelText: "Password",
+                            errorText: loginFailed
+                                ? "Invalid Password, maybe, idk"
+                                : null),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  Navigator.pop(context, "Cancel");
+                                });
+                              },
+                              child: const Text("Cancel")),
+                          TextButton(
+                              onPressed: () {
+                                attemptLogin();
+                              },
+                              child: const Text("Login"))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
 }
 
 class LoginButton extends StatefulWidget {
@@ -28,73 +138,19 @@ class LoginButton extends StatefulWidget {
 }
 
 class _LoginButtonState extends State<LoginButton> {
-  final _EmailController = TextEditingController();
-  final _PasswordController = TextEditingController();
-  var loginFailed = false;
-
   @override
   Widget build(BuildContext context) {
     if (Supabase.instance.client.auth.currentSession == null) {
       return CupertinoButton(
           child: const Text("Login"),
-          onPressed: () => showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                insetPadding: const EdgeInsets.all(10),
-                title: const Text("Login"),
-                content: Column(
-                  children: [
-                    loginFailed
-                        ? const Text("Login failed, try again, or don't, idm")
-                        : const Padding(
-                      padding: EdgeInsets.zero,
-                    ),
-                    TextField(
-                      controller: _EmailController,
-                      decoration: InputDecoration(
-                          labelText: "Email",
-                          errorText:
-                          loginFailed ? "Invalid Email, maybe, idk" : null),
-                    ),
-                    TextField(
-                      obscureText: true,
-                      controller: _PasswordController,
-                      decoration: InputDecoration(
-                          labelText: "Password",
-                          errorText: loginFailed
-                              ? "Invalid Password, maybe, idk"
-                              : null),
-                    )
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        setState(() {
-                          Navigator.pop(context, "Cancel");
-                        });
-                      },
-                      child: const Text("Cancel")),
-                  TextButton(
-                      onPressed: () {
-                        setState(() async {
-                          var temp = await Supabase.instance.client.auth
-                              .signInWithPassword(
-                              password: _PasswordController.text,
-                              email: _EmailController.text);
-                          if (temp.session == null) {
-                            loginFailed = true;
-                          } else {
-                            Navigator.pop(context, "Submit");
-                          }
-                        });
-                      },
-                      child: const Text("Login"))
-                ],
-              );
-            }
-          ));
+          onPressed: () async {
+            await Navigator.push(context,
+                MaterialPageRoute(builder: (context) {
+              return const LoginPage();
+            }));
+            if (!context.mounted) return;
+            setState(() {});
+          });
     } else {
       return FutureBuilder(
           future: getUserData(Supabase.instance.client.auth.currentSession!),
@@ -103,16 +159,34 @@ class _LoginButtonState extends State<LoginButton> {
               return const CircularProgressIndicator();
             }
             final data = snapshot.data!;
-            return Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: UserIcon(
-                    ImageURL: data.ProfilePictureURL,
+            return CupertinoButton(
+              onPressed: () async {
+                await Navigator.push(context,
+                    MaterialPageRoute(builder: (context) {
+                  return AccountPage(
+                      User: data, ProfilePictureName: data.ProfilePictureName);
+                }));
+                if (!context.mounted) return;
+                setState(() {});
+              },
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: UserIcon(
+                      ImageURL: data.ProfilePictureURL,
+                    ),
                   ),
-                ),
-                MediaQuery.of(context).size.width >= 700 ? Text(data.Username, style: const TextStyle(color: Color(0xFFCCCCCC)),):const Padding(padding: EdgeInsets.all(0),),
-              ],
+                  MediaQuery.of(context).size.width >= 700
+                      ? Text(
+                          data.Username,
+                          style: const TextStyle(color: Color(0xFFCCCCCC)),
+                        )
+                      : const Padding(
+                          padding: EdgeInsets.all(0),
+                        ),
+                ],
+              ),
             );
           });
     }

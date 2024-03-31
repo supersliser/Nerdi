@@ -18,7 +18,7 @@ class InterestPage extends StatefulWidget {
 }
 
 class _InterestPageState extends State<InterestPage> {
-  final bool editMode = false;
+  bool editMode = false;
   final _formKey = GlobalKey<FormState>();
 
   final _NameController = TextEditingController();
@@ -29,22 +29,28 @@ class _InterestPageState extends State<InterestPage> {
 
     final data = await Supabase.instance.client
         .from("InterestSubInterest")
-        .select()
+        .select("SubInterestID")
         .eq("InterestID", widget.interest.ID);
 
+    final images = Supabase.instance.client.storage.from("Interests");
+
     for (int i = 0; i < data.length; i++) {
-      final interestItem = await Supabase.instance.client
+      var interestItem = await Supabase.instance.client
           .from("Interest")
           .select()
           .eq("ID", data[i]["SubInterestID"]);
+      print("test");
       output.add(Interest(
           ID: interestItem.first["ID"],
           Name: interestItem.first["Name"],
           Description: interestItem.first["Description"],
           ImageName: interestItem.first["ImageName"],
-          ImageURL: Supabase.instance.client.storage
-              .from("Interests")
-              .getPublicUrl(interestItem.first["ImageName"])));
+          ImageURL: images.getPublicUrl(interestItem.first["ImageName"]),
+          PrimaryColour: Color.fromARGB(
+              0xFF,
+              interestItem.first["PrimaryColourRed"],
+              interestItem.first["PrimaryColourGreen"],
+              interestItem.first["PrimaryColourBlue"])));
     }
     return output;
   }
@@ -76,7 +82,10 @@ class _InterestPageState extends State<InterestPage> {
   }
 
   Future<List<Interest>> getAllInterests() async {
-    var temp = await Supabase.instance.client.from("Interest").select();
+    var temp = await Supabase.instance.client
+        .from("Interest")
+        .select()
+        .neq("ID", widget.interest.ID);
     List<Interest> output = List.empty(growable: true);
     for (int i = 0; i < temp.length; i++) {
       output.add(Interest(
@@ -86,9 +95,10 @@ class _InterestPageState extends State<InterestPage> {
           ImageName: temp[i]["ImageName"],
           ImageURL: Supabase.instance.client.storage
               .from("Interests")
-              .getPublicUrl(temp[i]["ImageName"])));
+              .getPublicUrl(temp[i]["ImageName"]),
+          PrimaryColour: Color.fromARGB(0xFF, temp[i]["PrimaryColourRed"],
+              temp[i]["PrimaryColourGreen"], temp[i]["PrimaryColourBlue"])));
     }
-
     var parentInterestGetter = await Supabase.instance.client
         .from("InterestSubInterest")
         .select()
@@ -105,9 +115,13 @@ class _InterestPageState extends State<InterestPage> {
           ImageName: tempInterest.first["ImageName"],
           ImageURL: Supabase.instance.client.storage
               .from("Interests")
-              .getPublicUrl(tempInterest.first["ImageName"])));
+              .getPublicUrl(tempInterest.first["ImageName"]),
+          PrimaryColour: Color.fromARGB(
+              0xFF,
+              tempInterest.first["PrimaryColourRed"],
+              tempInterest.first["PrimaryColourGreen"],
+              tempInterest.first["PrimaryColourBlue"])));
     }
-
     var childInterestGetter = await Supabase.instance.client
         .from("InterestSubInterest")
         .select()
@@ -116,7 +130,7 @@ class _InterestPageState extends State<InterestPage> {
       var tempInterest = await Supabase.instance.client
           .from("Interest")
           .select()
-          .eq("ID", parentInterestGetter[i]["SubInterestID"]);
+          .eq("ID", childInterestGetter[i]["SubInterestID"]);
       childInterests.add(Interest(
           ID: tempInterest.first["ID"],
           Name: tempInterest.first["Name"],
@@ -124,7 +138,12 @@ class _InterestPageState extends State<InterestPage> {
           ImageName: tempInterest.first["ImageName"],
           ImageURL: Supabase.instance.client.storage
               .from("Interests")
-              .getPublicUrl(tempInterest.first["ImageName"])));
+              .getPublicUrl(tempInterest.first["ImageName"]),
+          PrimaryColour: Color.fromARGB(
+              0xFF,
+              tempInterest.first["PrimaryColourRed"],
+              tempInterest.first["PrimaryColourGreen"],
+              tempInterest.first["PrimaryColourBlue"])));
     }
 
     return output;
@@ -136,50 +155,64 @@ class _InterestPageState extends State<InterestPage> {
     if (editMode) {
       return InterestEditor();
     } else {
-      return Row(
-        children: [
-          const NavBar(),
-          Expanded(
-            child: Scaffold(
-              floatingActionButton: FloatingActionButton(
+      return InterestViewer(context, appSize);
+    }
+  }
+
+  Row InterestViewer(BuildContext context, Size appSize) {
+    return Row(
+      children: [
+        const NavBar(),
+        Expanded(
+          child: Scaffold(
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FloatingActionButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 child: const Text("Back"),
               ),
-              body: SingleChildScrollView(
-                child: Column(children: [
-                  SizedBox(
-                    width: appSize.width,
-                    height: 100,
-                    child: FadeInImage.memoryNetwork(
-                        fit: BoxFit.cover,
-                        placeholder: kTransparentImage,
-                        image: widget.interest.ImageURL),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(25),
-                    child: Text(
-                      widget.interest.Name,
-                      style: const TextStyle(
-                        color: Color(0xFFCCCCCC),
-                        fontSize: 80,
-                      ),
+            ),
+            body: SingleChildScrollView(
+              child: Column(children: [
+                SizedBox(
+                  width: appSize.width,
+                  height: 100,
+                  child: FadeInImage.memoryNetwork(
+                      fit: BoxFit.cover,
+                      placeholder: kTransparentImage,
+                      image: widget.interest.ImageURL),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(25),
+                  child: Text(
+                    widget.interest.Name,
+                    style: const TextStyle(
+                      color: Color(0xFFCCCCCC),
+                      fontSize: 50,
                     ),
                   ),
-                  Wrap(
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
                     children: [
-                      SizedBox(
-                        width: appSize.width <= 624 ? 324 : appSize.width - 324,
-                        child: Column(
+                      Text(widget.interest.Description,
+                          style: const TextStyle(
+                            color: Color(0xFFCCCCCC),
+                            fontSize: 20,
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 30, bottom: 30),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          alignment: WrapAlignment.start,
                           children: [
-                            Text(widget.interest.Description,
-                                style: const TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                  fontSize: 20,
-                                )),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 30, bottom: 30),
+                            SizedBox(
+                              width: appSize.width >= 324
+                                  ? 324
+                                  : appSize.width - 324,
                               child: Column(
                                 children: [
                                   const Text("Related interests",
@@ -191,7 +224,8 @@ class _InterestPageState extends State<InterestPage> {
                                       builder: (context, snapshop) {
                                         if (!snapshop.hasData) {
                                           return const Center(
-                                              child: CircularProgressIndicator());
+                                              child:
+                                                  CircularProgressIndicator());
                                         }
                                         var data = snapshop.data!;
                                         return Column(
@@ -207,22 +241,28 @@ class _InterestPageState extends State<InterestPage> {
                                                           builder: (context) =>
                                                               InterestPage(
                                                                   interest:
-                                                                      data[i])));
+                                                                      data[
+                                                                          i])));
                                                 },
                                                 child: Card.outlined(
-                                                    color: const Color(0xFFC78FFF),
-                                                    clipBehavior: Clip.antiAlias,
+                                                    color:
+                                                        data[i].PrimaryColour,
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.start,
+                                                          MainAxisAlignment
+                                                              .start,
                                                       crossAxisAlignment:
-                                                          CrossAxisAlignment.center,
+                                                          CrossAxisAlignment
+                                                              .center,
                                                       children: [
                                                         SizedBox(
                                                           width: 50,
                                                           child: FadeInImage
                                                               .memoryNetwork(
-                                                                  fit: BoxFit.cover,
+                                                                  fit: BoxFit
+                                                                      .cover,
                                                                   placeholder:
                                                                       kTransparentImage,
                                                                   image: data[i]
@@ -230,9 +270,11 @@ class _InterestPageState extends State<InterestPage> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              const EdgeInsets.only(
+                                                              const EdgeInsets
+                                                                  .only(
                                                                   left: 8.0),
-                                                          child: Text(data[i].Name),
+                                                          child: Text(
+                                                              data[i].Name),
                                                         )
                                                       ],
                                                     )),
@@ -243,47 +285,48 @@ class _InterestPageState extends State<InterestPage> {
                                 ],
                               ),
                             ),
+                            Column(
+                              children: [
+                                const Text(
+                                  "Others interested in this",
+                                  style: TextStyle(
+                                      color: Color(0xFFCCCCCC), fontSize: 20),
+                                ),
+                                FutureBuilder(
+                                    future: getUsersWithInterest(),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      }
+                                      return Column(
+                                        children: [
+                                          for (int i = 0;
+                                              i < snapshot.data!.length;
+                                              i++)
+                                            UserCard(User: snapshot.data![i])
+                                        ],
+                                      );
+                                    })
+                              ],
+                            ),
                           ],
                         ),
                       ),
-                      Column(
-                        children: [
-                          const SizedBox(
-                            width: 300,
-                            child: Text(
-                              "Others interested in this",
-                              style:
-                                  TextStyle(color: Color(0xFFCCCCCC), fontSize: 20),
-                            ),
-                          ),
-                          FutureBuilder(
-                              future: getUsersWithInterest(),
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const Center(child: CircularProgressIndicator());
-                                }
-                                return Column(
-                                  children: [
-                                    for (int i = 0; i < snapshot.data!.length; i++)
-                                      UserCard(User: snapshot.data![i])
-                                  ],
-                                );
-                              })
-                        ],
-                      ),
                     ],
                   ),
-                ]),
-              ),
+                ),
+              ]),
             ),
           ),
-        ],
-      );
-    }
+        ),
+      ],
+    );
   }
 
   List<Interest> parentInterests = List.empty(growable: true);
   List<Interest> childInterests = List.empty(growable: true);
+
   Widget InterestEditor() {
     return Scaffold(
         body: Form(
@@ -292,7 +335,9 @@ class _InterestPageState extends State<InterestPage> {
               children: [
                 TextFormField(
                   controller: _NameController,
-                  initialValue: widget.interest.Name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
                   decoration: const InputDecoration(
                     labelText: "Interest Title",
                   ),
@@ -304,10 +349,11 @@ class _InterestPageState extends State<InterestPage> {
                   },
                 ),
                 TextFormField(
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
                   controller: _DescController,
-                  expands: true,
                   maxLength: 20000,
-                  initialValue: widget.interest.Description,
                   decoration: const InputDecoration(
                     labelText: "Description",
                   ),
@@ -352,64 +398,76 @@ class _InterestPageState extends State<InterestPage> {
                       }
                       var data = snapshot.data!;
                       return Row(children: [
-                        Column(children: [
-                          const Text("Parents"),
-                          Wrap(
-                            children: [
-                              for (int i = 0; i < data.length; i++)
-                                ChoiceChip(
-                                  label: Text(data[i].Name),
-                                  selected: parentInterests.contains(data[i]),
-                                  onSelected: (context) {
-                                    setState(() {
-                                      if (parentInterests.contains(data[i])) {
-                                        parentInterests.remove(data[i]);
-                                      } else {
-                                        parentInterests.add(data[i]);
-                                      }
-                                    });
-                                  },
-                                )
-                            ],
-                          )
-                        ]),
-                        Column(children: [
-                          const Text("Children"),
-                          Wrap(
-                            children: [
-                              for (int i = 0; i < data.length; i++)
-                                ChoiceChip(
-                                  label: Text(data[i].Name),
-                                  selected: childInterests.contains(data[i]),
-                                  onSelected: (context) {
-                                    setState(() {
-                                      if (childInterests.contains(data[i])) {
-                                        childInterests.remove(data[i]);
-                                      } else {
-                                        childInterests.add(data[i]);
-                                      }
-                                    });
-                                  },
-                                )
-                            ],
-                          )
-                        ]),
+                        Expanded(
+                          child: Column(children: [
+                            const Text(
+                              "Parents",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Wrap(
+                              children: [
+                                for (int i = 0; i < data.length; i++)
+                                  InterestChip(data[i], parentInterests)
+                              ],
+                            )
+                          ]),
+                        ),
+                        Expanded(
+                          child: Column(children: [
+                            const Text("Children",
+                                style: TextStyle(color: Colors.white)),
+                            Wrap(
+                              children: [
+                                for (int i = 0; i < data.length; i++)
+                                  InterestChip(data[i], childInterests)
+                              ],
+                            )
+                          ]),
+                        ),
                       ]);
                     }),
                 FutureBuilder(
-                  future: getUserData(Supabase.instance.client.auth.currentSession!),
-                  builder: (context, snapshot) {
-                    return ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            widget.interest.upload(parentInterests, childInterests, snapshot.data!);
-                          }
-                        },
-                        child: const Text("Publish Changes"));
-                  }
-                )
+                    future: getUserData(
+                        Supabase.instance.client.auth.currentSession!),
+                    builder: (context, snapshot) {
+                      return ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              widget.interest.upload(parentInterests,
+                                  childInterests, snapshot.data!);
+                              setState(() {
+                                editMode = !editMode;
+                              });
+                            }
+                          },
+                          child: const Text("Publish Changes"));
+                    })
               ],
             )));
+  }
+
+  ChoiceChip InterestChip(Interest data, List<Interest> interests) {
+    return ChoiceChip(
+      label: Text(data.Name),
+      selected: interests.where((element) {
+        return element.ID == data.ID;
+      }).isNotEmpty,
+      onSelected: (context) {
+        if (interests.where((element) {
+          return element.ID == data.ID;
+        }).isNotEmpty) {
+          setState(() {
+            interests.removeWhere((item) {
+              return item.ID == data.ID;
+            });
+          });
+        } else {
+          setState(() {
+            interests.add(data);
+          });
+        }
+      },
+    );
   }
 
   Future<void> pickImage() async {

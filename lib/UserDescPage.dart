@@ -7,7 +7,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:nerdi/InterestPage.dart';
 import 'dart:math';
 
-
 class UserDescPage extends StatelessWidget {
   const UserDescPage({super.key, required this.User});
   final UserData User;
@@ -22,7 +21,7 @@ class UserDescPage extends StatelessWidget {
         UserItem(Data: GenderEnum.values[User.Gender].name, Width: width));
     Output.add(UserItem(
         Data:
-            "Age: ${User.getAge()}, Birthday in ${User.Birthday!.difference(DateTime.now()).inDays} Days",
+            "Age: ${User.getAge()}, Birthday in ${User.Birthday!.copyWith(year: User.Birthday!.copyWith(year: DateTime.now().year).difference(DateTime.now()).inDays >= 0 ? DateTime.now().year : DateTime.now().year + 1).difference(DateTime.now()).inDays} Days",
         Width: width));
     Output.add(UserItem(Data: User.Description, Width: width));
 
@@ -48,10 +47,9 @@ class UserDescPage extends StatelessWidget {
           backgroundColor: const Color(0xEEC78FFF),
           child: const Text("Back"),
         ),
-        body: Row(
-          children: [
-            const NavBar(),
-            Expanded(
+        body: Row(children: [
+          const NavBar(),
+          Expanded(
             child: ListView(children: [
               FutureBuilder<List<Widget>>(
                   future: generateTiles(User, width),
@@ -93,7 +91,7 @@ class InterestItem extends StatelessWidget {
         width: Width,
         child: Card.filled(
           clipBehavior: Clip.antiAlias,
-          color: const Color(0xFFC78FFF),
+          color: interest.PrimaryColour,
           child: Column(
             children: [
               interest.ImageName == "Placeholder.svg"
@@ -104,8 +102,7 @@ class InterestItem extends StatelessWidget {
                       placeholder: kTransparentImage,
                       image: interest.ImageURL,
                       width: Width,
-                      fit: BoxFit.cover
-                    ),
+                      fit: BoxFit.cover),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Center(
