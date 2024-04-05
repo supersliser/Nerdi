@@ -77,7 +77,7 @@ class _UserCardState extends State<UserCard> {
             ? Colors.green
             : disliked
                 ? Colors.red
-                : Color(0xFF080808),
+                : const Color(0xFF080808),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -92,7 +92,7 @@ class _UserCardState extends State<UserCard> {
                         options: CarouselOptions(
                             enableInfiniteScroll: false,
                             showIndicator: true,
-                            slideIndicator: CircularSlideIndicator()),
+                            slideIndicator: const CircularSlideIndicator()),
                         items: snapshot.data);
                   }),
               const Padding(

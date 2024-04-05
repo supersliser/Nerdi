@@ -235,7 +235,7 @@ class _AccountPageState extends State<AccountPage> {
                         child: Center(
                           child: Column(
                             children: [
-                              Text(
+                              const Text(
                                 "Interests",
                                 style: TextStyle(
                                   color: Color(0xFFCCCCCC),
@@ -246,7 +246,7 @@ class _AccountPageState extends State<AccountPage> {
                                   future: getAllInterests(),
                                   builder: (context, snapshot) {
                                     if (snapshot.data == null) {
-                                      return CircularProgressIndicator();
+                                      return const CircularProgressIndicator();
                                     }
                                     return Wrap(
                                       children: [

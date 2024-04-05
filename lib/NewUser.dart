@@ -135,7 +135,7 @@ class _NewUserState extends State<NewUser> {
         padding: const EdgeInsets.all(20),
         child: Center(
           child: Column(children: [
-            Text(
+            const Text(
               "Now, for the main event\nTELL US WHAT YOURE INTERESTED IN",
               style: TextStyle(
                 color: Color(0xFFCCCCCC),
@@ -146,7 +146,7 @@ class _NewUserState extends State<NewUser> {
                 future: getAllInterests(),
                 builder: (context, snapshot) {
                   if (snapshot.data == null) {
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   }
                   return Wrap(
                     children: [
