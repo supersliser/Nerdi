@@ -136,7 +136,7 @@ class _NewUserState extends State<NewUser> {
         child: Center(
           child: Column(children: [
             const Text(
-              "Now, for the main event\nTELL US WHAT YOURE INTERESTED IN",
+              "Now, for the main event\nTELL US WHAT YOURE INTERESTED IN\nbtw if your interests arent here rn then dw, once you made an account you can add more interests",
               style: TextStyle(
                 color: Color(0xFFCCCCCC),
               ),
