@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nerdi/AccountPage.dart';
-import 'package:nerdi/UserData.dart';
 import 'package:nerdi/UserIcon.dart';
+import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<UserData> getUserData(Session session) async {
@@ -144,7 +144,8 @@ class _LoginButtonState extends State<LoginButton> {
       return CupertinoButton(
           child: const Text("Login"),
           onPressed: () async {
-            await Navigator.push(context, MaterialPageRoute(builder: (context) {
+            await Navigator.push(context,
+                MaterialPageRoute(builder: (context) {
               return const LoginPage();
             }));
             if (!context.mounted) return;

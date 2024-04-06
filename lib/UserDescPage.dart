@@ -1,15 +1,14 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/NavBar.dart';
-import 'package:nerdi/UserData.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:nerdi/UserData.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:nerdi/InterestPage.dart';
+import 'dart:math';
 
 class UserDescPage extends StatelessWidget {
   const UserDescPage({super.key, required this.User});
-
   final UserData User;
 
   Future<List<Widget>> generateTiles(UserData User, double width) async {
@@ -68,6 +67,8 @@ class UserDescPage extends StatelessWidget {
         ]));
   }
 }
+
+
 
 class UserItem extends StatelessWidget {
   const UserItem({

@@ -1,13 +1,12 @@
 import 'dart:math';
-
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/UserCard.dart';
 import 'package:nerdi/UserData.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NewUser extends StatefulWidget {
   const NewUser({super.key});
@@ -221,10 +220,7 @@ class _NewUserState extends State<NewUser> {
       child: Wrap(
         alignment: WrapAlignment.center,
         children: [
-          UserCard(
-            User: User,
-            parentSetState: null,
-          ),
+          UserCard(User: User, parentSetState: null,),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
