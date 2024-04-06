@@ -1,26 +1,20 @@
-import 'dart:ui';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nerdi/InterestPage.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:nerdi/InterestData.dart';
-import 'package:nerdi/NavBar.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:nerdi/UserData.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:nerdi/InterestPage.dart';
-import 'dart:math';
-
+import 'package:uuid/uuid.dart';
 
 class InterestViewer extends StatelessWidget {
   const InterestViewer(
       {super.key,
-        required this.interest,
-        this.title = null,
-        required this.Width});
+      required this.interest,
+      this.title = null,
+      required this.Width});
+
   final Interest interest;
   final String? title;
   final double Width;
@@ -43,25 +37,25 @@ class InterestViewer extends StatelessWidget {
             children: [
               interest.ImageName == "Placeholder.svg"
                   ? const Padding(
-                padding: EdgeInsets.all(0),
-              )
+                      padding: EdgeInsets.all(0),
+                    )
                   : FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image: interest.ImageURL,
-                  width: Width,
-                  fit: BoxFit.cover),
+                      placeholder: kTransparentImage,
+                      image: interest.ImageURL,
+                      width: Width,
+                      fit: BoxFit.cover),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Center(
                     child: Column(
-                      children: [
-                        Text(
-                          title == null ? interest.Name : title!,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        Text(interest.Description)
-                      ],
-                    )),
+                  children: [
+                    Text(
+                      title == null ? interest.Name : title!,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    Text(interest.Description)
+                  ],
+                )),
               ),
             ],
           ),
@@ -80,6 +74,7 @@ class Interest {
       this.ImageURL =
           "https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg",
       required this.PrimaryColour});
+
   String ID;
   String Name;
   String Description;
@@ -136,8 +131,9 @@ class Interest {
           .upsert({"InterestID": ID, "SubInterestID": i.ID});
     }
     try {
-      await Supabase.instance.client.from("UserInterest").upsert(
-          {"UserID": currentUser.UUID, "InterestID": ID});
+      await Supabase.instance.client
+          .from("UserInterest")
+          .upsert({"UserID": currentUser.UUID, "InterestID": ID});
     } catch (temp) {}
   }
 }

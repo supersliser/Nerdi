@@ -1,9 +1,10 @@
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:io';
-import 'dart:ui';
-import 'package:image_picker/image_picker.dart';
 
 enum GenderEnum {
   Null,
@@ -14,9 +15,8 @@ enum GenderEnum {
 
 class SecondaryPicture {
   SecondaryPicture(
-      {required this.ID,
-      required this.PictureName,
-      required this.Order});
+      {required this.ID, required this.PictureName, required this.Order});
+
   String ID;
   String PictureName;
   int Order;

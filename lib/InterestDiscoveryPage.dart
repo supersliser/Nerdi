@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/NavBar.dart';
-import 'package:transparent_image/transparent_image.dart';
-import 'package:nerdi/UserData.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:nerdi/InterestPage.dart';
-import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class InterestDiscoveryPage extends StatelessWidget {

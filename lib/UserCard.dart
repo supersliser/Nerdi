@@ -3,8 +3,8 @@ import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:nerdi/UserDescPage.dart';
 import 'package:nerdi/UserIcon.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class UserCard extends StatefulWidget {
   const UserCard({super.key, required this.User, required this.parentSetState});
@@ -46,15 +46,16 @@ class _UserCardState extends State<UserCard> {
 
   bool liked = false;
   bool disliked = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onDoubleTapDown: (details) async {
         if (details.localPosition.dx >= 200) {
           await Supabase.instance.client.from("Likes").insert({
-            "LikerID" : Supabase.instance.client.auth.currentUser!.id,
-            "LikedID" : widget.User.UUID,
-            "Liked" : 1
+            "LikerID": Supabase.instance.client.auth.currentUser!.id,
+            "LikedID": widget.User.UUID,
+            "Liked": 1
           });
           setState(() {
             liked = !liked;
@@ -62,9 +63,9 @@ class _UserCardState extends State<UserCard> {
           widget.parentSetState(() {});
         } else {
           await Supabase.instance.client.from("Likes").insert({
-            "LikerID" : Supabase.instance.client.auth.currentUser!.id,
-            "LikedID" : widget.User.UUID,
-            "Liked" : -1
+            "LikerID": Supabase.instance.client.auth.currentUser!.id,
+            "LikedID": widget.User.UUID,
+            "Liked": -1
           });
           setState(() {
             disliked = !disliked;

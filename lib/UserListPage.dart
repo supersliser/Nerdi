@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nerdi/NavBar.dart';
+import 'package:nerdi/UserCard.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:nerdi/UserCard.dart';
 import 'package:uuid/v4.dart';
 
 class UserListPage extends StatefulWidget {
@@ -14,12 +14,16 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   Future<List<UserData>> getUsers() async {
-    var temp = await Supabase.instance.client
-        .from("UserInfo")
-        .select()
-        .neq("UserUID", Supabase.instance.client.auth.currentUser == null ? const UuidV4().generate() : Supabase.instance.client.auth.currentUser!.id);
+    var temp = await Supabase.instance.client.from("UserInfo").select().neq(
+        "UserUID",
+        Supabase.instance.client.auth.currentUser == null
+            ? const UuidV4().generate()
+            : Supabase.instance.client.auth.currentUser!.id);
 
-    var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
+    var likes = await Supabase.instance.client
+        .from("Likes")
+        .select("LikedID")
+        .eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
 
     temp.removeWhere((element) {
       return likes.where((elementee) {
@@ -45,7 +49,7 @@ class _UserListPageState extends State<UserListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Row(
+      body: Row(
         children: [
           const NavBar(
             CurrentIndex: 0,
@@ -68,7 +72,10 @@ class _UserListPageState extends State<UserListPage> {
                         child: ListView.builder(
                           itemCount: data.length,
                           itemBuilder: (context, index) {
-                            return UserCard(User: data[index], parentSetState: setState,);
+                            return UserCard(
+                              User: data[index],
+                              parentSetState: setState,
+                            );
                           },
                         ),
                       ),

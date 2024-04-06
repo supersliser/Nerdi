@@ -6,6 +6,7 @@ import 'package:nerdi/UserListPage.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key, this.CurrentIndex = 0});
+
   final int CurrentIndex;
 
   @override
@@ -23,26 +24,44 @@ class _NavBarState extends State<NavBar> {
       extended: MediaQuery.of(context).size.width >= 700,
       selectedIndex: widget.CurrentIndex,
       destinations: const [
-        NavigationRailDestination(icon: Icon(Icons.home), label: Text("Home", style: TextStyle(color: Color(0xFFCCCCCC)),)),
-        NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create New User", style: TextStyle(color: Color(0xFFCCCCCC)))),
-        NavigationRailDestination(icon: Icon(Icons.account_tree), label: Text("Interest Discovery", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(
+            icon: Icon(Icons.home),
+            label: Text(
+              "Home",
+              style: TextStyle(color: Color(0xFFCCCCCC)),
+            )),
+        NavigationRailDestination(
+            icon: Icon(Icons.add),
+            label: Text("Create New User",
+                style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(
+            icon: Icon(Icons.account_tree),
+            label: Text("Interest Discovery",
+                style: TextStyle(color: Color(0xFFCCCCCC)))),
       ],
       onDestinationSelected: (index) {
         switch (index) {
           case 0:
             setState(() {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const UserListPage()));
             });
             break;
           case 1:
             setState(() {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const NewUser()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const NewUser()));
             });
             break;
-            case 2:
-              setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => InterestDiscoveryPage()));
-              });
+          case 2:
+            setState(() {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InterestDiscoveryPage()));
+            });
         }
       },
     );
