@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NavBar.dart';
@@ -349,11 +350,16 @@ class _InterestPageState extends State<InterestPage> {
     _NameController.text = widget.interest.Name;
     _DescController.text = widget.interest.Description;
     return Scaffold(
-        body: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
+        body: SingleChildScrollView(
+      child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
                   controller: _NameController,
                   style: const TextStyle(
                     color: Colors.white,
@@ -368,7 +374,10 @@ class _InterestPageState extends State<InterestPage> {
                     return null;
                   },
                 ),
-                TextFormField(
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
                   style: const TextStyle(
                     color: Colors.white,
                   ),
@@ -384,7 +393,10 @@ class _InterestPageState extends State<InterestPage> {
                     return null;
                   },
                 ),
-                Wrap(
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
@@ -410,62 +422,78 @@ class _InterestPageState extends State<InterestPage> {
                     )
                   ],
                 ),
-                FutureBuilder(
-                    future: getAllInterests(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      var data = snapshot.data!;
-                      return Row(children: [
-                        Expanded(
-                          child: Column(children: [
-                            const Text(
-                              "Parents",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Wrap(
-                              children: [
-                                for (int i = 0; i < data.length; i++)
-                                  InterestChip(data[i], parentInterests)
-                              ],
-                            )
-                          ]),
-                        ),
-                        Expanded(
-                          child: Column(children: [
-                            const Text("Children",
-                                style: TextStyle(color: Colors.white)),
-                            Wrap(
-                              children: [
-                                for (int i = 0; i < data.length; i++)
-                                  InterestChip(data[i], childInterests)
-                              ],
-                            )
-                          ]),
-                        ),
-                      ]);
-                    }),
-                FutureBuilder(
-                    future: getUserData(
-                        Supabase.instance.client.auth.currentSession!),
-                    builder: (context, snapshot) {
-                      return ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              widget.interest.Name = _NameController.text;
-                              widget.interest.Description = _DescController.text;
-                              widget.interest.upload(parentInterests,
-                                  childInterests, snapshot.data!);
-                              setState(() {
-                                editMode = !editMode;
-                              });
-                            }
-                          },
-                          child: const Text("Publish Changes"));
-                    })
-              ],
-            )));
+              ),
+              FutureBuilder(
+                  future: getAllInterests(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    var data = snapshot.data!;
+                    return Row(children: [
+                      Expanded(
+                        child: Column(children: [
+                          const Text(
+                            "Parents",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Wrap(
+                            children: [
+                              for (int i = 0; i < data.length; i++)
+                                InterestChip(data[i], parentInterests)
+                            ],
+                          )
+                        ]),
+                      ),
+                      Expanded(
+                        child: Column(children: [
+                          const Text("Children",
+                              style: TextStyle(color: Colors.white)),
+                          Wrap(
+                            children: [
+                              for (int i = 0; i < data.length; i++)
+                                InterestChip(data[i], childInterests)
+                            ],
+                          )
+                        ]),
+                      ),
+                    ]);
+                  }),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                    child: ColorPicker(
+                  enableAlpha: false,
+                  labelTextStyle: TextStyle(color: Colors.white),
+                  pickerColor: widget.interest.PrimaryColour,
+                  onColorChanged: (input) {
+                    setState(() {
+                      widget.interest.PrimaryColour = input;
+                    });
+                  },
+                )),
+              ),
+              FutureBuilder(
+                  future: getUserData(
+                      Supabase.instance.client.auth.currentSession!),
+                  builder: (context, snapshot) {
+                    return ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            widget.interest.Name = _NameController.text;
+                            widget.interest.Description = _DescController.text;
+                            widget.interest.upload(parentInterests,
+                                childInterests, snapshot.data!);
+                            setState(() {
+                              editMode = !editMode;
+                            });
+                          }
+                        },
+                        child: const Text("Publish Changes"));
+                  })
+            ],
+          )),
+    ));
   }
 
   ChoiceChip InterestChip(Interest data, List<Interest> interests) {

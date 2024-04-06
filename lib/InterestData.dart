@@ -47,7 +47,10 @@ class Interest {
       "ID": ID,
       "Name": Name,
       "Description": Description,
-      "ImageName": ImageName
+      "ImageName": ImageName,
+      "PrimaryColourRed": PrimaryColour.red,
+      "PrimaryColourGreen": PrimaryColour.green,
+      "PrimaryColourBlue": PrimaryColour.blue
     });
     await Supabase.instance.client
         .from("InterestSubInterest")
