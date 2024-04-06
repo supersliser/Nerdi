@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/InterestDiscoveryPage.dart';
+import 'package:nerdi/InterestPage.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NewUser.dart';
 import 'package:nerdi/UserListPage.dart';
+import 'package:uuid/uuid.dart';
 
 class NavBar extends StatefulWidget {
-  const NavBar({super.key, this.CurrentIndex = 0});
+  const NavBar({super.key, required this.CurrentIndex});
   final int CurrentIndex;
 
   @override
@@ -26,6 +29,7 @@ class _NavBarState extends State<NavBar> {
         NavigationRailDestination(icon: Icon(Icons.home), label: Text("Home", style: TextStyle(color: Color(0xFFCCCCCC)),)),
         NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create New User", style: TextStyle(color: Color(0xFFCCCCCC)))),
         NavigationRailDestination(icon: Icon(Icons.account_tree), label: Text("Interest Discovery", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create new interest", style: TextStyle(color: Color(0xFFCCCCCC))))
       ],
       onDestinationSelected: (index) {
         switch (index) {
@@ -41,8 +45,22 @@ class _NavBarState extends State<NavBar> {
             break;
             case 2:
               setState(() {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => InterestDiscoveryPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const InterestDiscoveryPage()));
               });
+              break;
+          case 3:
+            setState(() {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => InterestPage(
+                interest: Interest(
+                  ID: const Uuid().v4(),
+                  Name: "New Interest",
+                  Description: "Interest Description",
+                  PrimaryColour: const Color.fromARGB(255, 199, 143, 255)
+                ),
+                editMode: true,
+                newInterest: true,
+              )));
+            });
         }
       },
     );

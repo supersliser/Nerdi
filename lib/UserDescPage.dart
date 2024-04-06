@@ -4,7 +4,6 @@ import 'package:nerdi/NavBar.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:nerdi/InterestPage.dart';
 import 'dart:math';
 
 class UserDescPage extends StatelessWidget {
@@ -48,7 +47,7 @@ class UserDescPage extends StatelessWidget {
           child: const Text("Back"),
         ),
         body: Row(children: [
-          const NavBar(),
+          const NavBar(CurrentIndex: 1,),
           Expanded(
             child: ListView(children: [
               FutureBuilder<List<Widget>>(

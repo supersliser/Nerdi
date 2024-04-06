@@ -84,7 +84,7 @@ class _AccountPageState extends State<AccountPage> {
     DescriptionController.text = widget.User.Description;
     return Row(
       children: [
-        const NavBar(),
+        const NavBar(CurrentIndex: 0,),
         Expanded(
           child: Scaffold(
             body: SingleChildScrollView(

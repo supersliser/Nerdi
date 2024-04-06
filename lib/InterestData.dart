@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,20 +5,15 @@ import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:nerdi/InterestData.dart';
-import 'package:nerdi/NavBar.dart';
 import 'package:transparent_image/transparent_image.dart';
-import 'package:nerdi/UserData.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:nerdi/InterestPage.dart';
-import 'dart:math';
 
 
 class InterestViewer extends StatelessWidget {
   const InterestViewer(
       {super.key,
         required this.interest,
-        this.title = null,
+        this.title,
         required this.Width});
   final Interest interest;
   final String? title;
@@ -100,10 +94,11 @@ class Interest {
               contentType: 'image/${Image.path.split('.').last}',
               upsert: false,
             ));
+    ImageName = '$imageName.${Image.path.split('.').last}';
     ImageURL = Supabase.instance.client.storage
         .from("Interests")
         .getPublicUrl('$imageName.${Image.path.split('.').last}');
-    return '$imageName.${Image.path.split('.').last}';
+    return ImageURL;
   }
 
   Future<void> upload(List<Interest> parentInterests,
@@ -135,9 +130,5 @@ class Interest {
           .from("InterestSubInterest")
           .upsert({"InterestID": ID, "SubInterestID": i.ID});
     }
-    try {
-      await Supabase.instance.client.from("UserInterest").upsert(
-          {"UserID": currentUser.UUID, "InterestID": ID});
-    } catch (temp) {}
   }
 }

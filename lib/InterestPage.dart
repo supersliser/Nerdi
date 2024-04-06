@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:nerdi/InterestData.dart';
@@ -11,16 +10,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InterestPage extends StatefulWidget {
-  const InterestPage({super.key, required this.interest});
+  InterestPage(
+      {super.key,
+      required this.interest,
+      this.editMode = false,
+      this.newInterest = false});
 
   final Interest interest;
+  bool editMode;
+  final bool newInterest;
 
   @override
   State<InterestPage> createState() => _InterestPageState();
 }
 
 class _InterestPageState extends State<InterestPage> {
-  bool editMode = false;
   final _formKey = GlobalKey<FormState>();
 
   final _NameController = TextEditingController();
@@ -153,7 +157,7 @@ class _InterestPageState extends State<InterestPage> {
   @override
   Widget build(BuildContext context) {
     var appSize = MediaQuery.of(context).size;
-    if (editMode) {
+    if (widget.editMode) {
       return InterestEditor();
     } else {
       return InterestViewer(context, appSize);
@@ -163,7 +167,9 @@ class _InterestPageState extends State<InterestPage> {
   Row InterestViewer(BuildContext context, Size appSize) {
     return Row(
       children: [
-        const NavBar(),
+        const NavBar(
+          CurrentIndex: 2,
+        ),
         Expanded(
           child: Scaffold(
             floatingActionButton: Padding(
@@ -190,10 +196,10 @@ class _InterestPageState extends State<InterestPage> {
                     TextButton(
                         onPressed: () {
                           setState(() {
-                            editMode = !editMode;
+                            widget.editMode = !widget.editMode;
                           });
                         },
-                        child: Text("Edit")),
+                        child: const Text("Edit")),
                     Expanded(
                       child: Center(
                         child: Padding(
@@ -360,6 +366,9 @@ class _InterestPageState extends State<InterestPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  onChanged: (value) {
+                    widget.interest.Name = _NameController.text;
+                  },
                   controller: _NameController,
                   style: const TextStyle(
                     color: Colors.white,
@@ -378,11 +387,16 @@ class _InterestPageState extends State<InterestPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  onChanged: (value) {
+                    widget.interest.Description = _DescController.text;
+                  },
                   style: const TextStyle(
                     color: Colors.white,
                   ),
                   controller: _DescController,
                   maxLength: 20000,
+                  minLines: 1,
+                  maxLines: 200,
                   decoration: const InputDecoration(
                     labelText: "Description",
                   ),
@@ -464,7 +478,7 @@ class _InterestPageState extends State<InterestPage> {
                 child: Center(
                     child: ColorPicker(
                   enableAlpha: false,
-                  labelTextStyle: TextStyle(color: Colors.white),
+                  labelTextStyle: const TextStyle(color: Colors.white),
                   pickerColor: widget.interest.PrimaryColour,
                   onColorChanged: (input) {
                     setState(() {
@@ -484,8 +498,17 @@ class _InterestPageState extends State<InterestPage> {
                             widget.interest.Description = _DescController.text;
                             widget.interest.upload(parentInterests,
                                 childInterests, snapshot.data!);
+                            if (widget.newInterest) {
+                              Supabase.instance.client
+                                  .from("UserInterest")
+                                  .insert({
+                                "UserID": Supabase
+                                    .instance.client.auth.currentUser!.id,
+                                "InterestID": widget.interest.ID
+                              });
+                            }
                             setState(() {
-                              editMode = !editMode;
+                              widget.editMode = !widget.editMode;
                             });
                           }
                         },
