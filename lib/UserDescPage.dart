@@ -26,8 +26,8 @@ class UserDescPage extends StatelessWidget {
     Output.add(UserItem(Data: User.Description, Width: width));
 
     for (int i = 0; i < Interests.length; i++) {
-      Output.add(InterestItem(
-          interest: Interests[i], username: User.Username, Width: width));
+      Output.add(InterestViewer(
+          interest: Interests[i], title: User.Username, Width: width));
     }
     Output.shuffle(Random(DateTime.now().hour));
     return Output;
@@ -68,61 +68,7 @@ class UserDescPage extends StatelessWidget {
   }
 }
 
-class InterestItem extends StatelessWidget {
-  const InterestItem(
-      {super.key,
-      required this.interest,
-      this.username = "this person",
-      required this.Width});
-  final Interest interest;
-  final String username;
-  final double Width;
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => InterestPage(interest: interest)));
-      },
-      child: SizedBox(
-        width: Width,
-        child: Card.filled(
-          clipBehavior: Clip.antiAlias,
-          color: interest.PrimaryColour,
-          child: Column(
-            children: [
-              interest.ImageName == "Placeholder.svg"
-                  ? const Padding(
-                      padding: EdgeInsets.all(0),
-                    )
-                  : FadeInImage.memoryNetwork(
-                      placeholder: kTransparentImage,
-                      image: interest.ImageURL,
-                      width: Width,
-                      fit: BoxFit.cover),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                    child: Column(
-                  children: [
-                    Text(
-                      "$username is interested in ${interest.Name}",
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    Text(interest.Description)
-                  ],
-                )),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class UserItem extends StatelessWidget {
   const UserItem({

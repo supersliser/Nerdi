@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nerdi/InterestDiscoveryPage.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NewUser.dart';
 import 'package:nerdi/UserListPage.dart';
@@ -23,7 +24,8 @@ class _NavBarState extends State<NavBar> {
       selectedIndex: widget.CurrentIndex,
       destinations: const [
         NavigationRailDestination(icon: Icon(Icons.home), label: Text("Home", style: TextStyle(color: Color(0xFFCCCCCC)),)),
-        NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create New User", style: TextStyle(color: Color(0xFFCCCCCC))))
+        NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create New User", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.account_tree), label: Text("Interest Discovery", style: TextStyle(color: Color(0xFFCCCCCC)))),
       ],
       onDestinationSelected: (index) {
         switch (index) {
@@ -36,6 +38,11 @@ class _NavBarState extends State<NavBar> {
             setState(() {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const NewUser()));
             });
+            break;
+            case 2:
+              setState(() {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => InterestDiscoveryPage()));
+              });
         }
       },
     );

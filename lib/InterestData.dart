@@ -5,6 +5,71 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:nerdi/InterestData.dart';
+import 'package:nerdi/NavBar.dart';
+import 'package:transparent_image/transparent_image.dart';
+import 'package:nerdi/UserData.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:nerdi/InterestPage.dart';
+import 'dart:math';
+
+
+class InterestViewer extends StatelessWidget {
+  const InterestViewer(
+      {super.key,
+        required this.interest,
+        this.title = null,
+        required this.Width});
+  final Interest interest;
+  final String? title;
+  final double Width;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => InterestPage(interest: interest)));
+      },
+      child: SizedBox(
+        width: Width,
+        child: Card.filled(
+          clipBehavior: Clip.antiAlias,
+          color: interest.PrimaryColour,
+          child: Column(
+            children: [
+              interest.ImageName == "Placeholder.svg"
+                  ? const Padding(
+                padding: EdgeInsets.all(0),
+              )
+                  : FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: interest.ImageURL,
+                  width: Width,
+                  fit: BoxFit.cover),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          title == null ? interest.Name : title!,
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                        Text(interest.Description)
+                      ],
+                    )),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class Interest {
   Interest(
