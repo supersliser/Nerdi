@@ -60,17 +60,16 @@ class Interest {
     for (var i in parentInterests) {
       await Supabase.instance.client
           .from("InterestSubInterest")
-          .insert({"InterestID": i.ID, "SubInterestID": ID});
+          .upsert({"InterestID": i.ID, "SubInterestID": ID});
     }
     for (var i in childInterests) {
       await Supabase.instance.client
           .from("InterestSubInterest")
-          .insert({"InterestID": ID, "SubInterestID": i.ID});
+          .upsert({"InterestID": ID, "SubInterestID": i.ID});
     }
     try {
-      await Supabase.instance.client
-          .from("UserInterest")
-          .insert({"UserID": currentUser.UUID, "InterestID": ID});
-    } finally {}
+      await Supabase.instance.client.from("UserInterest").upsert(
+          {"UserID": currentUser.UUID, "InterestID": ID});
+    } catch (temp) {}
   }
 }

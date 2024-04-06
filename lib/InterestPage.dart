@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/Login.dart';
@@ -39,7 +40,6 @@ class _InterestPageState extends State<InterestPage> {
           .from("Interest")
           .select()
           .eq("ID", data[i]["SubInterestID"]);
-      print("test");
       output.add(Interest(
           ID: interestItem.first["ID"],
           Name: interestItem.first["Name"],
@@ -184,15 +184,30 @@ class _InterestPageState extends State<InterestPage> {
                       placeholder: kTransparentImage,
                       image: widget.interest.ImageURL),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(25),
-                  child: Text(
-                    widget.interest.Name,
-                    style: const TextStyle(
-                      color: Color(0xFFCCCCCC),
-                      fontSize: 50,
+                Row(
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          setState(() {
+                            editMode = !editMode;
+                          });
+                        },
+                        child: Text("Edit")),
+                    Expanded(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Text(
+                            widget.interest.Name,
+                            style: const TextStyle(
+                              color: Color(0xFFCCCCCC),
+                              fontSize: 50,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -304,7 +319,10 @@ class _InterestPageState extends State<InterestPage> {
                                           for (int i = 0;
                                               i < snapshot.data!.length;
                                               i++)
-                                            UserCard(User: snapshot.data![i], parentSetState: null,)
+                                            UserCard(
+                                              User: snapshot.data![i],
+                                              parentSetState: null,
+                                            )
                                         ],
                                       );
                                     })
@@ -328,6 +346,8 @@ class _InterestPageState extends State<InterestPage> {
   List<Interest> childInterests = List.empty(growable: true);
 
   Widget InterestEditor() {
+    _NameController.text = widget.interest.Name;
+    _DescController.text = widget.interest.Description;
     return Scaffold(
         body: Form(
             key: _formKey,
@@ -433,6 +453,8 @@ class _InterestPageState extends State<InterestPage> {
                       return ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
+                              widget.interest.Name = _NameController.text;
+                              widget.interest.Description = _DescController.text;
                               widget.interest.upload(parentInterests,
                                   childInterests, snapshot.data!);
                               setState(() {
