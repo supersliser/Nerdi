@@ -58,6 +58,12 @@ class _UserCardState extends State<UserCard> {
               "Liked" : 1
             });
           } else {
+            await Supabase.instance.client.from("Likes").update({
+              "Liked" : 2,
+            }).match({
+              "LikedID" : Supabase.instance.client.auth.currentUser!.id,
+              "LikerID" : widget.User.UUID,
+            });
             await Supabase.instance.client.from("Likes").insert({
               "LikerID" : Supabase.instance.client.auth.currentUser!.id,
               "LikedID" : widget.User.UUID,
