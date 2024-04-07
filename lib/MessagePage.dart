@@ -129,7 +129,7 @@ class _MessagePageState extends State<MessagePage> {
                                         ? Colors.white
                                         : const Color(0xEEC78FFF),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.all(10.0),
                                       child: Text(
                                         i["Content"],
                                         textAlign:
