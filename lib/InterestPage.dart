@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NavBar.dart';
@@ -476,16 +476,18 @@ class _InterestPageState extends State<InterestPage> {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Center(
-                    child: ColorPicker(
-                  enableAlpha: false,
-                  labelTextStyle: const TextStyle(color: Colors.white),
-                  pickerColor: widget.interest.PrimaryColour,
-                  onColorChanged: (input) {
-                    setState(() {
-                      widget.interest.PrimaryColour = input;
-                    });
-                  },
-                )),
+                    child: Card.filled(
+                      color: Colors.purpleAccent,
+                      child: ColorPicker(
+                                        initialPicker: Picker.rgb,
+                                        color: widget.interest.PrimaryColour,
+                                        onChanged: (input) {
+                      setState(() {
+                        widget.interest.PrimaryColour = input;
+                      });
+                                        },
+                                      ),
+                    )),
               ),
               FutureBuilder(
                   future: getUserData(
