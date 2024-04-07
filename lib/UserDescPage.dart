@@ -26,7 +26,7 @@ class UserDescPage extends StatelessWidget {
 
     for (int i = 0; i < Interests.length; i++) {
       Output.add(InterestViewer(
-          interest: Interests[i], title: User.Username, Width: width));
+          interest: Interests[i], title: User.Username + " has an interest in " + Interests[i].Name, Width: width));
     }
     Output.shuffle(Random(DateTime.now().hour));
     return Output;
@@ -47,7 +47,7 @@ class UserDescPage extends StatelessWidget {
           child: const Text("Back"),
         ),
         body: Row(children: [
-          const NavBar(CurrentIndex: 1,),
+          const NavBar(CurrentIndex: 2,),
           Expanded(
             child: ListView(children: [
               FutureBuilder<List<Widget>>(

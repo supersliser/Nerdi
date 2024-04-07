@@ -18,7 +18,6 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  String ImageName = "";
   var UsernameController = TextEditingController();
   var DescriptionController = TextEditingController();
   List<Interest> UserInterest = List.empty(growable: true);
@@ -28,9 +27,9 @@ class _AccountPageState extends State<AccountPage> {
     String imageName = widget.User.getImageUUID();
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var temp = await widget.User.uploadImage(image, imageName);
+      var temp = await widget.User.uploadImage(image, imageName, image.name.split(".")[1]);
       setState(() {
-        ImageName = temp;
+        widget.User.ProfilePictureName = temp;
       });
     }
   }
@@ -79,12 +78,13 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    ImageName = widget.ProfilePictureName;
     UsernameController.text = widget.User.Username;
     DescriptionController.text = widget.User.Description;
     return Row(
       children: [
-        const NavBar(CurrentIndex: 0,),
+        const NavBar(
+          CurrentIndex: 0,
+        ),
         Expanded(
           child: Scaffold(
             body: SingleChildScrollView(
@@ -106,10 +106,9 @@ class _AccountPageState extends State<AccountPage> {
                       Padding(
                         padding: const EdgeInsets.all(20),
                         child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                pickImage();
-                              });
+                            onPressed: () async {
+                              await pickImage();
+                              setState(() {});
                             },
                             child: const Text("Select Image")),
                       )
@@ -307,9 +306,9 @@ class _AccountPageState extends State<AccountPage> {
                                   "InterestID": item.ID
                                 });
                               }
-                              setState(() {
-                                widget.User.upload(ImageName, null, null);
-                              });
+                              await widget.User.upload(
+                                  widget.User.ProfilePictureName, null, null);
+                              setState(() {});
                             },
                             style: TextButton.styleFrom(
                                 backgroundColor: Colors.green),

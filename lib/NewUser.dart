@@ -48,7 +48,7 @@ class _NewUserState extends State<NewUser> {
     String imageName = User.getImageUUID();
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var temp = await User.uploadImage(image, imageName);
+      var temp = await User.uploadImage(image, imageName, image.name.split(".")[1]);
       setState(() {
         ImageName = temp;
       });

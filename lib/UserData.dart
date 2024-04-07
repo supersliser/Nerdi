@@ -1,3 +1,6 @@
+import 'dart:js';
+
+import 'package:flutter/foundation.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -88,18 +91,27 @@ class UserData {
     }
   }
 
-  Future<String> uploadImage(XFile Image, String imageName) async {
-    await Supabase.instance.client.storage
-        .from('ProfilePictures')
-        .upload('$imageName.${Image.path.split('.').last}', File(Image.path),
-            fileOptions: FileOptions(
-              contentType: 'image/${Image.path.split('.').last}',
-              upsert: false,
-            ));
-    ProfilePictureURL = Supabase.instance.client.storage
-        .from("ProfilePictures")
-        .getPublicUrl('$imageName.${Image.path.split('.').last}');
-    return '$imageName.${Image.path.split('.').last}';
+  Future<String> uploadImage(XFile Image, String imageName, String type) async {
+    await Supabase.instance.client.storage.from("ProfilePictures").remove([ProfilePictureName]);
+    if (kIsWeb) {
+      var imageB = await Image.readAsBytes();
+      await Supabase.instance.client.storage
+          .from('ProfilePictures')
+          .uploadBinary(imageName, imageB, fileOptions: FileOptions(contentType: "image/" + type)
+      );
+      ProfilePictureURL = Supabase.instance.client.storage
+          .from("ProfilePictures")
+          .getPublicUrl(imageName);
+    } else {
+      await Supabase.instance.client.storage
+          .from('ProfilePictures')
+          .upload(imageName, File(Image.path), fileOptions: FileOptions(contentType: "image/" + Image.path.split(".").last)
+          );
+      ProfilePictureURL = Supabase.instance.client.storage
+          .from("ProfilePictures")
+          .getPublicUrl(imageName);
+    }
+    return imageName;
   }
 
   Future<List<bool>> getGendersLookingFor() async {
