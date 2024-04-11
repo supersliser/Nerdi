@@ -176,7 +176,7 @@ class _AccountPageState extends State<AccountPage> {
               () {
                 Supabase.instance.client.from("UserData").delete().eq(
                     "UserUID", Supabase.instance.client.auth.currentUser!.id);
-                Navigator.pop(context);
+                Supabase.instance.client.auth.signOut(scope: SignOutScope.global);
                 Navigator.pop(context);
               },
             );
