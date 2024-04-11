@@ -6,6 +6,58 @@ import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/InterestData.dart';
 
+class ChangePasswordPage extends StatefulWidget {
+  ChangePasswordPage({super.key});
+
+  @override
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
+}
+
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          TextField(
+            controller: passwordController,
+            decoration: InputDecoration(
+                labelText: "New Password",
+                labelStyle: TextStyle(color: Colors.white)),
+            onSubmitted: (value) {
+              Supabase.instance.client.auth.updateUser(
+                  UserAttributes(password: passwordController.text));
+              Navigator.pop(context);
+            },
+          ),
+          TextButton(
+              onPressed: () {
+                Supabase.instance.client.auth.updateUser(
+                    UserAttributes(password: passwordController.text));
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(backgroundColor: Colors.green),
+              child: Text(
+                "Submit",
+                style: TextStyle(color: Colors.white),
+              )),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(backgroundColor: Colors.green),
+              child: Text(
+                "Cancel",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
+      ),
+    );
+  }
+}
+
 class AccountPage extends StatefulWidget {
   const AccountPage(
       {super.key, required this.User, required this.ProfilePictureName});
@@ -100,7 +152,9 @@ class _AccountPageState extends State<AccountPage> {
                   Column(
                     children: [
                       SaveButton(),
+                      ChangePasswordButton(context),
                       SignOutButton(context),
+                      DeleteAccountButton(context)
                     ],
                   )
                 ],
@@ -109,6 +163,52 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Padding DeleteAccountButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            setState(
+              () {
+                Supabase.instance.client.from("UserData").delete().eq(
+                    "UserUID", Supabase.instance.client.auth.currentUser!.id);
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            );
+          },
+          style: TextButton.styleFrom(backgroundColor: Colors.black),
+          child: const Text(
+            "Delete Account",
+            style: TextStyle(color: Colors.white),
+          )),
+    );
+  }
+
+  Padding ChangePasswordButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            setState(
+              () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ChangePasswordPage()));
+              },
+            );
+          },
+          style: TextButton.styleFrom(backgroundColor: Colors.yellow),
+          child: const Text(
+            "Change Password",
+            style: TextStyle(color: Colors.black),
+          )),
     );
   }
 
@@ -125,7 +225,10 @@ class _AccountPageState extends State<AccountPage> {
             );
           },
           style: TextButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text("Sign Out", style: TextStyle(color: Colors.black),)),
+          child: const Text(
+            "Sign Out",
+            style: TextStyle(color: Colors.black),
+          )),
     );
   }
 
@@ -149,7 +252,10 @@ class _AccountPageState extends State<AccountPage> {
             setState(() {});
           },
           style: TextButton.styleFrom(backgroundColor: Colors.green),
-          child: const Text("Save", style: TextStyle(color: Colors.black),)),
+          child: const Text(
+            "Save",
+            style: TextStyle(color: Colors.black),
+          )),
     );
   }
 
