@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nerdi/StartPage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserListPage.dart';
 
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF151515),
         useMaterial3: true,
       ),
-      home: const UserListPage(),
+      home: Supabase.instance.client.auth.currentUser == null ? StartPage() : UserListPage(),
     );
   }
 }
