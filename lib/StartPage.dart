@@ -9,8 +9,7 @@ class StartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Expanded(
-        child: Center(
+      body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -49,7 +48,6 @@ class StartPage extends StatelessWidget {
             )
           ],
         )),
-      ),
     );
   }
 }
