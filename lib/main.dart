@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nerdi/StartPage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserListPage.dart';
 
@@ -41,7 +42,21 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF151515),
         useMaterial3: true,
       ),
-      home: const UserListPage(),
+      home: StatefulTemp(),
     );
+  }
+}
+
+class StatefulTemp extends StatefulWidget{
+  StatefulTemp({super.key});
+
+  @override
+  State<StatefulTemp> createState() => _StatefulTempState();
+}
+
+class _StatefulTempState extends State<StatefulTemp> {
+  @override
+  Widget build(BuildContext context) {
+    return Supabase.instance.client.auth.currentUser == null ? StartPage() : UserListPage();
   }
 }

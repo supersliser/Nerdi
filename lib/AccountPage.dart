@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nerdi/NavBar.dart';
+import 'package:nerdi/StartPage.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -217,12 +218,8 @@ class _AccountPageState extends State<AccountPage> {
       padding: const EdgeInsets.all(8.0),
       child: TextButton(
           onPressed: () {
-            Navigator.pop(context);
-            setState(
-              () {
-                Supabase.instance.client.auth.signOut();
-              },
-            );
+            Supabase.instance.client.auth.signOut();
+            Navigator.push(context, MaterialPageRoute(builder: (context) => StartPage()));
           },
           style: TextButton.styleFrom(backgroundColor: Colors.red),
           child: const Text(

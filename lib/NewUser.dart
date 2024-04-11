@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/UserCard.dart';
 import 'package:nerdi/UserData.dart';
+import 'package:nerdi/UserListPage.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -234,7 +235,7 @@ class _NewUserState extends State<NewUser> {
                         ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {
                       User.upload(ImageName, Email, Password);
-                      Navigator.pop(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserListPage()));
                     },
                     child: const Text("below",
                         style: TextStyle(color: Color(0xFFCCCCCC)))),
