@@ -168,7 +168,7 @@ class _InterestPageState extends State<InterestPage> {
     return Row(
       children: [
         const NavBar(
-          CurrentIndex: 2,
+          CurrentIndex: 1,
         ),
         Expanded(
           child: Scaffold(

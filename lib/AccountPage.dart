@@ -138,7 +138,7 @@ class _AccountPageState extends State<AccountPage> {
       body: Row(
         children: [
           const NavBar(
-            CurrentIndex: 0,
+            CurrentIndex: null,
           ),
           Expanded(
             child: SingleChildScrollView(

@@ -48,7 +48,7 @@ class InterestDiscoveryPage extends StatelessWidget {
     return Scaffold(
         body: Row(children: [
       const NavBar(
-        CurrentIndex: 2,
+        CurrentIndex: 1,
       ),
       Expanded(
         child: ListView(children: [

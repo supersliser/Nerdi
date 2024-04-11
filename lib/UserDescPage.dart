@@ -47,7 +47,7 @@ class UserDescPage extends StatelessWidget {
           child: const Text("Back"),
         ),
         body: Row(children: [
-          const NavBar(CurrentIndex: 2,),
+          const NavBar(CurrentIndex: 0,),
           Expanded(
             child: ListView(children: [
               FutureBuilder<List<Widget>>(

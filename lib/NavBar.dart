@@ -11,7 +11,7 @@ import 'MessagePage.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key, required this.CurrentIndex});
-  final int CurrentIndex;
+  final int? CurrentIndex;
 
   @override
   State<NavBar> createState() => _NavBarState();
@@ -35,10 +35,6 @@ class _NavBarState extends State<NavBar> {
               style: TextStyle(color: Color(0xFFCCCCCC)),
             )),
         NavigationRailDestination(
-            icon: Icon(Icons.add),
-            label: Text("Create New User",
-                style: TextStyle(color: Color(0xFFCCCCCC)))),
-        NavigationRailDestination(
             icon: Icon(Icons.account_tree),
             label: Text("Interest Discovery",
                 style: TextStyle(color: Color(0xFFCCCCCC)))),
@@ -59,12 +55,6 @@ class _NavBarState extends State<NavBar> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const UserListPage()));
-            });
-            break;
-          case 1:
-            setState(() {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const NewUser()));
             });
             break;
           case 2:

@@ -62,7 +62,7 @@ class _MessagePageState extends State<MessagePage> {
         ),
         body: Row(children: [
           const NavBar(
-            CurrentIndex: 4,
+            CurrentIndex: 3,
           ),
           Recipient == null ? MatchedUserList() : MesagingInterface()
         ]));
