@@ -307,7 +307,7 @@ class _AccountPageState extends State<AccountPage> {
     );
   }
 
-  Column GenderSelector() {
+  Widget GenderSelector() {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Text("Gender", style: TextStyle(color: Color(0xFFCCCCCC))),
       Padding(
