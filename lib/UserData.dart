@@ -1,4 +1,3 @@
-import 'dart:js';
 
 import 'package:flutter/foundation.dart';
 import 'package:nerdi/InterestData.dart';
@@ -97,7 +96,7 @@ class UserData {
       var imageB = await Image.readAsBytes();
       await Supabase.instance.client.storage
           .from('ProfilePictures')
-          .uploadBinary(imageName, imageB, fileOptions: FileOptions(contentType: "image/" + type)
+          .uploadBinary(imageName, imageB, fileOptions: FileOptions(contentType: "image/$type")
       );
       ProfilePictureURL = Supabase.instance.client.storage
           .from("ProfilePictures")
@@ -105,7 +104,7 @@ class UserData {
     } else {
       await Supabase.instance.client.storage
           .from('ProfilePictures')
-          .upload(imageName, File(Image.path), fileOptions: FileOptions(contentType: "image/" + Image.path.split(".").last)
+          .upload(imageName, File(Image.path), fileOptions: FileOptions(contentType: "image/${Image.path.split(".").last}")
           );
       ProfilePictureURL = Supabase.instance.client.storage
           .from("ProfilePictures")

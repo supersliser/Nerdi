@@ -26,7 +26,7 @@ class UserDescPage extends StatelessWidget {
 
     for (int i = 0; i < Interests.length; i++) {
       Output.add(InterestViewer(
-          interest: Interests[i], title: User.Username + " has an interest in " + Interests[i].Name, Width: width));
+          interest: Interests[i], title: "${User.Username} has an interest in ${Interests[i].Name}", Width: width));
     }
     Output.shuffle(Random(DateTime.now().hour));
     return Output;

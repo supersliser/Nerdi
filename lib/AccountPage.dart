@@ -27,7 +27,8 @@ class _AccountPageState extends State<AccountPage> {
     String imageName = widget.User.getImageUUID();
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var temp = await widget.User.uploadImage(image, imageName, image.name.split(".")[1]);
+      var temp = await widget.User.uploadImage(
+          image, imageName, image.name.split(".")[1]);
       setState(() {
         widget.User.ProfilePictureName = temp;
       });
@@ -80,262 +81,267 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     UsernameController.text = widget.User.Username;
     DescriptionController.text = widget.User.Description;
-    return Row(
-      children: [
-        const NavBar(
-          CurrentIndex: 0,
-        ),
-        Expanded(
-          child: Scaffold(
-            body: SingleChildScrollView(
+    return Scaffold(
+      body: Row(
+        children: [
+          const NavBar(
+            CurrentIndex: 0,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
               child: Wrap(
                 alignment: WrapAlignment.center,
                 children: [
+                  PrimaryImageContainer(),
+                  UsernameInput(),
+                  DescriptionInput(),
+                  GenderSelector(),
+                  InterestSelector(),
                   Column(
                     children: [
-                      Card.outlined(
-                        clipBehavior: Clip.hardEdge,
-                        color: const Color(0xFFC78FFF),
-                        child: FadeInImage.memoryNetwork(
-                          placeholder: kTransparentImage,
-                          image: widget.User.ProfilePictureURL,
-                          width: 300,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await pickImage();
-                              setState(() {});
-                            },
-                            child: const Text("Select Image")),
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      TextField(
-                        onSubmitted: (text) {
-                          setState(() {
-                            if (UsernameController.text.isNotEmpty) {
-                              widget.User.Username = UsernameController.text;
-                            }
-                          });
-                        },
-                        onChanged: (text) {
-                          setState(() {});
-                        },
-                        controller: UsernameController,
-                        style: const TextStyle(color: Color(0xFFCCCCCC)),
-                        decoration: InputDecoration(
-                          error: UsernameController.text.isEmpty
-                              ? const Text(
-                                  "like at least give us something plz",
-                                  style: TextStyle(color: Color(0xFFCCCCCC)))
-                              : null,
-                          label: const Text("Username",
-                              style: TextStyle(color: Color(0xFFCCCCCC))),
-                        ),
-                      ),
-                      TextField(
-                        enableSuggestions: false,
-                        maxLength: 5000,
-                        maxLines: null,
-                        onSubmitted: (text) {
-                          setState(() {
-                            if (DescriptionController.text.isEmpty) {
-                            } else {
-                              widget.User.Description =
-                                  DescriptionController.text;
-                            }
-                          });
-                        },
-                        onChanged: (text) {
-                          setState(() {});
-                        },
-                        controller: DescriptionController,
-                        style: const TextStyle(color: Color(0xFFCCCCCC)),
-                        decoration: InputDecoration(
-                          error: DescriptionController.text.isEmpty
-                              ? const Text(
-                                  "Bro I promise you're not that boring",
-                                  style: TextStyle(color: Color(0xFFCCCCCC)))
-                              : null,
-                          label: const Text("Description",
-                              style: TextStyle(color: Color(0xFFCCCCCC))),
-                        ),
-                      ),
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Gender",
-                                style: TextStyle(color: Color(0xFFCCCCCC))),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Wrap(
-                                  alignment: WrapAlignment.center,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ChoiceChip(
-                                        backgroundColor:
-                                            const Color(0xFFFF82FF),
-                                        selectedColor: const Color(0xFFFF82FF),
-                                        label: Text(GenderEnum.Female.name),
-                                        selected: widget.User.Gender == 2,
-                                        onSelected: (bool selected) {
-                                          setState(() {
-                                            widget.User.Gender =
-                                                selected ? 2 : 0;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ChoiceChip(
-                                        backgroundColor:
-                                            const Color(0xFFFFEF63),
-                                        selectedColor: const Color(0xFFFFEF63),
-                                        label: Text(GenderEnum.NonBinary.name),
-                                        selected: widget.User.Gender == 3,
-                                        onSelected: (bool selected) {
-                                          setState(() {
-                                            widget.User.Gender =
-                                                selected ? 3 : 0;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ChoiceChip(
-                                        backgroundColor:
-                                            const Color(0xFF63EDFF),
-                                        selectedColor: const Color(0xFF63EDFF),
-                                        label: Text(GenderEnum.Male.name),
-                                        selected: widget.User.Gender == 1,
-                                        onSelected: (bool selected) {
-                                          setState(() {
-                                            widget.User.Gender =
-                                                selected ? 1 : 0;
-                                          });
-                                        },
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                          ]),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              const Text(
-                                "Interests",
-                                style: TextStyle(
-                                  color: Color(0xFFCCCCCC),
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              FutureBuilder(
-                                  future: getAllInterests(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.data == null) {
-                                      return const CircularProgressIndicator();
-                                    }
-                                    return Wrap(
-                                      children: [
-                                        for (var item in snapshot.data!)
-                                          ChoiceChip(
-                                            backgroundColor: item.PrimaryColour,
-                                            label: Text(item.Name),
-                                            selected:
-                                                UserInterest.where((element) {
-                                              return element.ID == item.ID;
-                                            }).isNotEmpty,
-                                            onSelected: (selected) {
-                                              if (UserInterest.where((element) {
-                                                return element.ID == item.ID;
-                                              }).isNotEmpty) {
-                                                setState(() {
-                                                  UserInterest.removeWhere(
-                                                      (element) {
-                                                    return element.ID ==
-                                                        item.ID;
-                                                  });
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  UserInterest.add(item);
-                                                });
-                                              }
-                                            },
-                                          )
-                                      ],
-                                    );
-                                  }),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                            onPressed: () async {
-                              await Supabase.instance.client
-                                  .from("UserInterest")
-                                  .delete()
-                                  .eq(
-                                      "UserID",
-                                      Supabase.instance.client.auth.currentUser!
-                                          .id);
-                              for (var item in UserInterest) {
-                                await Supabase.instance.client
-                                    .from("UserInterest")
-                                    .insert({
-                                  "UserID": Supabase
-                                      .instance.client.auth.currentUser!.id,
-                                  "InterestID": item.ID
-                                });
-                              }
-                              await widget.User.upload(
-                                  widget.User.ProfilePictureName, null, null);
-                              setState(() {});
-                            },
-                            style: TextButton.styleFrom(
-                                backgroundColor: Colors.green),
-                            child: const Text("Save")),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              setState(
-                                () {
-                                  Supabase.instance.client.auth.signOut();
-                                },
-                              );
-                            },
-                            style: TextButton.styleFrom(
-                                backgroundColor: Colors.red),
-                            child: const Text("Sign Out")),
-                      ),
+                      SaveButton(),
+                      SignOutButton(context),
                     ],
                   )
                 ],
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Padding SignOutButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            setState(
+              () {
+                Supabase.instance.client.auth.signOut();
+              },
+            );
+          },
+          style: TextButton.styleFrom(backgroundColor: Colors.red),
+          child: const Text("Sign Out", style: TextStyle(color: Colors.black),)),
+    );
+  }
+
+  Padding SaveButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+          onPressed: () async {
+            await Supabase.instance.client
+                .from("UserInterest")
+                .delete()
+                .eq("UserID", Supabase.instance.client.auth.currentUser!.id);
+            for (var item in UserInterest) {
+              await Supabase.instance.client.from("UserInterest").insert({
+                "UserID": Supabase.instance.client.auth.currentUser!.id,
+                "InterestID": item.ID
+              });
+            }
+            await widget.User.upload(
+                widget.User.ProfilePictureName, null, null);
+            setState(() {});
+          },
+          style: TextButton.styleFrom(backgroundColor: Colors.green),
+          child: const Text("Save", style: TextStyle(color: Colors.black),)),
+    );
+  }
+
+  Padding InterestSelector() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: Column(children: [
+          const Text(
+            "Interests",
+            style: TextStyle(
+              color: Color(0xFFCCCCCC),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          FutureBuilder(
+              future: getAllInterests(),
+              builder: (context, snapshot) {
+                if (snapshot.data == null) {
+                  return const CircularProgressIndicator();
+                }
+                return Wrap(
+                  children: [
+                    for (var item in snapshot.data!)
+                      ChoiceChip(
+                        backgroundColor: item.PrimaryColour,
+                        label: Text(item.Name),
+                        selected: UserInterest.where((element) {
+                          return element.ID == item.ID;
+                        }).isNotEmpty,
+                        onSelected: (selected) {
+                          if (UserInterest.where((element) {
+                            return element.ID == item.ID;
+                          }).isNotEmpty) {
+                            setState(() {
+                              UserInterest.removeWhere((element) {
+                                return element.ID == item.ID;
+                              });
+                            });
+                          } else {
+                            setState(() {
+                              UserInterest.add(item);
+                            });
+                          }
+                        },
+                      )
+                  ],
+                );
+              }),
+        ]),
+      ),
+    );
+  }
+
+  Column GenderSelector() {
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Text("Gender", style: TextStyle(color: Color(0xFFCCCCCC))),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFFFF82FF),
+                  selectedColor: const Color(0xFFFF82FF),
+                  label: Text(GenderEnum.Female.name),
+                  selected: widget.User.Gender == 2,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      widget.User.Gender = selected ? 2 : 0;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFFFFEF63),
+                  selectedColor: const Color(0xFFFFEF63),
+                  label: Text(GenderEnum.NonBinary.name),
+                  selected: widget.User.Gender == 3,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      widget.User.Gender = selected ? 3 : 0;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFF63EDFF),
+                  selectedColor: const Color(0xFF63EDFF),
+                  label: Text(GenderEnum.Male.name),
+                  selected: widget.User.Gender == 1,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      widget.User.Gender = selected ? 1 : 0;
+                    });
+                  },
+                ),
+              )
+            ]),
+      ),
+    ]);
+  }
+
+  Widget DescriptionInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        enableSuggestions: false,
+        maxLength: 5000,
+        maxLines: null,
+        onSubmitted: (text) {
+          setState(() {
+            if (DescriptionController.text.isEmpty) {
+            } else {
+              widget.User.Description = DescriptionController.text;
+            }
+          });
+        },
+        onChanged: (text) {
+          setState(() {});
+        },
+        controller: DescriptionController,
+        style: const TextStyle(color: Color(0xFFCCCCCC)),
+        decoration: InputDecoration(
+          error: DescriptionController.text.isEmpty
+              ? const Text("Bro I promise you're not that boring",
+                  style: TextStyle(color: Color(0xFFCCCCCC)))
+              : null,
+          label: const Text("Description",
+              style: TextStyle(color: Color(0xFFCCCCCC))),
         ),
+      ),
+    );
+  }
+
+  Widget UsernameInput() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        onSubmitted: (text) {
+          setState(() {
+            if (UsernameController.text.isNotEmpty) {
+              widget.User.Username = UsernameController.text;
+            }
+          });
+        },
+        onChanged: (text) {
+          setState(() {});
+        },
+        controller: UsernameController,
+        style: const TextStyle(color: Color(0xFFCCCCCC)),
+        decoration: InputDecoration(
+          error: UsernameController.text.isEmpty
+              ? const Text("like at least give us something plz",
+                  style: TextStyle(color: Color(0xFFCCCCCC)))
+              : null,
+          label: const Text("Username",
+              style: TextStyle(color: Color(0xFFCCCCCC))),
+        ),
+      ),
+    );
+  }
+
+  Widget PrimaryImageContainer() {
+    return Column(
+      children: [
+        Card.outlined(
+          clipBehavior: Clip.hardEdge,
+          color: const Color(0xFFC78FFF),
+          child: FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: widget.User.ProfilePictureURL,
+            width: 300,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: ElevatedButton(
+              onPressed: () async {
+                await pickImage();
+                setState(() {});
+              },
+              child: const Text("Select Image")),
+        )
       ],
     );
   }

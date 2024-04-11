@@ -79,100 +79,78 @@ class _MessagePageState extends State<MessagePage> {
     var MessageController = TextEditingController();
 
     return Expanded(
-      child: SizedBox(
-        height: appSize.height,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card.filled(
-              color: Colors.black,
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    UserIcon(ImageURL: Recipient!.ProfilePictureURL),
-                    Text(
-                      Recipient!.Username,
-                      style: const TextStyle(color: Colors.white),
-                    )
-                  ],
-                ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card.filled(
+            color: Colors.black,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  UserIcon(ImageURL: Recipient!.ProfilePictureURL),
+                  Text(
+                    Recipient!.Username,
+                    style: const TextStyle(color: Colors.white),
+                  )
+                ],
               ),
             ),
-            SizedBox(
-              height: appSize.height - 138,
-              child: StreamBuilder(
-                  stream: stream,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    var data = snapshot.data!.where((element) {
-                      return element["Recipient"] == Recipient!.UUID ||
-                          element["Recipient"] ==
-                              Supabase.instance.client.auth.currentUser!.id;
-                    });
-                    return SingleChildScrollView(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            for (var i in data)
-                              Row(
-                                mainAxisAlignment:
-                                    i["Sender"] == Recipient!.UUID
-                                        ? MainAxisAlignment.start
-                                        : MainAxisAlignment.end,
-                                children: [
-                                  Card.filled(
-                                    color: i["Sender"] == Recipient!.UUID
-                                        ? Colors.white
-                                        : const Color(0xEEC78FFF),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Text(
-                                        i["Content"],
-                                        textAlign:
-                                            i["Sender"] == Recipient!.UUID
-                                                ? TextAlign.start
-                                                : TextAlign.end,
-                                      ),
+          ),
+          StreamBuilder(
+              stream: stream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                var data = snapshot.data!.where((element) {
+                  return element["Recipient"] == Recipient!.UUID ||
+                      element["Recipient"] ==
+                          Supabase.instance.client.auth.currentUser!.id;
+                });
+                return Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          for (var i in data)
+                            Row(
+                              mainAxisAlignment: i["Sender"] == Recipient!.UUID
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.end,
+                              children: [
+                                Card.filled(
+                                  color: i["Sender"] == Recipient!.UUID
+                                      ? Colors.white
+                                      : const Color(0xEEC78FFF),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      i["Content"],
+                                      textAlign: i["Sender"] == Recipient!.UUID
+                                          ? TextAlign.start
+                                          : TextAlign.end,
                                     ),
                                   ),
-                                ],
-                              ),
-                          ]),
-                    );
-                  }),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: appSize.width >= 700
-                      ? appSize.width - 400
-                      : appSize.width - 250,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: TextField(
-                      onSubmitted: (data) async {
-                        await Supabase.instance.client.from("Messages").insert({
-                          "Content": MessageController.text,
-                          "Sender": Supabase.instance.client.auth.currentUser!.id,
-                          "Recipient": Recipient!.UUID,
-                        });
-                        setState(() {
-                          MessageController.text = "";
-                        });
-                      },
-                      controller: MessageController,
-                      style: const TextStyle(color: Colors.white),
-                      maxLength: 512,
-                    ),
+                                ),
+                              ],
+                            ),
+                        ]),
                   ),
-                ),
-                IconButton(
-                    onPressed: () async {
+                );
+              }),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: appSize.width >= 700
+                    ? appSize.width - 400
+                    : appSize.width - 250,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: TextField(
+                    onSubmitted: (data) async {
                       await Supabase.instance.client.from("Messages").insert({
                         "Content": MessageController.text,
                         "Sender": Supabase.instance.client.auth.currentUser!.id,
@@ -182,11 +160,27 @@ class _MessagePageState extends State<MessagePage> {
                         MessageController.text = "";
                       });
                     },
-                    icon: const Icon(Icons.send))
-              ],
-            ),
-          ],
-        ),
+                    controller: MessageController,
+                    style: const TextStyle(color: Colors.white),
+                    maxLength: 512,
+                  ),
+                ),
+              ),
+              IconButton(
+                  onPressed: () async {
+                    await Supabase.instance.client.from("Messages").insert({
+                      "Content": MessageController.text,
+                      "Sender": Supabase.instance.client.auth.currentUser!.id,
+                      "Recipient": Recipient!.UUID,
+                    });
+                    setState(() {
+                      MessageController.text = "";
+                    });
+                  },
+                  icon: const Icon(Icons.send))
+            ],
+          ),
+        ],
       ),
     );
   }
