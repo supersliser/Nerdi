@@ -42,7 +42,21 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF151515),
         useMaterial3: true,
       ),
-      home: Supabase.instance.client.auth.currentUser == null ? StartPage() : UserListPage(),
+      home: StatefulTemp(),
     );
+  }
+}
+
+class StatefulTemp extends StatefulWidget{
+  StatefulTemp({super.key});
+
+  @override
+  State<StatefulTemp> createState() => _StatefulTempState();
+}
+
+class _StatefulTempState extends State<StatefulTemp> {
+  @override
+  Widget build(BuildContext context) {
+    return Supabase.instance.client.auth.currentUser == null ? StartPage() : UserListPage();
   }
 }

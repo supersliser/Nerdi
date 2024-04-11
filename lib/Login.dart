@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nerdi/AccountPage.dart';
 import 'package:nerdi/UserIcon.dart';
 import 'package:nerdi/UserData.dart';
+import 'package:nerdi/UserListPage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<UserData> getUserData(Session session) async {
@@ -47,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         loginFailed = true;
       });
     } else {
-      Navigator.pop(context, Supabase.instance.client.auth.currentSession);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => UserListPage()));
     }
   }
 
