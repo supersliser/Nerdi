@@ -8,7 +8,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/InterestData.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  ChangePasswordPage({super.key});
+  const ChangePasswordPage({super.key});
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -24,7 +24,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         children: [
           TextField(
             controller: passwordController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 labelText: "New Password",
                 labelStyle: TextStyle(color: Colors.white)),
             onSubmitted: (value) {
@@ -40,7 +40,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(backgroundColor: Colors.green),
-              child: Text(
+              child: const Text(
                 "Submit",
                 style: TextStyle(color: Colors.white),
               )),
@@ -49,7 +49,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(backgroundColor: Colors.green),
-              child: Text(
+              child: const Text(
                 "Cancel",
                 style: TextStyle(color: Colors.white),
               ))
@@ -201,7 +201,7 @@ class _AccountPageState extends State<AccountPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ChangePasswordPage()));
+                        builder: (context) => const ChangePasswordPage()));
               },
             );
           },
@@ -219,7 +219,7 @@ class _AccountPageState extends State<AccountPage> {
       child: TextButton(
           onPressed: () {
             Supabase.instance.client.auth.signOut();
-            Navigator.push(context, MaterialPageRoute(builder: (context) => StartPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
           },
           style: TextButton.styleFrom(backgroundColor: Colors.red),
           child: const Text(

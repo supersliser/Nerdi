@@ -3,7 +3,6 @@ import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/InterestDiscoveryPage.dart';
 import 'package:nerdi/InterestPage.dart';
 import 'package:nerdi/Login.dart';
-import 'package:nerdi/NewUser.dart';
 import 'package:nerdi/UserListPage.dart';
 import 'package:uuid/uuid.dart';
 
@@ -23,6 +22,7 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
+
       backgroundColor: const Color(0xFF040404),
       trailing: const LoginButton(),
       extended: MediaQuery.of(context).size.width >= 700,
