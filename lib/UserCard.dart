@@ -7,7 +7,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class nonInteractiveUserCard extends StatelessWidget {
-  nonInteractiveUserCard({super.key, required this.User});
+  const nonInteractiveUserCard({super.key, required this.User});
 
   final UserData User;
 
@@ -153,12 +153,12 @@ class _UserCardState extends State<UserCard> {
   }
 
   Widget dislikeButton() {
-    return TextButton(
-      child: Text(
-        "Damn",
-        style: TextStyle(color: Colors.red),
+    return IconButton(
+      icon: const Icon(
+        Icons.thumb_down,
+        color: Colors.red,
       ),
-      style: TextButton.styleFrom(backgroundColor: Colors.white),
+      style: TextButton.styleFrom(backgroundColor: Colors.black),
       onPressed: () async {
         await Supabase.instance.client.from("Likes").insert({
           "LikerID": Supabase.instance.client.auth.currentUser!.id,
@@ -174,12 +174,12 @@ class _UserCardState extends State<UserCard> {
   }
 
   Widget likeButton() {
-    return TextButton(
-      child: Text(
-        "Dayyyyymn",
-        style: TextStyle(color: Colors.green),
+    return IconButton(
+      icon: const Icon(
+        Icons.thumb_up,
+        color: Colors.green,
       ),
-      style: TextButton.styleFrom(backgroundColor: Colors.white),
+      style: TextButton.styleFrom(backgroundColor: Colors.black),
       onPressed: () async {
         if ((await Supabase.instance.client
                 .from("Likes")
@@ -218,11 +218,12 @@ class _UserCardState extends State<UserCard> {
   bool disliked = false;
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     return Row(
       children: [
         dislikeButton(),
         SizedBox(
-          width: 300,
+          width: width <= 500 ? width - 170 : 300,
           child: Card.filled(
             color: liked
                 ? Colors.green
@@ -262,7 +263,7 @@ class _UserCardState extends State<UserCard> {
                                         UserDescPage(User: widget.User)));
                           },
                           icon:
-                              UserIcon(ImageURL: widget.User.ProfilePictureURL)),
+                              UserIcon(ImageURL: widget.User.ProfilePictureURL, size: MediaQuery.of(context).size.width >= 300 ? 30 : 50,)),
                       Padding(
                         padding: const EdgeInsets.all(5),
                         child: Text(

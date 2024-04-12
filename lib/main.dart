@@ -42,13 +42,13 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF151515),
         useMaterial3: true,
       ),
-      home: StatefulTemp(),
+      home: const StatefulTemp(),
     );
   }
 }
 
 class StatefulTemp extends StatefulWidget{
-  StatefulTemp({super.key});
+  const StatefulTemp({super.key});
 
   @override
   State<StatefulTemp> createState() => _StatefulTempState();
@@ -57,6 +57,6 @@ class StatefulTemp extends StatefulWidget{
 class _StatefulTempState extends State<StatefulTemp> {
   @override
   Widget build(BuildContext context) {
-    return Supabase.instance.client.auth.currentUser == null ? StartPage() : UserListPage();
+    return Supabase.instance.client.auth.currentUser == null ? const StartPage() : const UserListPage();
   }
 }

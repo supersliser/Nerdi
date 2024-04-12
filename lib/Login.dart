@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         loginFailed = true;
       });
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => UserListPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
     }
   }
 
@@ -171,18 +171,17 @@ class _LoginButtonState extends State<LoginButton> {
                 setState(() {});
               },
               child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: UserIcon(
+                children: [UserIcon(
                       ImageURL: data.ProfilePictureURL,
-                    ),
-                  ),
+                    size: MediaQuery.of(context).size.width <= 300 ? 30 : 50),
                   MediaQuery.of(context).size.width >= 700
-                      ? Text(
-                          data.Username,
-                          style: const TextStyle(color: Color(0xFFCCCCCC)),
-                        )
+                      ? Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                            data.Username,
+                            style: const TextStyle(color: Color(0xFFCCCCCC)),
+                          ),
+                      )
                       : const Padding(
                           padding: EdgeInsets.all(0),
                         ),

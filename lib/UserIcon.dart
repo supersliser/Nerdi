@@ -6,9 +6,11 @@ class UserIcon extends StatelessWidget {
   const UserIcon({
     super.key,
     required this.ImageURL,
+    this.size = 50,
   });
 
   final String ImageURL;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +20,8 @@ class UserIcon extends StatelessWidget {
       child: FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
         image: ImageURL,
-        width: 50,
-        height: 50,
+        width: size,
+        height: size,
         fit: BoxFit.cover,
       ),
     );
