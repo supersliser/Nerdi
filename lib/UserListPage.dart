@@ -62,16 +62,16 @@ class _UserListPageState extends State<UserListPage> {
                       return const Center(child: CircularProgressIndicator());
                     }
                     final data = snapshot.data!;
-                    return Center(
-                      child: SizedBox(
-                        width: 400,
-                        child: ListView.builder(
+                    return ListView.builder(
                           itemCount: data.length,
                           itemBuilder: (context, index) {
-                            return UserCard(User: data[index], parentSetState: setState,);
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                UserCard(User: data[index], parentSetState: setState,),
+                              ],
+                            );
                           },
-                        ),
-                      ),
                     );
                   }),
             ),

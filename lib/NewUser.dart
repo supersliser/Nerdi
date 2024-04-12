@@ -221,7 +221,7 @@ class _NewUserState extends State<NewUser> {
       child: Wrap(
         alignment: WrapAlignment.center,
         children: [
-          UserCard(User: User, parentSetState: null,),
+          nonInteractiveUserCard(User: User),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

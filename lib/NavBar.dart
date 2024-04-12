@@ -57,7 +57,7 @@ class _NavBarState extends State<NavBar> {
                       builder: (context) => const UserListPage()));
             });
             break;
-          case 2:
+          case 1:
             setState(() {
               Navigator.push(
                   context,
@@ -65,7 +65,7 @@ class _NavBarState extends State<NavBar> {
                       builder: (context) => const InterestDiscoveryPage()));
             });
             break;
-          case 3:
+          case 2:
             setState(() {
               Navigator.push(
                   context,
@@ -82,7 +82,7 @@ class _NavBarState extends State<NavBar> {
                           )));
             });
             break;
-          case 4:
+          case 3:
             setState(() {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const MessagePage()));
             });
