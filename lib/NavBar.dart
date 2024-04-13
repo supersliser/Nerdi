@@ -91,7 +91,7 @@ class _NavBarState extends State<NavBar> {
             break;
           case 4:
             setState(() {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => LikedHistoryPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LikedHistoryPage()));
             });
         }
       },

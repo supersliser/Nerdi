@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:nerdi/NavBar.dart';
 import 'package:nerdi/UserCard.dart';
-import 'package:nerdi/UserDescPage.dart';
-import 'package:nerdi/UserIcon.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LikedHistoryPage extends StatefulWidget {
-  LikedHistoryPage({super.key});
+  const LikedHistoryPage({super.key});
 
   @override
   State<LikedHistoryPage> createState() => _LikedHistoryPageState();
@@ -54,13 +52,13 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          NavBar(CurrentIndex: 4),
+          const NavBar(CurrentIndex: 4),
           Expanded(
               child: FutureBuilder(
                   future: getLiked(),
                   builder: (context, snapshot) {
                     if (snapshot.data == null) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                     return StaggeredGrid.count(
                       crossAxisCount:
@@ -73,7 +71,7 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                     backgroundColor: Colors.red),
-                                child: Text(
+                                child: const Text(
                                   "Unlike person",
                                   style: TextStyle(color: Colors.white),
                                 ),
