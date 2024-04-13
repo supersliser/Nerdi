@@ -225,11 +225,7 @@ class _UserCardState extends State<UserCard> {
         SizedBox(
           width: width <= 500 ? width - 170 : 300,
           child: Card.filled(
-            color: liked
-                ? Colors.green
-                : disliked
-                    ? Colors.red
-                    : const Color(0xFF080808),
+            color: const Color(0xFF080808),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -263,7 +259,7 @@ class _UserCardState extends State<UserCard> {
                                         UserDescPage(User: widget.User)));
                           },
                           icon:
-                              UserIcon(ImageURL: widget.User.ProfilePictureURL, size: MediaQuery.of(context).size.width >= 300 ? 30 : 50,)),
+                              UserIcon(ImageURL: widget.User.ProfilePictureURL, size: MediaQuery.of(context).size.width <= 300 ? 30 : 50,)),
                       Padding(
                         padding: const EdgeInsets.all(5),
                         child: Text(

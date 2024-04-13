@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nerdi/NavBar.dart';
+import 'package:nerdi/UserDescPage.dart';
 import 'package:nerdi/UserIcon.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -204,7 +205,16 @@ class _MessagePageState extends State<MessagePage> {
                     },
                     child: Row(
                       children: [
-                        UserIcon(ImageURL: i.ProfilePictureURL),
+                        IconButton(
+                          icon: UserIcon(ImageURL: i.ProfilePictureURL),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        UserDescPage(User: i)));
+                          },
+                        ),
                         Text(
                           i.Username,
                           style: const TextStyle(color: Colors.white),

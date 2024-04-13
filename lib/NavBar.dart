@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/InterestDiscoveryPage.dart';
 import 'package:nerdi/InterestPage.dart';
+import 'package:nerdi/LikedHistory.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/UserListPage.dart';
 import 'package:uuid/uuid.dart';
@@ -46,6 +47,7 @@ class _NavBarState extends State<NavBar> {
             icon: Icon(Icons.mail),
             label:
                 Text("Messages", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.thumb_up), label: Text("Liked History", style: TextStyle(color: Color(0xFFCCCCCC))))
       ],
       onDestinationSelected: (index) {
         switch (index) {
@@ -85,6 +87,11 @@ class _NavBarState extends State<NavBar> {
           case 3:
             setState(() {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const MessagePage()));
+            });
+            break;
+          case 4:
+            setState(() {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => LikedHistoryPage()));
             });
         }
       },
