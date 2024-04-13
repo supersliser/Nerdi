@@ -235,6 +235,7 @@ class _NewUserState extends State<NewUser> {
                         ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {
                       User.upload(ImageName, Email, Password);
+                      Supabase.instance.client.auth.signInWithPassword(email: Email, password: Password);
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
                     },
                     child: const Text("below",
