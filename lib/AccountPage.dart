@@ -73,6 +73,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   var UsernameController = TextEditingController();
   var DescriptionController = TextEditingController();
+  bool initialSetup = false;
   List<Interest> UserInterest = List.empty(growable: true);
   bool userInterestSet = false;
 
@@ -132,8 +133,11 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    UsernameController.text = widget.User.Username;
-    DescriptionController.text = widget.User.Description;
+    if (!initialSetup) {
+      UsernameController.text = widget.User.Username;
+      DescriptionController.text = widget.User.Description;
+      initialSetup = true;
+    }
     return Scaffold(
       body: Row(
         children: [
@@ -244,9 +248,12 @@ class _AccountPageState extends State<AccountPage> {
                 "InterestID": item.ID
               });
             }
+            widget.User.Username = UsernameController.text;
+            widget.User.Description = DescriptionController.text;
             await widget.User.upload(
                 widget.User.ProfilePictureName, null, null);
             setState(() {});
+            Navigator.pop(context);
           },
           style: TextButton.styleFrom(backgroundColor: Colors.green),
           child: const Text(
