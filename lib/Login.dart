@@ -38,12 +38,17 @@ class _LoginPageState extends State<LoginPage> {
   var loginFailed = false;
 
   Future<void> attemptLogin() async {
-    if (_EmailController.text.isEmpty && _PasswordController.text.isEmpty) {
+    if (_EmailController.text.isEmpty || _PasswordController.text.isEmpty) {
       return;
     }
-    var temp = await Supabase.instance.client.auth.signInWithPassword(
-        password: _PasswordController.text, email: _EmailController.text);
-    if (temp.user == null) {
+    var temp;
+    try {
+      temp = await Supabase.instance.client.auth.signInWithPassword(
+          password: _PasswordController.text, email: _EmailController.text);
+    } catch (ex) {
+      temp = null;
+    }
+    if (temp == null) {
       setState(() {
         loginFailed = true;
       });
@@ -54,9 +59,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: attemptLogin(),
-        builder: (context, snapshot) {
           return Scaffold(
             body: Center(
               child: SizedBox(
@@ -67,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     loginFailed
-                        ? const Text("Login failed, try again, or don't, idm")
+                        ? const Text("Login failed, try again, or don't, idm", style: TextStyle(color: Colors.red),)
                         : const Padding(
                             padding: EdgeInsets.zero,
                           ),
@@ -127,7 +129,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           );
-        });
   }
 }
 
