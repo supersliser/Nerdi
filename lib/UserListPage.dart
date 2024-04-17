@@ -15,20 +15,37 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   Future<List<UserData>> getUsers() async {
-    var temp = await Supabase.instance.client
+    var UserDataTemp = await Supabase.instance.client.from("UserInfo").select().eq("UserUID", Supabase.instance.client.auth.currentUser!.id);
+    var User = UserData(
+      UUID: UserDataTemp.first["UserUID"],
+      Username: UserDataTemp.first["Username"],
+      Description: UserDataTemp.first["Description"],
+      Birthday: DateTime.parse(UserDataTemp.first["Birthday"]),
+      ProfilePictureName: UserDataTemp.first["ProfilePictureName"],
+      Gender: UserDataTemp.first["Gender"],
+      ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(UserDataTemp.first["ProfilePictureName"]),
+    );
+    User.getGendersLookingFor();
+    var PossibleUsers = await Supabase.instance.client
         .from("UserInfo")
         .select()
         .neq("UserUID", Supabase.instance.client.auth.currentUser == null ? const UuidV4().generate() : Supabase.instance.client.auth.currentUser!.id);
 
+    for (var item in PossibleUsers) {
+        if (!User.GendersLookingFor[item["Gender"]]) {
+          PossibleUsers.remove(item);
+        }
+    }
+
     var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
 
-    temp.removeWhere((element) {
+    PossibleUsers.removeWhere((element) {
       return likes.where((elementee) {
         return elementee["LikedID"] == element["UserUID"];
       }).isNotEmpty;
     });
     List<UserData> output = List.empty(growable: true);
-    for (var item in temp) {
+    for (var item in PossibleUsers) {
       output.add(UserData(
           UUID: item["UserUID"],
           Username: item["Username"],
