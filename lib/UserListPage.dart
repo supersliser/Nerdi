@@ -16,10 +16,7 @@ class UserListPage extends StatefulWidget {
 class _UserListPageState extends State<UserListPage> {
   Future<List<UserData>> getUsers() async {
     List<UserData> PossibleUsers = List.empty(growable: true);
-    var UserDataTemp = await Supabase.instance.client
-        .from("UserInfo")
-        .select()
-        .eq("UserUID", Supabase.instance.client.auth.currentUser!.id);
+    var UserDataTemp = await Supabase.instance.client.from("UserInfo").select().eq("UserUID", Supabase.instance.client.auth.currentUser!.id);
     var User = UserData(
       UUID: UserDataTemp.first["UserUID"],
       Username: UserDataTemp.first["Username"],
@@ -27,19 +24,14 @@ class _UserListPageState extends State<UserListPage> {
       Birthday: DateTime.parse(UserDataTemp.first["Birthday"]),
       ProfilePictureName: UserDataTemp.first["ProfilePictureName"],
       Gender: UserDataTemp.first["Gender"],
-      ProfilePictureURL: Supabase.instance.client.storage
-          .from("ProfilePictures")
-          .getPublicUrl(UserDataTemp.first["ProfilePictureName"]),
+      ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(UserDataTemp.first["ProfilePictureName"]),
     );
     await User.getGendersLookingFor();
     var PossibleUsersTemp = await Supabase.instance.client
         .from("UserInfo")
         .select()
-        .neq(
-            "UserUID",
-            Supabase.instance.client.auth.currentUser == null
-                ? const UuidV4().generate()
-                : Supabase.instance.client.auth.currentUser!.id);
+        .neq("UserUID", Supabase.instance.client.auth.currentUser == null ? const UuidV4().generate() : Supabase.instance.client.auth.currentUser!.id)
+        .range(0, 50);
     for (var item in PossibleUsersTemp) {
       PossibleUsers.add(UserData(
           UUID: item["UserUID"],
@@ -48,50 +40,41 @@ class _UserListPageState extends State<UserListPage> {
           Gender: item["Gender"],
           Description: item["Description"],
           ProfilePictureName: item["ProfilePictureName"],
-          ProfilePictureURL: Supabase.instance.client.storage
-              .from("ProfilePictures")
-              .getPublicUrl(item["ProfilePictureName"])));
+          ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(item["ProfilePictureName"])));
     }
     var iterableLoop = PossibleUsers;
     for (int i = 0; i < iterableLoop.length; i++) {
-      if (!User.GendersLookingFor[iterableLoop[i].Gender-1]) {
+      if (!User.GendersLookingFor[iterableLoop[i].Gender - 1]) {
         PossibleUsers.removeAt(i);
       }
     }
-    var likes = await Supabase.instance.client
-        .from("Likes")
-        .select("LikedID")
-        .eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
+    var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
     PossibleUsers.removeWhere((element) {
       return likes.where((elementee) {
         return elementee["LikedID"] == element.UUID;
       }).isNotEmpty;
     });
-    List<Map<UserData, int>> SortingUsers = List.empty(growable: true);
+    List<List<dynamic>> SortingUsers = List.empty(growable: true);
     var UserInterests = await User.getInterests();
     for (int i = 0; i < PossibleUsers.length; i++) {
-      SortingUsers.add({PossibleUsers[i]: 0});
+      SortingUsers.add(List.of([PossibleUsers[i], 0]));
       var tempUserInterests = await PossibleUsers[i].getInterests();
       for (int j = 0; j < tempUserInterests.length; j++) {
         for (int k = 0; k < UserInterests.length; k++) {
           if (UserInterests[k].ID == tempUserInterests[j].ID) {
-            SortingUsers.last.update(PossibleUsers[i], (value) {
-              return value++;
-            });
+            SortingUsers.last.last++;
           }
         }
       }
     }
-    SortingUsers.sort((a, b) => a.values.first.compareTo(b.values.first) * -1);
-    return List.generate(
-        SortingUsers.length, (index) => SortingUsers[index].keys.first);
+    SortingUsers.sort((a, b) => a.last.compareTo(b.last) * -1);
+    return List.generate(SortingUsers.length, (index) => SortingUsers[index].first);
   }
 
   @override
   Widget build(BuildContext context) {
     if (Supabase.instance.client.auth.currentUser == null) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const StartPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
     }
     return Scaffold(
       body: Row(
