@@ -168,64 +168,72 @@ class _UserCardState extends State<UserCard> {
   }
 
   Widget dislikeButton() {
-    return IconButton(
-      icon: const Icon(
-        Icons.thumb_down,
-        color: Colors.red,
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: IconButton(
+        icon: const Icon(
+          Icons.thumb_down,
+          color: Colors.red,
+        ),
+        style: TextButton.styleFrom(backgroundColor: Colors.black),
+        onPressed: () async {
+          await Supabase.instance.client.from("Likes").insert({
+            "LikerID": Supabase.instance.client.auth.currentUser!.id,
+            "LikedID": widget.User.UUID,
+            "Liked": -1
+          });
+          setState(() {
+            disliked = !disliked;
+          });
+          widget.parentSetState(() {});
+        },
       ),
-      style: TextButton.styleFrom(backgroundColor: Colors.black),
-      onPressed: () async {
-        await Supabase.instance.client.from("Likes").insert({
-          "LikerID": Supabase.instance.client.auth.currentUser!.id,
-          "LikedID": widget.User.UUID,
-          "Liked": -1
-        });
-        setState(() {
-          disliked = !disliked;
-        });
-        widget.parentSetState(() {});
-      },
     );
   }
 
   Widget likeButton() {
-    return IconButton(
-      icon: const Icon(
-        Icons.thumb_up,
-        color: Colors.green,
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: IconButton(
+        icon: const Icon(
+          Icons.thumb_up,
+          color: Colors.green,
+        ),
+        style: TextButton.styleFrom(backgroundColor: Colors.black),
+        onPressed: () async {
+          if ((await Supabase.instance.client
+                  .from("Likes")
+                  .select()
+                  .eq("LikerID", widget.User.UUID)
+                  .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
+                  .eq("Liked", 1))
+              .isEmpty) {
+            await Supabase.instance.client.from("Likes").insert({
+              "LikerID": Supabase.instance.client.auth.currentUser!.id,
+              "LikedID": widget.User.UUID,
+              "Liked": 1
+            });
+          } else {
+            await Supabase.instance.client.from("Likes").update({
+              "Liked": 2,
+            }).match({
+              "LikedID": Supabase.instance.client.auth.currentUser!.id,
+              "LikerID": widget.User.UUID,
+            });
+            await Supabase.instance.client.from("Likes").insert({
+              "LikerID": Supabase.instance.client.auth.currentUser!.id,
+              "LikedID": widget.User.UUID,
+              "Liked": 2
+            });
+          }
+          setState(() {
+            liked = !liked;
+          });
+          widget.parentSetState(() {});
+        },
       ),
-      style: TextButton.styleFrom(backgroundColor: Colors.black),
-      onPressed: () async {
-        if ((await Supabase.instance.client
-                .from("Likes")
-                .select()
-                .eq("LikerID", widget.User.UUID)
-                .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
-                .eq("Liked", 1))
-            .isEmpty) {
-          await Supabase.instance.client.from("Likes").insert({
-            "LikerID": Supabase.instance.client.auth.currentUser!.id,
-            "LikedID": widget.User.UUID,
-            "Liked": 1
-          });
-        } else {
-          await Supabase.instance.client.from("Likes").update({
-            "Liked": 2,
-          }).match({
-            "LikedID": Supabase.instance.client.auth.currentUser!.id,
-            "LikerID": widget.User.UUID,
-          });
-          await Supabase.instance.client.from("Likes").insert({
-            "LikerID": Supabase.instance.client.auth.currentUser!.id,
-            "LikedID": widget.User.UUID,
-            "Liked": 2
-          });
-        }
-        setState(() {
-          liked = !liked;
-        });
-        widget.parentSetState(() {});
-      },
     );
   }
 
@@ -234,86 +242,99 @@ class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    return Row(
+    return Stack(
       children: [
-        dislikeButton(),
-        SizedBox(
-          width: width <= 500 ? width - 170 : 300,
-          child: Card.filled(
-            color: const Color(0xFF080808),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  FutureBuilder(
-                      future: getImages(),
-                      builder: (context, snapshot) {
-                        if (snapshot.data == null) {
-                          return const CircularProgressIndicator();
-                        }
-                        return ExpandableCarousel(
-                            options: CarouselOptions(
-                                enableInfiniteScroll: false,
-                                showIndicator: true,
-                                slideIndicator: const CircularSlideIndicator()),
-                            items: snapshot.data);
-                      }),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+
+        Row(
+          children: [
+            Padding(padding: EdgeInsets.only(left: 10)),
+            SizedBox(
+              width: width <= 500 ? width - 170 : 300,
+              height: 450,
+              child: Card.filled(
+                color: const Color(0xFF080808),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UserDescPage(User: widget.User)));
-                          },
-                          icon:
-                              UserIcon(ImageURL: widget.User.ProfilePictureURL, size: MediaQuery.of(context).size.width <= 300 ? 30 : 50,)),
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
-                          widget.User.Username,
-                          style: const TextStyle(color: Color(0xFFCCCCCC)),
-                        ),
+                      FutureBuilder(
+                          future: getImages(),
+                          builder: (context, snapshot) {
+                            if (snapshot.data == null) {
+                              return const CircularProgressIndicator();
+                            }
+                            return ExpandableCarousel(
+                                options: CarouselOptions(
+                                    enableInfiniteScroll: false,
+                                    showIndicator: true,
+                                    slideIndicator: const CircularSlideIndicator()),
+                                items: snapshot.data);
+                          }),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Card.filled(
-                          color: widget.User.Gender == 1
-                              ? Colors.lightBlue
-                              : widget.User.Gender == 2
-                                  ? Colors.yellow
-                                  : Colors.pinkAccent,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UserDescPage(User: widget.User)));
+                              },
+                              icon:
+                                  UserIcon(ImageURL: widget.User.ProfilePictureURL, size: MediaQuery.of(context).size.width <= 300 ? 30 : 50,)),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
                             child: Text(
-                              GenderEnum.values[widget.User.Gender].name,
-                              style: const TextStyle(color: Color(0xFF161616)),
+                              widget.User.Username,
+                              style: const TextStyle(color: Color(0xFFCCCCCC)),
                             ),
                           ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: Text(
-                          widget.User.getAge().toString(),
-                          style: const TextStyle(color: Color(0xFFCCCCCC)),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Card.filled(
+                              color: widget.User.Gender == 1
+                                  ? Colors.lightBlue
+                                  : widget.User.Gender == 2
+                                      ? Colors.yellow
+                                      : Colors.pinkAccent,
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Text(
+                                  GenderEnum.values[widget.User.Gender].name,
+                                  style: const TextStyle(color: Color(0xFF161616)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              widget.User.getAge().toString(),
+                              style: const TextStyle(color: Color(0xFFCCCCCC)),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
-        likeButton()
+        Row(
+          children: [
+            dislikeButton(),
+            Padding(padding: EdgeInsets.only(left: width <= 500 ? width - 230 : 240, top: 450)),
+            likeButton(),
+          ],
+        )
       ],
     );
   }

@@ -47,6 +47,8 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
         onPressed: () {
           Navigator.pop(context);
         },
+        backgroundColor: const Color(0xEEC78FFF),
+        child: const Text("Back"),
       ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
