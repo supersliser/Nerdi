@@ -15,32 +15,60 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   Future<List<UserData>> getUsers() async {
-    var temp = await Supabase.instance.client
+    List<UserData> PossibleUsers = List.empty(growable: true);
+    var UserDataTemp = await Supabase.instance.client.from("UserInfo").select().eq("UserUID", Supabase.instance.client.auth.currentUser!.id);
+    var User = UserData(
+      UUID: UserDataTemp.first["UserUID"],
+      Username: UserDataTemp.first["Username"],
+      Description: UserDataTemp.first["Description"],
+      Birthday: DateTime.parse(UserDataTemp.first["Birthday"]),
+      ProfilePictureName: UserDataTemp.first["ProfilePictureName"],
+      Gender: UserDataTemp.first["Gender"],
+      ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(UserDataTemp.first["ProfilePictureName"]),
+    );
+    await User.getGendersLookingFor();
+    var PossibleUsersTemp = await Supabase.instance.client
         .from("UserInfo")
         .select()
-        .neq("UserUID", Supabase.instance.client.auth.currentUser == null ? const UuidV4().generate() : Supabase.instance.client.auth.currentUser!.id);
-
-    var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
-
-    temp.removeWhere((element) {
-      return likes.where((elementee) {
-        return elementee["LikedID"] == element["UserUID"];
-      }).isNotEmpty;
-    });
-    List<UserData> output = List.empty(growable: true);
-    for (var item in temp) {
-      output.add(UserData(
+        .neq("UserUID", Supabase.instance.client.auth.currentUser == null ? const UuidV4().generate() : Supabase.instance.client.auth.currentUser!.id)
+        .range(0, 50);
+    for (var item in PossibleUsersTemp) {
+      PossibleUsers.add(UserData(
           UUID: item["UserUID"],
           Username: item["Username"],
           Birthday: DateTime.parse(item["Birthday"]),
           Gender: item["Gender"],
           Description: item["Description"],
           ProfilePictureName: item["ProfilePictureName"],
-          ProfilePictureURL: Supabase.instance.client.storage
-              .from("ProfilePictures")
-              .getPublicUrl(item["ProfilePictureName"])));
+          ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(item["ProfilePictureName"])));
     }
-    return output;
+    var iterableLoop = PossibleUsers;
+    for (int i = 0; i < iterableLoop.length; i++) {
+      if (!User.GendersLookingFor[iterableLoop[i].Gender - 1]) {
+        PossibleUsers.removeAt(i);
+      }
+    }
+    var likes = await Supabase.instance.client.from("Likes").select("LikedID").eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
+    PossibleUsers.removeWhere((element) {
+      return likes.where((elementee) {
+        return elementee["LikedID"] == element.UUID;
+      }).isNotEmpty;
+    });
+    List<List<dynamic>> SortingUsers = List.empty(growable: true);
+    var UserInterests = await User.getInterests();
+    for (int i = 0; i < PossibleUsers.length; i++) {
+      SortingUsers.add(List.of([PossibleUsers[i], 0]));
+      var tempUserInterests = await PossibleUsers[i].getInterests();
+      for (int j = 0; j < tempUserInterests.length; j++) {
+        for (int k = 0; k < UserInterests.length; k++) {
+          if (UserInterests[k].ID == tempUserInterests[j].ID) {
+            SortingUsers.last.last++;
+          }
+        }
+      }
+    }
+    SortingUsers.sort((a, b) => a.last.compareTo(b.last) * -1);
+    return List.generate(SortingUsers.length, (index) => SortingUsers[index].first);
   }
 
   @override
@@ -49,7 +77,7 @@ class _UserListPageState extends State<UserListPage> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
     }
     return Scaffold(
-        body: Row(
+      body: Row(
         children: [
           const NavBar(
             CurrentIndex: 0,
@@ -67,15 +95,18 @@ class _UserListPageState extends State<UserListPage> {
                     }
                     final data = snapshot.data!;
                     return ListView.builder(
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                UserCard(User: data[index], parentSetState: setState,),
-                              ],
-                            );
-                          },
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            UserCard(
+                              User: data[index],
+                              parentSetState: setState,
+                            ),
+                          ],
+                        );
+                      },
                     );
                   }),
             ),
