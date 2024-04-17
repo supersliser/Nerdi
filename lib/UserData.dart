@@ -120,7 +120,7 @@ class UserData {
         .eq("User", UUID);
 
     for (int i = 0; i < Genders.length; i++) {
-      GendersLookingFor[Genders[i]["GenderLookingFor"]--] = true;
+      GendersLookingFor[Genders[i]["GenderLookingFor"]] = true;
     }
 
     return GendersLookingFor;
