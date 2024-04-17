@@ -1,4 +1,3 @@
-
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -8,13 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/InterestPage.dart';
 
-
 class InterestViewer extends StatelessWidget {
-  const InterestViewer(
-      {super.key,
-        required this.interest,
-        this.title,
-        required this.Width});
+  const InterestViewer({super.key, required this.interest, this.title, required this.Width});
   final Interest interest;
   final String? title;
   final double Width;
@@ -23,10 +17,7 @@ class InterestViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => InterestPage(interest: interest)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => InterestPage(interest: interest)));
       },
       child: SizedBox(
         width: Width,
@@ -37,25 +28,21 @@ class InterestViewer extends StatelessWidget {
             children: [
               interest.ImageName == "Placeholder.svg"
                   ? const Padding(
-                padding: EdgeInsets.all(0),
-              )
-                  : FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
-                  image: interest.ImageURL,
-                  width: Width,
-                  fit: BoxFit.cover),
+                      padding: EdgeInsets.all(0),
+                    )
+                  : FadeInImage.memoryNetwork(placeholder: kTransparentImage, image: interest.ImageURL, width: Width, fit: BoxFit.cover),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Center(
                     child: Column(
-                      children: [
-                        Text(
-                          title == null ? interest.Name : title!,
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                        Text(interest.Description)
-                      ],
-                    )),
+                  children: [
+                    Text(
+                      title == null ? interest.Name : title!,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    Text(interest.Description)
+                  ],
+                )),
               ),
             ],
           ),
@@ -71,8 +58,7 @@ class Interest {
       this.Name = "UNNAMED_INTEREST",
       this.Description = "NULL_DESCRIPTION",
       this.ImageName = "Placeholder",
-      this.ImageURL =
-          "https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg",
+      this.ImageURL = "https://t3.ftcdn.net/jpg/02/68/55/60/360_F_268556012_c1WBaKFN5rjRxR2eyV33znK4qnYeKZjm.jpg",
       required this.PrimaryColour});
   String ID;
   String Name;
@@ -87,22 +73,17 @@ class Interest {
   }
 
   Future<String> uploadImage(XFile Image, String imageName) async {
-    await Supabase.instance.client.storage
-        .from('Interests')
-        .upload('$imageName.${Image.path.split('.').last}', File(Image.path),
-            fileOptions: FileOptions(
-              contentType: 'image/${Image.path.split('.').last}',
-              upsert: false,
-            ));
+    await Supabase.instance.client.storage.from('Interests').upload('$imageName.${Image.path.split('.').last}', File(Image.path),
+        fileOptions: FileOptions(
+          contentType: 'image/${Image.path.split('.').last}',
+          upsert: false,
+        ));
     ImageName = '$imageName.${Image.path.split('.').last}';
-    ImageURL = Supabase.instance.client.storage
-        .from("Interests")
-        .getPublicUrl('$imageName.${Image.path.split('.').last}');
+    ImageURL = Supabase.instance.client.storage.from("Interests").getPublicUrl('$imageName.${Image.path.split('.').last}');
     return ImageURL;
   }
 
-  Future<void> upload(List<Interest> parentInterests,
-      List<Interest> childInterests, UserData currentUser) async {
+  Future<void> upload(List<Interest> parentInterests, List<Interest> childInterests, UserData currentUser) async {
     await Supabase.instance.client.from("Interest").upsert({
       "ID": ID,
       "Name": Name,
@@ -112,23 +93,13 @@ class Interest {
       "PrimaryColourGreen": PrimaryColour.green,
       "PrimaryColourBlue": PrimaryColour.blue
     });
-    await Supabase.instance.client
-        .from("InterestSubInterest")
-        .delete()
-        .eq("InterestID", ID);
-    await Supabase.instance.client
-        .from("InterestSubInterest")
-        .delete()
-        .eq("SubInterestID", ID);
+    await Supabase.instance.client.from("InterestSubInterest").delete().eq("InterestID", ID);
+    await Supabase.instance.client.from("InterestSubInterest").delete().eq("SubInterestID", ID);
     for (var i in parentInterests) {
-      await Supabase.instance.client
-          .from("InterestSubInterest")
-          .upsert({"InterestID": i.ID, "SubInterestID": ID});
+      await Supabase.instance.client.from("InterestSubInterest").upsert({"InterestID": i.ID, "SubInterestID": ID});
     }
     for (var i in childInterests) {
-      await Supabase.instance.client
-          .from("InterestSubInterest")
-          .upsert({"InterestID": ID, "SubInterestID": i.ID});
+      await Supabase.instance.client.from("InterestSubInterest").upsert({"InterestID": ID, "SubInterestID": i.ID});
     }
   }
 }

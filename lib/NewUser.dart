@@ -67,19 +67,14 @@ class _NewUserState extends State<NewUser> {
           Description: temp[index]["Description"],
           ImageName: temp[index]["ImageName"],
           ImageURL: images.getPublicUrl(temp[index]["ImageName"]),
-          PrimaryColour: Color.fromARGB(
-              0xFF,
-              temp[index]["PrimaryColourRed"],
-              temp[index]["PrimaryColourGreen"],
-              temp[index]["PrimaryColourBlue"]));
+          PrimaryColour: Color.fromARGB(0xFF, temp[index]["PrimaryColourRed"], temp[index]["PrimaryColourGreen"], temp[index]["PrimaryColourBlue"]));
     });
   }
 
   Widget getQuestion() {
     if (BirthdayInvalid) {
       return InvalidBirthday();
-    }
-    else if (!NameSet) {
+    } else if (!NameSet) {
       return NameSetter();
     } else if (!BirthdaySet) {
       List<DateTime> TempDate = List.empty(growable: true);
@@ -99,13 +94,7 @@ class _NewUserState extends State<NewUser> {
       return EmailSetter();
     } else if (!InterestsSet) {
       return InterestSetter();
-    } else if (NameSet &&
-        BirthdaySet &&
-        GendersSet &&
-        DescriptionSet &&
-        ProfilePictureSet &&
-        EmailSet &&
-        InterestsSet) {
+    } else if (NameSet && BirthdaySet && GendersSet && DescriptionSet && ProfilePictureSet && EmailSet && InterestsSet) {
       return ProfileSetter();
     }
 
@@ -113,24 +102,12 @@ class _NewUserState extends State<NewUser> {
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-            style: const TextStyle(color: Color(0xFFCCCCCC)),
-            "Username set: ${NameSet.toString()}"),
-        Text(
-            style: const TextStyle(color: Color(0xFFCCCCCC)),
-            "Birthday set: ${BirthdaySet.toString()}"),
-        Text(
-            style: const TextStyle(color: Color(0xFFCCCCCC)),
-            "Genders set: ${GendersSet.toString()}"),
-        Text(
-            style: const TextStyle(color: Color(0xFFCCCCCC)),
-            "Description set: ${DescriptionSet.toString()}"),
-        Text(
-            style: const TextStyle(color: Color(0xFFCCCCCC)),
-            "Profile Picture set: ${ProfilePictureSet.toString()}"),
-        Text(
-            style: const TextStyle(color: Color(0xFFCCCCCC)),
-            "Email set: ${EmailSet.toString()}"),
+        Text(style: const TextStyle(color: Color(0xFFCCCCCC)), "Username set: ${NameSet.toString()}"),
+        Text(style: const TextStyle(color: Color(0xFFCCCCCC)), "Birthday set: ${BirthdaySet.toString()}"),
+        Text(style: const TextStyle(color: Color(0xFFCCCCCC)), "Genders set: ${GendersSet.toString()}"),
+        Text(style: const TextStyle(color: Color(0xFFCCCCCC)), "Description set: ${DescriptionSet.toString()}"),
+        Text(style: const TextStyle(color: Color(0xFFCCCCCC)), "Profile Picture set: ${ProfilePictureSet.toString()}"),
+        Text(style: const TextStyle(color: Color(0xFFCCCCCC)), "Email set: ${EmailSet.toString()}"),
       ],
     ));
   }
@@ -189,29 +166,25 @@ class _NewUserState extends State<NewUser> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         onPressed: () {
                           setState(() {
                             EmailSet = false;
                             InterestsSet = false;
                           });
                         },
-                        child: const Text("Back",
-                            style: TextStyle(color: Color(0xFF181818)))),
+                        child: const Text("Back", style: TextStyle(color: Color(0xFF181818)))),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                         onPressed: () {
                           setState(() {
                             InterestsSet = true;
                           });
                         },
-                        child: const Text("Next",
-                            style: TextStyle(color: Color(0xFF181818)))),
+                        child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
                   )
                 ],
               ),
@@ -225,18 +198,18 @@ class _NewUserState extends State<NewUser> {
       child: Wrap(
         alignment: WrapAlignment.center,
         children: [
-          nonInteractiveUserCard(User: User, hasSecondaryPictures: false,),
+          nonInteractiveUserCard(
+            User: User,
+            hasSecondaryPictures: false,
+          ),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                  style: TextStyle(color: Color(0xFFCCCCCC)),
-                  "This is you now, hope you're happy\nClick below to let others see you"),
+              const Text(style: TextStyle(color: Color(0xFFCCCCCC)), "This is you now, hope you're happy\nClick below to let others see you"),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () async {
                       if (User.Birthday!.difference(DateTime.now()).inDays * -1 > (365 * 18)) {
                         await User.upload(ImageName, Email, Password);
@@ -248,29 +221,25 @@ class _NewUserState extends State<NewUser> {
                         });
                       }
                     },
-                    child: const Text("I'm happy, lets go (you can change all of this later anyway)",
-                        style: TextStyle(color: Color(0xFFCCCCCC)))),
+                    child: const Text("I'm happy, lets go (you can change all of this later anyway)", style: TextStyle(color: Color(0xFFCCCCCC)))),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: () {
                       setState(() {
-                         NameSet = false;
-                         BirthdaySet = false;
-                         GendersSet = false;
-                         DescriptionSet = false;
-                         ProfilePictureSet = false;
-                         EmailSet = false;
-                         InterestsSet = false;
+                        NameSet = false;
+                        BirthdaySet = false;
+                        GendersSet = false;
+                        DescriptionSet = false;
+                        ProfilePictureSet = false;
+                        EmailSet = false;
+                        InterestsSet = false;
                       });
                     },
-                    child: const Text(
-                        style: TextStyle(color: Color(0xFFCCCCCC)),
-                        textAlign: TextAlign.center,
-                        "wait, I forgot to add something to my profile")),
+                    child:
+                        const Text(style: TextStyle(color: Color(0xFFCCCCCC)), textAlign: TextAlign.center, "wait, I forgot to add something to my profile")),
               ),
             ],
           ),
@@ -280,7 +249,7 @@ class _NewUserState extends State<NewUser> {
   }
 
   Widget InvalidBirthday() {
-    return Center(
+    return const Center(
       child: Text("Sorry, youre too young to use this. For safety reasons you're gonna have to be over 18 to use this app"),
     );
   }
@@ -292,9 +261,7 @@ class _NewUserState extends State<NewUser> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-                textAlign: TextAlign.center,
-                "OK OK last thing I promise\nPlease enter your email and password",
-                style: TextStyle(color: Color(0xFFCCCCCC))),
+                textAlign: TextAlign.center, "OK OK last thing I promise\nPlease enter your email and password", style: TextStyle(color: Color(0xFFCCCCCC))),
             TextField(
               onSubmitted: (text) {
                 setState(() {
@@ -303,7 +270,7 @@ class _NewUserState extends State<NewUser> {
                       ProfilePictureSet = false;
                       EmailSet = false;
                     });
-                  }else {
+                  } else {
                     Email = EmailController.text;
                     Password = PassController.text;
                     EmailSet = true;
@@ -318,12 +285,8 @@ class _NewUserState extends State<NewUser> {
               controller: EmailController,
               style: const TextStyle(color: Color(0xFFCCCCCC)),
               decoration: InputDecoration(
-                error: EmailController.text.isEmpty
-                    ? const Text("like at least give us something plz",
-                        style: TextStyle(color: Color(0xFFCCCCCC)))
-                    : null,
-                label: const Text("Enter your email",
-                    style: TextStyle(color: Color(0xFFCCCCCC))),
+                error: EmailController.text.isEmpty ? const Text("like at least give us something plz", style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+                label: const Text("Enter your email", style: TextStyle(color: Color(0xFFCCCCCC))),
               ),
             ),
             TextField(
@@ -349,12 +312,8 @@ class _NewUserState extends State<NewUser> {
               controller: PassController,
               style: const TextStyle(color: Color(0xFFCCCCCC)),
               decoration: InputDecoration(
-                error: PassController.text.isEmpty
-                    ? const Text("*closes eyes* i promise im not peeking",
-                        style: TextStyle(color: Color(0xFFCCCCCC)))
-                    : null,
-                label: const Text("Enter your password",
-                    style: TextStyle(color: Color(0xFFCCCCCC))),
+                error: PassController.text.isEmpty ? const Text("*closes eyes* i promise im not peeking", style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+                label: const Text("Enter your password", style: TextStyle(color: Color(0xFFCCCCCC))),
               ),
             ),
             Padding(
@@ -365,8 +324,7 @@ class _NewUserState extends State<NewUser> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         onPressed: () {
                           if (PassController.text.isEmpty || EmailController.text.isEmpty) {
                             setState(() {
@@ -378,18 +336,15 @@ class _NewUserState extends State<NewUser> {
                             EmailSet = true;
                           }
                         },
-                        child: const Text("Back",
-                            style: TextStyle(color: Color(0xFF181818)))),
+                        child: const Text("Back", style: TextStyle(color: Color(0xFF181818)))),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                         onPressed: () {
                           setState(() {
-                            if (EmailController.text.isEmpty ||
-                                PassController.text.isEmpty) {
+                            if (EmailController.text.isEmpty || PassController.text.isEmpty) {
                               EmailSet = false;
                             } else {
                               Email = EmailController.text;
@@ -398,8 +353,7 @@ class _NewUserState extends State<NewUser> {
                             }
                           });
                         },
-                        child: const Text("Next",
-                            style: TextStyle(color: Color(0xFF181818)))),
+                        child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
                   )
                 ],
               ),
@@ -412,8 +366,7 @@ class _NewUserState extends State<NewUser> {
     return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text(
-              "We sound like we would be great friends.\nFinally, why dont you show us your beautiful face?",
+          const Text("We sound like we would be great friends.\nFinally, why dont you show us your beautiful face?",
               style: TextStyle(color: Color(0xFFCCCCCC))),
           Wrap(
             alignment: WrapAlignment.center,
@@ -449,29 +402,25 @@ class _NewUserState extends State<NewUser> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {
                         setState(() {
                           DescriptionSet = false;
                           ProfilePictureSet = false;
                         });
                       },
-                      child: const Text("Back",
-                          style: TextStyle(color: Color(0xFF181818)))),
+                      child: const Text("Back", style: TextStyle(color: Color(0xFF181818)))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                       onPressed: () {
                         setState(() {
                           ProfilePictureSet = true;
                         });
                       },
-                      child: const Text("Next",
-                          style: TextStyle(color: Color(0xFF181818)))),
+                      child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
                 )
               ],
             ),
@@ -485,9 +434,7 @@ class _NewUserState extends State<NewUser> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-              "Hmm, sounds like fun.\nWhy dont you tell us some stuff about you?",
-              style: TextStyle(color: Color(0xFFCCCCCC))),
+          const Text("Hmm, sounds like fun.\nWhy dont you tell us some stuff about you?", style: TextStyle(color: Color(0xFFCCCCCC))),
           TextField(
             enableSuggestions: false,
             maxLength: 5000,
@@ -508,12 +455,8 @@ class _NewUserState extends State<NewUser> {
             controller: DescController,
             style: const TextStyle(color: Color(0xFFCCCCCC)),
             decoration: InputDecoration(
-              error: DescController.text.isEmpty
-                  ? const Text("Bro I promise you're not that boring",
-                      style: TextStyle(color: Color(0xFFCCCCCC)))
-                  : null,
-              label: const Text("Enter some stuff about you",
-                  style: TextStyle(color: Color(0xFFCCCCCC))),
+              error: DescController.text.isEmpty ? const Text("Bro I promise you're not that boring", style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+              label: const Text("Enter some stuff about you", style: TextStyle(color: Color(0xFFCCCCCC))),
             ),
           ),
           Padding(
@@ -524,22 +467,19 @@ class _NewUserState extends State<NewUser> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {
                         setState(() {
                           GendersSet = false;
                           DescriptionSet = false;
                         });
                       },
-                      child: const Text("Back",
-                          style: TextStyle(color: Color(0xFF181818)))),
+                      child: const Text("Back", style: TextStyle(color: Color(0xFF181818)))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                       onPressed: () {
                         setState(() {
                           if (DescController.text.isEmpty) {
@@ -550,8 +490,7 @@ class _NewUserState extends State<NewUser> {
                           }
                         });
                       },
-                      child: const Text("Next",
-                          style: TextStyle(color: Color(0xFF181818)))),
+                      child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
                 )
               ],
             ),
@@ -567,117 +506,102 @@ class _NewUserState extends State<NewUser> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("So ${User.Username}, you're ${User.getAge()} years old?",
-              style: const TextStyle(color: Color(0xFFCCCCCC))),
-          const Text("Whats your gender",
-              style: TextStyle(color: Color(0xFFCCCCCC))),
+          Text("So ${User.Username}, you're ${User.getAge()} years old?", style: const TextStyle(color: Color(0xFFCCCCCC))),
+          const Text("Whats your gender", style: TextStyle(color: Color(0xFFCCCCCC))),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChoiceChip(
-                      backgroundColor: const Color(0xFFFF82FF),
-                      selectedColor: const Color(0xFFFF82FF),
-                      label: Text(GenderEnum.Female.name),
-                      selected: User.Gender == 2,
-                      onSelected: (bool selected) {
-                        setState(() {
-                          User.Gender = selected ? 2 : 0;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChoiceChip(
-                      backgroundColor: const Color(0xFFFFEF63),
-                      selectedColor: const Color(0xFFFFEF63),
-                      label: Text(GenderEnum.NonBinary.name),
-                      selected: User.Gender == 3,
-                      onSelected: (bool selected) {
-                        setState(() {
-                          User.Gender = selected ? 3 : 0;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChoiceChip(
-                      backgroundColor: const Color(0xFF63EDFF),
-                      selectedColor: const Color(0xFF63EDFF),
-                      label: Text(GenderEnum.Male.name),
-                      selected: User.Gender == 1,
-                      onSelected: (bool selected) {
-                        setState(() {
-                          User.Gender = selected ? 1 : 0;
-                        });
-                      },
-                    ),
-                  )
-                ]),
+            child: Wrap(alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFFFF82FF),
+                  selectedColor: const Color(0xFFFF82FF),
+                  label: Text(GenderEnum.Female.name),
+                  selected: User.Gender == 2,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      User.Gender = selected ? 2 : 0;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFFFFEF63),
+                  selectedColor: const Color(0xFFFFEF63),
+                  label: Text(GenderEnum.NonBinary.name),
+                  selected: User.Gender == 3,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      User.Gender = selected ? 3 : 0;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFF63EDFF),
+                  selectedColor: const Color(0xFF63EDFF),
+                  label: Text(GenderEnum.Male.name),
+                  selected: User.Gender == 1,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      User.Gender = selected ? 1 : 0;
+                    });
+                  },
+                ),
+              )
+            ]),
           ),
-          const Text("And what genders are you looking for",
-              style: TextStyle(color: Color(0xFFCCCCCC))),
+          const Text("And what genders are you looking for", style: TextStyle(color: Color(0xFFCCCCCC))),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChoiceChip(
-                      backgroundColor: const Color(0xFFFF82FF),
-                      selectedColor: const Color(0xFFFF82FF),
-                      label: Text(GenderEnum.Female.name),
-                      selected:
-                          User.GendersLookingFor[GenderEnum.Female.index - 1],
-                      onSelected: (bool selected) {
-                        setState(() {
-                          User.GendersLookingFor[GenderEnum.Female.index - 1] =
-                              selected;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChoiceChip(
-                      label: Text(GenderEnum.NonBinary.name),
-                      backgroundColor: const Color(0xFFFFEF63),
-                      selectedColor: const Color(0xFFFFEF63),
-                      selected: User
-                          .GendersLookingFor[GenderEnum.NonBinary.index - 1],
-                      onSelected: (bool selected) {
-                        setState(() {
-                          User.GendersLookingFor[
-                              GenderEnum.NonBinary.index - 1] = selected;
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ChoiceChip(
-                      label: Text(GenderEnum.Male.name),
-                      backgroundColor: const Color(0xFF63EDFF),
-                      selectedColor: const Color(0xFF63EDFF),
-                      selected:
-                          User.GendersLookingFor[GenderEnum.Male.index - 1],
-                      onSelected: (bool selected) {
-                        setState(() {
-                          User.GendersLookingFor[GenderEnum.Male.index - 1] =
-                              selected;
-                        });
-                      },
-                    ),
-                  )
-                ]),
+            child: Wrap(alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  backgroundColor: const Color(0xFFFF82FF),
+                  selectedColor: const Color(0xFFFF82FF),
+                  label: Text(GenderEnum.Female.name),
+                  selected: User.GendersLookingFor[GenderEnum.Female.index - 1],
+                  onSelected: (bool selected) {
+                    setState(() {
+                      User.GendersLookingFor[GenderEnum.Female.index - 1] = selected;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  label: Text(GenderEnum.NonBinary.name),
+                  backgroundColor: const Color(0xFFFFEF63),
+                  selectedColor: const Color(0xFFFFEF63),
+                  selected: User.GendersLookingFor[GenderEnum.NonBinary.index - 1],
+                  onSelected: (bool selected) {
+                    setState(() {
+                      User.GendersLookingFor[GenderEnum.NonBinary.index - 1] = selected;
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ChoiceChip(
+                  label: Text(GenderEnum.Male.name),
+                  backgroundColor: const Color(0xFF63EDFF),
+                  selectedColor: const Color(0xFF63EDFF),
+                  selected: User.GendersLookingFor[GenderEnum.Male.index - 1],
+                  onSelected: (bool selected) {
+                    setState(() {
+                      User.GendersLookingFor[GenderEnum.Male.index - 1] = selected;
+                    });
+                  },
+                ),
+              )
+            ]),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -687,32 +611,27 @@ class _NewUserState extends State<NewUser> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                       onPressed: () {
                         setState(() {
                           BirthdaySet = false;
                           GendersSet = false;
                         });
                       },
-                      child: const Text("Back",
-                          style: TextStyle(color: Color(0xFF181818)))),
+                      child: const Text("Back", style: TextStyle(color: Color(0xFF181818)))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                       onPressed: () {
                         setState(() {
-                          if (User.Gender != 0 &&
-                              User.GendersLookingFor.contains(true)) {
+                          if (User.Gender != 0 && User.GendersLookingFor.contains(true)) {
                             GendersSet = true;
                           }
                         });
                       },
-                      child: const Text("Next",
-                          style: TextStyle(color: Color(0xFF181818)))),
+                      child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
                 )
               ],
             ),
@@ -726,16 +645,13 @@ class _NewUserState extends State<NewUser> {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text("Hi There ${User.Username}.\nWhen were you born?",
-            style: const TextStyle(color: Color(0xFFCCCCCC))),
+        Text("Hi There ${User.Username}.\nWhen were you born?", style: const TextStyle(color: Color(0xFFCCCCCC))),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: CalendarDatePicker2(
             config: CalendarDatePicker2Config(
-                lastMonthIcon: const Icon(Icons.arrow_circle_left_outlined,
-                    color: Colors.white),
-                nextMonthIcon: const Icon(Icons.arrow_circle_right_outlined,
-                    color: Colors.white),
+                lastMonthIcon: const Icon(Icons.arrow_circle_left_outlined, color: Colors.white),
+                nextMonthIcon: const Icon(Icons.arrow_circle_right_outlined, color: Colors.white),
                 currentDate: User.Birthday,
                 controlsTextStyle: const TextStyle(
                   color: Color(0xFFCCCCCC),
@@ -767,29 +683,25 @@ class _NewUserState extends State<NewUser> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: () {
                       setState(() {
                         BirthdaySet = false;
                         NameSet = false;
                       });
                     },
-                    child: const Text("Back",
-                        style: TextStyle(color: Color(0xFF181818)))),
+                    child: const Text("Back", style: TextStyle(color: Color(0xFF181818)))),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {
                       setState(() {
                         BirthdaySet = true;
                       });
                     },
-                    child: const Text("Next",
-                        style: TextStyle(color: Color(0xFF181818)))),
+                    child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
               )
             ],
           ),
@@ -822,12 +734,8 @@ class _NewUserState extends State<NewUser> {
           style: const TextStyle(color: Color(0xFFCCCCCC)),
           decoration: InputDecoration(
             focusColor: Colors.green,
-            error: NameController.text.isEmpty
-                ? const Text("Cmon, you gotta give me something",
-                    style: TextStyle(color: Color(0xFFCCCCCC)))
-                : null,
-            label: const Text("Enter your name",
-                style: TextStyle(color: Color(0xFFCCCCCC))),
+            error: NameController.text.isEmpty ? const Text("Cmon, you gotta give me something", style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+            label: const Text("Enter your name", style: TextStyle(color: Color(0xFFCCCCCC))),
           ),
         ),
         Padding(
@@ -838,8 +746,7 @@ class _NewUserState extends State<NewUser> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () {
                       setState(() {
                         if (NameController.text.isEmpty) {
@@ -850,8 +757,7 @@ class _NewUserState extends State<NewUser> {
                         }
                       });
                     },
-                    child: const Text("Next",
-                        style: TextStyle(color: Color(0xFF181818)))),
+                    child: const Text("Next", style: TextStyle(color: Color(0xFF181818)))),
               )
             ],
           ),

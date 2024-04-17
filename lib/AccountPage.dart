@@ -24,19 +24,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         children: [
           TextField(
             controller: passwordController,
-            decoration: const InputDecoration(
-                labelText: "New Password",
-                labelStyle: TextStyle(color: Colors.white)),
+            decoration: const InputDecoration(labelText: "New Password", labelStyle: TextStyle(color: Colors.white)),
             onSubmitted: (value) {
-              Supabase.instance.client.auth.updateUser(
-                  UserAttributes(password: passwordController.text));
+              Supabase.instance.client.auth.updateUser(UserAttributes(password: passwordController.text));
               Navigator.pop(context);
             },
           ),
           TextButton(
               onPressed: () {
-                Supabase.instance.client.auth.updateUser(
-                    UserAttributes(password: passwordController.text));
+                Supabase.instance.client.auth.updateUser(UserAttributes(password: passwordController.text));
                 Navigator.pop(context);
               },
               style: TextButton.styleFrom(backgroundColor: Colors.green),
@@ -60,8 +56,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 }
 
 class AccountPage extends StatefulWidget {
-  const AccountPage(
-      {super.key, required this.User, required this.ProfilePictureName});
+  const AccountPage({super.key, required this.User, required this.ProfilePictureName});
 
   final UserData User;
   final String ProfilePictureName;
@@ -81,8 +76,7 @@ class _AccountPageState extends State<AccountPage> {
     String imageName = widget.User.getImageUUID();
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var temp = await widget.User.uploadImage(
-          image, imageName, image.name.split(".")[1]);
+      var temp = await widget.User.uploadImage(image, imageName, image.name.split(".")[1]);
       setState(() {
         widget.User.ProfilePictureName = temp;
       });
@@ -94,10 +88,7 @@ class _AccountPageState extends State<AccountPage> {
     var images = Supabase.instance.client.storage.from("Interests");
 
     if (!userInterestSet) {
-      var userTemp = await Supabase.instance.client
-          .from("UserInterest")
-          .select()
-          .eq("UserID", Supabase.instance.client.auth.currentUser!.id);
+      var userTemp = await Supabase.instance.client.from("UserInterest").select().eq("UserID", Supabase.instance.client.auth.currentUser!.id);
       for (var item in userTemp) {
         var tempInterest = temp.where((element) {
           return element["ID"] == item["InterestID"];
@@ -108,11 +99,7 @@ class _AccountPageState extends State<AccountPage> {
             Description: tempInterest["Description"],
             ImageName: tempInterest["ImageName"],
             ImageURL: images.getPublicUrl(tempInterest["ImageName"]),
-            PrimaryColour: Color.fromARGB(
-                0xFF,
-                tempInterest["PrimaryColourRed"],
-                tempInterest["PrimaryColourGreen"],
-                tempInterest["PrimaryColourBlue"])));
+            PrimaryColour: Color.fromARGB(0xFF, tempInterest["PrimaryColourRed"], tempInterest["PrimaryColourGreen"], tempInterest["PrimaryColourBlue"])));
         userInterestSet = true;
       }
     }
@@ -123,11 +110,7 @@ class _AccountPageState extends State<AccountPage> {
           Description: temp[index]["Description"],
           ImageName: temp[index]["ImageName"],
           ImageURL: images.getPublicUrl(temp[index]["ImageName"]),
-          PrimaryColour: Color.fromARGB(
-              0xFF,
-              temp[index]["PrimaryColourRed"],
-              temp[index]["PrimaryColourGreen"],
-              temp[index]["PrimaryColourBlue"]));
+          PrimaryColour: Color.fromARGB(0xFF, temp[index]["PrimaryColourRed"], temp[index]["PrimaryColourGreen"], temp[index]["PrimaryColourBlue"]));
     });
   }
 
@@ -155,12 +138,7 @@ class _AccountPageState extends State<AccountPage> {
                   GenderSelector(),
                   InterestSelector(),
                   Column(
-                    children: [
-                      SaveButton(),
-                      ChangePasswordButton(context),
-                      SignOutButton(context),
-                      DeleteAccountButton(context)
-                    ],
+                    children: [SaveButton(), ChangePasswordButton(context), SignOutButton(context), DeleteAccountButton(context)],
                   )
                 ],
               ),
@@ -179,8 +157,7 @@ class _AccountPageState extends State<AccountPage> {
             Navigator.pop(context);
             setState(
               () {
-                Supabase.instance.client.from("UserData").delete().eq(
-                    "UserUID", Supabase.instance.client.auth.currentUser!.id);
+                Supabase.instance.client.from("UserData").delete().eq("UserUID", Supabase.instance.client.auth.currentUser!.id);
                 Supabase.instance.client.auth.signOut(scope: SignOutScope.global);
                 Navigator.pop(context);
               },
@@ -202,10 +179,7 @@ class _AccountPageState extends State<AccountPage> {
             Navigator.pop(context);
             setState(
               () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ChangePasswordPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePasswordPage()));
               },
             );
           },
@@ -238,20 +212,13 @@ class _AccountPageState extends State<AccountPage> {
       padding: const EdgeInsets.all(8.0),
       child: TextButton(
           onPressed: () async {
-            await Supabase.instance.client
-                .from("UserInterest")
-                .delete()
-                .eq("UserID", Supabase.instance.client.auth.currentUser!.id);
+            await Supabase.instance.client.from("UserInterest").delete().eq("UserID", Supabase.instance.client.auth.currentUser!.id);
             for (var item in UserInterest) {
-              await Supabase.instance.client.from("UserInterest").insert({
-                "UserID": Supabase.instance.client.auth.currentUser!.id,
-                "InterestID": item.ID
-              });
+              await Supabase.instance.client.from("UserInterest").insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": item.ID});
             }
             widget.User.Username = UsernameController.text;
             widget.User.Description = DescriptionController.text;
-            await widget.User.upload(
-                widget.User.ProfilePictureName, null, null);
+            await widget.User.upload(widget.User.ProfilePictureName, null, null);
             setState(() {});
             Navigator.pop(context);
           },
@@ -319,53 +286,50 @@ class _AccountPageState extends State<AccountPage> {
       const Text("Gender", style: TextStyle(color: Color(0xFFCCCCCC))),
       Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ChoiceChip(
-                  backgroundColor: const Color(0xFFFF82FF),
-                  selectedColor: const Color(0xFFFF82FF),
-                  label: Text(GenderEnum.Female.name),
-                  selected: widget.User.Gender == 2,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      widget.User.Gender = selected ? 2 : 0;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ChoiceChip(
-                  backgroundColor: const Color(0xFFFFEF63),
-                  selectedColor: const Color(0xFFFFEF63),
-                  label: Text(GenderEnum.NonBinary.name),
-                  selected: widget.User.Gender == 3,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      widget.User.Gender = selected ? 3 : 0;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ChoiceChip(
-                  backgroundColor: const Color(0xFF63EDFF),
-                  selectedColor: const Color(0xFF63EDFF),
-                  label: Text(GenderEnum.Male.name),
-                  selected: widget.User.Gender == 1,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      widget.User.Gender = selected ? 1 : 0;
-                    });
-                  },
-                ),
-              )
-            ]),
+        child: Wrap(alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ChoiceChip(
+              backgroundColor: const Color(0xFFFF82FF),
+              selectedColor: const Color(0xFFFF82FF),
+              label: Text(GenderEnum.Female.name),
+              selected: widget.User.Gender == 2,
+              onSelected: (bool selected) {
+                setState(() {
+                  widget.User.Gender = selected ? 2 : 0;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ChoiceChip(
+              backgroundColor: const Color(0xFFFFEF63),
+              selectedColor: const Color(0xFFFFEF63),
+              label: Text(GenderEnum.NonBinary.name),
+              selected: widget.User.Gender == 3,
+              onSelected: (bool selected) {
+                setState(() {
+                  widget.User.Gender = selected ? 3 : 0;
+                });
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ChoiceChip(
+              backgroundColor: const Color(0xFF63EDFF),
+              selectedColor: const Color(0xFF63EDFF),
+              label: Text(GenderEnum.Male.name),
+              selected: widget.User.Gender == 1,
+              onSelected: (bool selected) {
+                setState(() {
+                  widget.User.Gender = selected ? 1 : 0;
+                });
+              },
+            ),
+          )
+        ]),
       ),
     ]);
   }
@@ -391,12 +355,8 @@ class _AccountPageState extends State<AccountPage> {
         controller: DescriptionController,
         style: const TextStyle(color: Color(0xFFCCCCCC)),
         decoration: InputDecoration(
-          error: DescriptionController.text.isEmpty
-              ? const Text("Bro I promise you're not that boring",
-                  style: TextStyle(color: Color(0xFFCCCCCC)))
-              : null,
-          label: const Text("Description",
-              style: TextStyle(color: Color(0xFFCCCCCC))),
+          error: DescriptionController.text.isEmpty ? const Text("Bro I promise you're not that boring", style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+          label: const Text("Description", style: TextStyle(color: Color(0xFFCCCCCC))),
         ),
       ),
     );
@@ -419,12 +379,8 @@ class _AccountPageState extends State<AccountPage> {
         controller: UsernameController,
         style: const TextStyle(color: Color(0xFFCCCCCC)),
         decoration: InputDecoration(
-          error: UsernameController.text.isEmpty
-              ? const Text("like at least give us something plz",
-                  style: TextStyle(color: Color(0xFFCCCCCC)))
-              : null,
-          label: const Text("Username",
-              style: TextStyle(color: Color(0xFFCCCCCC))),
+          error: UsernameController.text.isEmpty ? const Text("like at least give us something plz", style: TextStyle(color: Color(0xFFCCCCCC))) : null,
+          label: const Text("Username", style: TextStyle(color: Color(0xFFCCCCCC))),
         ),
       ),
     );

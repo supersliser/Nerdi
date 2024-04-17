@@ -3,7 +3,6 @@ import 'package:nerdi/StartPage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserListPage.dart';
 
-
 Future<void> main() async {
   await Supabase.initialize(
     url: "https://stiewffqtdtjdcgnoooy.supabase.co",
@@ -47,7 +46,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class StatefulTemp extends StatefulWidget{
+class StatefulTemp extends StatefulWidget {
   const StatefulTemp({super.key});
 
   @override

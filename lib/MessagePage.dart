@@ -18,17 +18,11 @@ class _MessagePageState extends State<MessagePage> {
   Future<List<UserData>> getMatchedUsers() async {
     List<UserData> output = List.empty(growable: true);
 
-    var UserLiked = await Supabase.instance.client
-        .from("Likes")
-        .select()
-        .eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
+    var UserLiked = await Supabase.instance.client.from("Likes").select().eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
     var images = Supabase.instance.client.storage.from("ProfilePictures");
     for (var i in UserLiked) {
       if (i["Liked"] == 2) {
-        var tempUser = await Supabase.instance.client
-            .from("UserInfo")
-            .select()
-            .eq("UserUID", i["LikedID"]);
+        var tempUser = await Supabase.instance.client.from("UserInfo").select().eq("UserUID", i["LikedID"]);
         output.add(UserData(
             UUID: tempUser.first["UserUID"],
             Username: tempUser.first["Username"],
@@ -36,8 +30,7 @@ class _MessagePageState extends State<MessagePage> {
             Birthday: DateTime.parse(tempUser.first["Birthday"]),
             Gender: tempUser.first["Gender"],
             ProfilePictureName: tempUser.first["ProfilePictureName"],
-            ProfilePictureURL:
-                images.getPublicUrl(tempUser.first["ProfilePictureName"])));
+            ProfilePictureURL: images.getPublicUrl(tempUser.first["ProfilePictureName"])));
       }
     }
     return output;
@@ -73,10 +66,7 @@ class _MessagePageState extends State<MessagePage> {
     var appSize = MediaQuery.of(context).size;
     final stream = Supabase.instance.client
         .from("Messages")
-        .stream(primaryKey: ["MessageUID"]).inFilter("Sender", [
-      Supabase.instance.client.auth.currentUser!.id,
-      Recipient!.UUID
-    ]).order("Sent");
+        .stream(primaryKey: ["MessageUID"]).inFilter("Sender", [Supabase.instance.client.auth.currentUser!.id, Recipient!.UUID]).order("Sent");
     var MessageController = TextEditingController();
 
     return Expanded(
@@ -106,38 +96,28 @@ class _MessagePageState extends State<MessagePage> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 var data = snapshot.data!.where((element) {
-                  return element["Recipient"] == Recipient!.UUID ||
-                      element["Recipient"] ==
-                          Supabase.instance.client.auth.currentUser!.id;
+                  return element["Recipient"] == Recipient!.UUID || element["Recipient"] == Supabase.instance.client.auth.currentUser!.id;
                 });
                 return Expanded(
                   child: SingleChildScrollView(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          for (var i in data)
-                            Row(
-                              mainAxisAlignment: i["Sender"] == Recipient!.UUID
-                                  ? MainAxisAlignment.start
-                                  : MainAxisAlignment.end,
-                              children: [
-                                Card.filled(
-                                  color: i["Sender"] == Recipient!.UUID
-                                      ? Colors.white
-                                      : const Color(0xEEC78FFF),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text(
-                                      i["Content"],
-                                      textAlign: i["Sender"] == Recipient!.UUID
-                                          ? TextAlign.start
-                                          : TextAlign.end,
-                                    ),
-                                  ),
+                    child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      for (var i in data)
+                        Row(
+                          mainAxisAlignment: i["Sender"] == Recipient!.UUID ? MainAxisAlignment.start : MainAxisAlignment.end,
+                          children: [
+                            Card.filled(
+                              color: i["Sender"] == Recipient!.UUID ? Colors.white : const Color(0xEEC78FFF),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  i["Content"],
+                                  textAlign: i["Sender"] == Recipient!.UUID ? TextAlign.start : TextAlign.end,
                                 ),
-                              ],
+                              ),
                             ),
-                        ]),
+                          ],
+                        ),
+                    ]),
                   ),
                 );
               }),
@@ -145,9 +125,7 @@ class _MessagePageState extends State<MessagePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                width: appSize.width >= 700
-                    ? appSize.width - 400
-                    : appSize.width - 250,
+                width: appSize.width >= 700 ? appSize.width - 400 : appSize.width - 250,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: TextField(
@@ -208,11 +186,7 @@ class _MessagePageState extends State<MessagePage> {
                         IconButton(
                           icon: UserIcon(ImageURL: i.ProfilePictureURL),
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        UserDescPage(User: i)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: i)));
                           },
                         ),
                         Text(

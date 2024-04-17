@@ -16,8 +16,7 @@ class UserDescPage extends StatelessWidget {
     final List<Interest> Interests = await User.getInterests();
 
     Output.add(LargeUserIcon(ImageURL: User.ProfilePictureURL, Width: width));
-    Output.add(
-        UserItem(Data: GenderEnum.values[User.Gender].name, Width: width));
+    Output.add(UserItem(Data: GenderEnum.values[User.Gender].name, Width: width));
     Output.add(UserItem(
         Data:
             "Age: ${User.getAge()}, Birthday in ${User.Birthday!.copyWith(year: User.Birthday!.copyWith(year: DateTime.now().year).difference(DateTime.now()).inDays >= 0 ? DateTime.now().year : DateTime.now().year + 1).difference(DateTime.now()).inDays} Days",
@@ -25,8 +24,7 @@ class UserDescPage extends StatelessWidget {
     Output.add(UserItem(Data: User.Description, Width: width));
 
     for (int i = 0; i < Interests.length; i++) {
-      Output.add(InterestViewer(
-          interest: Interests[i], title: "${User.Username} has an interest in ${Interests[i].Name}", Width: width));
+      Output.add(InterestViewer(interest: Interests[i], title: "${User.Username} has an interest in ${Interests[i].Name}", Width: width));
     }
     Output.shuffle(Random(DateTime.now().hour));
     return Output;
@@ -47,7 +45,9 @@ class UserDescPage extends StatelessWidget {
           child: const Text("Back"),
         ),
         body: Row(children: [
-          const NavBar(CurrentIndex: 0,),
+          const NavBar(
+            CurrentIndex: 0,
+          ),
           Expanded(
             child: ListView(children: [
               FutureBuilder<List<Widget>>(
@@ -57,17 +57,13 @@ class UserDescPage extends StatelessWidget {
                       return const Center(child: CircularProgressIndicator());
                     }
                     final data = snapshot.data!;
-                    return (StaggeredGrid.count(
-                        crossAxisCount: (appSize.width / 300).floor(),
-                        children: data));
+                    return (StaggeredGrid.count(crossAxisCount: (appSize.width / 300).floor(), children: data));
                   })
             ]),
           ),
         ]));
   }
 }
-
-
 
 class UserItem extends StatelessWidget {
   const UserItem({

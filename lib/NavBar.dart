@@ -23,7 +23,6 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-
       backgroundColor: const Color(0xFF040404),
       trailing: const LoginButton(),
       extended: MediaQuery.of(context).size.width >= 700,
@@ -35,36 +34,21 @@ class _NavBarState extends State<NavBar> {
               "Home",
               style: TextStyle(color: Color(0xFFCCCCCC)),
             )),
-        NavigationRailDestination(
-            icon: Icon(Icons.account_tree),
-            label: Text("Interest Discovery",
-                style: TextStyle(color: Color(0xFFCCCCCC)))),
-        NavigationRailDestination(
-            icon: Icon(Icons.add),
-            label: Text("Create new interest",
-                style: TextStyle(color: Color(0xFFCCCCCC)))),
-        NavigationRailDestination(
-            icon: Icon(Icons.mail),
-            label:
-                Text("Messages", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.account_tree), label: Text("Interest Discovery", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create new interest", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.mail), label: Text("Messages", style: TextStyle(color: Color(0xFFCCCCCC)))),
         NavigationRailDestination(icon: Icon(Icons.thumb_up), label: Text("Liked History", style: TextStyle(color: Color(0xFFCCCCCC))))
       ],
       onDestinationSelected: (index) {
         switch (index) {
           case 0:
             setState(() {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const UserListPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
             });
             break;
           case 1:
             setState(() {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const InterestDiscoveryPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const InterestDiscoveryPage()));
             });
             break;
           case 2:
@@ -77,8 +61,7 @@ class _NavBarState extends State<NavBar> {
                                 ID: const Uuid().v4(),
                                 Name: "New Interest",
                                 Description: "Interest Description",
-                                PrimaryColour:
-                                    const Color.fromARGB(255, 199, 143, 255)),
+                                PrimaryColour: const Color.fromARGB(255, 199, 143, 255)),
                             editMode: true,
                             newInterest: true,
                           )));

@@ -13,19 +13,13 @@ class LikedHistoryPage extends StatefulWidget {
 }
 
 class _LikedHistoryPageState extends State<LikedHistoryPage> {
-  Future<List<UserData>> getLiked() async {
-    var liked = await Supabase.instance.client
-        .from("Likes")
-        .select()
-        .eq("LikerID", Supabase.instance.client.auth.currentUser!.id)
-        .neq("Liked", -1);
+  Future<List<List<dynamic>>> getLiked() async {
+    var liked = await Supabase.instance.client.from("Likes").select().eq("LikerID", Supabase.instance.client.auth.currentUser!.id);
+    // .neq("Liked", -1);
 
     var output = List<UserData>.empty(growable: true);
     for (var i in liked) {
-      var userData = await Supabase.instance.client
-          .from("UserInfo")
-          .select()
-          .eq("UserUID", i["LikedID"]);
+      var userData = await Supabase.instance.client.from("UserInfo").select().eq("UserUID", i["LikedID"]);
       output.add(UserData(
           UUID: userData.first["UserUID"],
           Username: userData.first["Username"],
@@ -33,11 +27,9 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
           Description: userData.first["Description"],
           ProfilePictureName: userData.first["ProfilePictureName"],
           Gender: userData.first["Gender"],
-          ProfilePictureURL: Supabase.instance.client.storage
-              .from("ProfilePictures")
-              .getPublicUrl(userData.first["ProfilePictureName"])));
+          ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(userData.first["ProfilePictureName"])));
     }
-    return output;
+    return List.generate(output.length, (index) => [output[index], liked[index]["Liked"] == -1 ? false : true]);
   }
 
   @override
@@ -63,44 +55,37 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
                       return const CircularProgressIndicator();
                     }
                     return StaggeredGrid.count(
-                      crossAxisCount:
-                          (MediaQuery.of(context).size.width / 300).floor(),
+                      crossAxisCount: (MediaQuery.of(context).size.width / 300).floor(),
                       children: [
                         for (var i in snapshot.data!)
                           Column(
                             children: [
-                              nonInteractiveUserCard(User: i, hasSecondaryPictures: true,),
+                              nonInteractiveUserCard(
+                                User: i.first,
+                                hasSecondaryPictures: true,
+                                liked: i.last,
+                              ),
                               TextButton(
-                                style: TextButton.styleFrom(
-                                    backgroundColor: Colors.red),
+                                style: TextButton.styleFrom(backgroundColor: Colors.red),
                                 child: const Text(
                                   "Unlike person",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () async {
-                                  var quickCheck = await Supabase
-                                      .instance.client
+                                  var quickCheck = await Supabase.instance.client
                                       .from("Likes")
                                       .delete()
-                                      .eq("LikedID", i.UUID)
-                                      .eq(
-                                          "LikerID",
-                                          Supabase.instance.client.auth
-                                              .currentUser!.id)
+                                      .eq("LikedID", i.first.UUID)
+                                      .eq("LikerID", Supabase.instance.client.auth.currentUser!.id)
                                       .select();
                                   if (quickCheck.first["Liked"] == 2) {
                                     await Supabase.instance.client
                                         .from("Likes")
                                         .update({"Liked": 1})
-                                        .eq(
-                                            "LikedID",
-                                            Supabase.instance.client.auth
-                                                .currentUser!.id)
-                                        .eq("LikerID", i.UUID);
+                                        .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
+                                        .eq("LikerID", i.first.UUID);
                                   }
-                                  setState(() {
-
-                                  });
+                                  setState(() {});
                                 },
                               )
                             ],
