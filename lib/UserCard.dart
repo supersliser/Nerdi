@@ -7,35 +7,50 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class nonInteractiveUserCard extends StatelessWidget {
-  const nonInteractiveUserCard({super.key, required this.User});
+  const nonInteractiveUserCard({super.key, required this.User, required this.hasSecondaryPictures});
 
   final UserData User;
+  final bool hasSecondaryPictures;
 
   Future<List<Widget>> getImages() async {
-    var temp = await User.getSecondaryPictures();
-    List<Widget> output = List.empty(growable: true);
-    var images = Supabase.instance.client.storage.from("SecondaryPictures");
-    output.add(Card.outlined(
-        color: const Color(0xFFC78FFF),
-        clipBehavior: Clip.hardEdge,
-        child: FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: User.ProfilePictureURL,
-          width: 300,
-          fit: BoxFit.cover,
-        )));
-    for (int i = 0; i < temp.length; i++) {
+    if (hasSecondaryPictures) {
+      var temp = await User.getSecondaryPictures();
+      List<Widget> output = List.empty(growable: true);
+      var images = Supabase.instance.client.storage.from("SecondaryPictures");
       output.add(Card.outlined(
           color: const Color(0xFFC78FFF),
           clipBehavior: Clip.hardEdge,
           child: FadeInImage.memoryNetwork(
             placeholder: kTransparentImage,
-            image: images.getPublicUrl(temp[i].PictureName),
+            image: User.ProfilePictureURL,
             width: 300,
             fit: BoxFit.cover,
           )));
+      for (int i = 0; i < temp.length; i++) {
+        output.add(Card.outlined(
+            color: const Color(0xFFC78FFF),
+            clipBehavior: Clip.hardEdge,
+            child: FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: images.getPublicUrl(temp[i].PictureName),
+              width: 300,
+              fit: BoxFit.cover,
+            )));
+      }
+      return output;
+    } else {
+      List<Widget> output = List.empty(growable: true);
+      output.add(Card.outlined(
+          color: const Color(0xFFC78FFF),
+          clipBehavior: Clip.hardEdge,
+          child: FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: User.ProfilePictureURL,
+            width: 300,
+            fit: BoxFit.cover,
+          )));
+      return output;
     }
-    return output;
   }
 
   @override

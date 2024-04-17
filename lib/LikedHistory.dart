@@ -67,7 +67,7 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
                         for (var i in snapshot.data!)
                           Column(
                             children: [
-                              nonInteractiveUserCard(User: i),
+                              nonInteractiveUserCard(User: i, hasSecondaryPictures: true,),
                               TextButton(
                                 style: TextButton.styleFrom(
                                     backgroundColor: Colors.red),

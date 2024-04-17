@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nerdi/NavBar.dart';
+import 'package:nerdi/StartPage.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:nerdi/UserCard.dart';
@@ -44,6 +45,9 @@ class _UserListPageState extends State<UserListPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (Supabase.instance.client.auth.currentUser == null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const StartPage()));
+    }
     return Scaffold(
         body: Row(
         children: [

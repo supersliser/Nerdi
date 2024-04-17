@@ -32,6 +32,7 @@ class _NewUserState extends State<NewUser> {
   bool ProfilePictureSet = false;
   bool EmailSet = false;
   bool InterestsSet = false;
+  bool BirthdayInvalid = false;
   String ImageName = "";
 
   List<Interest> UserInterest = List.empty(growable: true);
@@ -75,7 +76,10 @@ class _NewUserState extends State<NewUser> {
   }
 
   Widget getQuestion() {
-    if (!NameSet) {
+    if (BirthdayInvalid) {
+      return InvalidBirthday();
+    }
+    else if (!NameSet) {
       return NameSetter();
     } else if (!BirthdaySet) {
       List<DateTime> TempDate = List.empty(growable: true);
@@ -221,7 +225,7 @@ class _NewUserState extends State<NewUser> {
       child: Wrap(
         alignment: WrapAlignment.center,
         children: [
-          nonInteractiveUserCard(User: User),
+          nonInteractiveUserCard(User: User, hasSecondaryPictures: false,),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -233,12 +237,18 @@ class _NewUserState extends State<NewUser> {
                 child: ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    onPressed: () {
-                      User.upload(ImageName, Email, Password);
-                      Supabase.instance.client.auth.signInWithPassword(email: Email, password: Password);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
+                    onPressed: () async {
+                      if (User.Birthday!.difference(DateTime.now()).inDays * -1 > (365 * 18)) {
+                        await User.upload(ImageName, Email, Password);
+                        await Supabase.instance.client.auth.signInWithPassword(email: Email, password: Password);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
+                      } else {
+                        setState(() {
+                          BirthdayInvalid;
+                        });
+                      }
                     },
-                    child: const Text("below",
+                    child: const Text("I'm happy, lets go (you can change all of this later anyway)",
                         style: TextStyle(color: Color(0xFFCCCCCC)))),
               ),
               Padding(
@@ -248,18 +258,30 @@ class _NewUserState extends State<NewUser> {
                         ElevatedButton.styleFrom(backgroundColor: Colors.red),
                     onPressed: () {
                       setState(() {
-                        ProfilePictureSet = false;
+                         NameSet = false;
+                         BirthdaySet = false;
+                         GendersSet = false;
+                         DescriptionSet = false;
+                         ProfilePictureSet = false;
+                         EmailSet = false;
+                         InterestsSet = false;
                       });
                     },
                     child: const Text(
                         style: TextStyle(color: Color(0xFFCCCCCC)),
                         textAlign: TextAlign.center,
-                        "WAIT NONONO THIS IS WRONG I HAVE\n VERY IMPORTANT CHANGES I MUST MAKE IMMEDIATELY OR ELSE\n THE WORLD SHALL END IN A FIREY PIT OF HELL")),
+                        "wait, I forgot to add something to my profile")),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget InvalidBirthday() {
+    return Center(
+      child: Text("Sorry, youre too young to use this. For safety reasons you're gonna have to be over 18 to use this app"),
     );
   }
 
@@ -271,18 +293,27 @@ class _NewUserState extends State<NewUser> {
           children: [
             const Text(
                 textAlign: TextAlign.center,
-                "OK OK last thing I promise\nPlease enter your email and password \n(were not gonna send you any emails its literally just so supabase agrees w me)",
+                "OK OK last thing I promise\nPlease enter your email and password",
                 style: TextStyle(color: Color(0xFFCCCCCC))),
             TextField(
               onSubmitted: (text) {
                 setState(() {
-                  if (EmailController.text.isNotEmpty) {
+                  if (PassController.text.isEmpty || EmailController.text.isEmpty) {
+                    setState(() {
+                      ProfilePictureSet = false;
+                      EmailSet = false;
+                    });
+                  }else {
                     Email = EmailController.text;
+                    Password = PassController.text;
+                    EmailSet = true;
                   }
                 });
               },
               onChanged: (text) {
-                setState(() {});
+                setState(() {
+                  Email = EmailController.text;
+                });
               },
               controller: EmailController,
               style: const TextStyle(color: Color(0xFFCCCCCC)),
@@ -299,13 +330,21 @@ class _NewUserState extends State<NewUser> {
               obscureText: true,
               onSubmitted: (text) {
                 setState(() {
-                  if (PassController.text.isNotEmpty) {
+                  if (PassController.text.isEmpty || EmailController.text.isEmpty) {
+                    setState(() {
+                      EmailSet = false;
+                    });
+                  } else {
+                    Email = EmailController.text;
                     Password = PassController.text;
+                    EmailSet = true;
                   }
                 });
               },
               onChanged: (text) {
-                setState(() {});
+                setState(() {
+                  Password = PassController.text;
+                });
               },
               controller: PassController,
               style: const TextStyle(color: Color(0xFFCCCCCC)),
@@ -329,10 +368,15 @@ class _NewUserState extends State<NewUser> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red),
                         onPressed: () {
-                          setState(() {
-                            ProfilePictureSet = false;
-                            EmailSet = false;
-                          });
+                          if (PassController.text.isEmpty || EmailController.text.isEmpty) {
+                            setState(() {
+                              EmailSet = false;
+                            });
+                          } else {
+                            Email = EmailController.text;
+                            Password = PassController.text;
+                            EmailSet = true;
+                          }
                         },
                         child: const Text("Back",
                             style: TextStyle(color: Color(0xFF181818)))),
