@@ -1,5 +1,5 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:nerdi/UserDescPage.dart';
 import 'package:nerdi/UserIcon.dart';
@@ -73,7 +73,7 @@ class nonInteractiveUserCard extends StatelessWidget {
                   if (snapshot.data == null) {
                     return const CircularProgressIndicator();
                   }
-                  return ExpandableCarousel(options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()), items: snapshot.data);
+                  return CarouselSlider(options: CarouselOptions(enableInfiniteScroll: false), items: snapshot.data);
                 }),
             const Padding(
               padding: EdgeInsets.all(8.0),
@@ -279,7 +279,7 @@ class _UserCardState extends State<UserCard> {
                             if (snapshot.data == null) {
                               return const CircularProgressIndicator();
                             }
-                            return ExpandableCarousel(options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()), items: snapshot.data);
+                            return CarouselSlider(options: CarouselOptions(enableInfiniteScroll: false), items: snapshot.data);
                           }),
                       const Padding(
                         padding: EdgeInsets.all(8.0),
