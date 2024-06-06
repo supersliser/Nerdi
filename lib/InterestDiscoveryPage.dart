@@ -29,8 +29,7 @@ class InterestDiscoveryPage extends StatelessWidget {
           Description: Interests[index]["Description"],
           ImageName: Interests[index]["ImageName"],
           ImageURL: images.getPublicUrl(Interests[index]["ImageName"]),
-          PrimaryColour:
-              Color.fromARGB(0xFF, Interests[index]["PrimaryColourRed"], Interests[index]["PrimaryColourGreen"], Interests[index]["PrimaryColourBlue"]));
+          PrimaryColour: Color.fromARGB(0xFF, Interests[index]["PrimaryColourRed"], Interests[index]["PrimaryColourGreen"], Interests[index]["PrimaryColourBlue"]));
     });
   }
 
@@ -53,9 +52,7 @@ class InterestDiscoveryPage extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 final data = snapshot.data!;
-                return (StaggeredGrid.count(
-                    crossAxisCount: (appSize.width / 300).floor(),
-                    children: [for (int i = 0; i < data.length; i++) InterestViewer(interest: data[i], Width: width)]));
+                return (StaggeredGrid.count(crossAxisCount: (appSize.width / 300).floor(), children: [for (int i = 0; i < data.length; i++) InterestViewer(interest: data[i], Width: width)]));
               })
         ]),
       )

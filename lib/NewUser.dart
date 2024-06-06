@@ -238,8 +238,7 @@ class _NewUserState extends State<NewUser> {
                         InterestsSet = false;
                       });
                     },
-                    child:
-                        const Text(style: TextStyle(color: Color(0xFFCCCCCC)), textAlign: TextAlign.center, "wait, I forgot to add something to my profile")),
+                    child: const Text(style: TextStyle(color: Color(0xFFCCCCCC)), textAlign: TextAlign.center, "wait, I forgot to add something to my profile")),
               ),
             ],
           ),
@@ -260,8 +259,7 @@ class _NewUserState extends State<NewUser> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-                textAlign: TextAlign.center, "OK OK last thing I promise\nPlease enter your email and password", style: TextStyle(color: Color(0xFFCCCCCC))),
+            const Text(textAlign: TextAlign.center, "OK OK last thing I promise\nPlease enter your email and password", style: TextStyle(color: Color(0xFFCCCCCC))),
             TextField(
               onSubmitted: (text) {
                 setState(() {
@@ -366,8 +364,7 @@ class _NewUserState extends State<NewUser> {
     return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text("We sound like we would be great friends.\nFinally, why dont you show us your beautiful face?",
-              style: TextStyle(color: Color(0xFFCCCCCC))),
+          const Text("We sound like we would be great friends.\nFinally, why dont you show us your beautiful face?", style: TextStyle(color: Color(0xFFCCCCCC))),
           Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,

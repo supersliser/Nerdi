@@ -61,8 +61,9 @@ class UserData {
       var temp = await Supabase.instance.client.auth.signUp(email: Email, password: Password);
       UUID = temp.user!.id;
     }
-    await Supabase.instance.client.from("UserInfo").upsert(
-        {"UserUID": UUID, "Username": Username, "Birthday": Birthday.toString(), "Description": Description, "ProfilePictureName": PPname, "Gender": Gender});
+    await Supabase.instance.client
+        .from("UserInfo")
+        .upsert({"UserUID": UUID, "Username": Username, "Birthday": Birthday.toString(), "Description": Description, "ProfilePictureName": PPname, "Gender": Gender});
     for (int i = 0; i < GendersLookingFor.length; i++) {
       if (GendersLookingFor[i]) {
         await Supabase.instance.client.from("UserLookingForGender").upsert({"User": UUID, "GenderLookingFor": i + 1});
@@ -77,9 +78,7 @@ class UserData {
       await Supabase.instance.client.storage.from('ProfilePictures').uploadBinary(imageName, imageB, fileOptions: FileOptions(contentType: "image/$type"));
       ProfilePictureURL = Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(imageName);
     } else {
-      await Supabase.instance.client.storage
-          .from('ProfilePictures')
-          .upload(imageName, File(Image.path), fileOptions: FileOptions(contentType: "image/${Image.path.split(".").last}"));
+      await Supabase.instance.client.storage.from('ProfilePictures').upload(imageName, File(Image.path), fileOptions: FileOptions(contentType: "image/${Image.path.split(".").last}"));
       ProfilePictureURL = Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(imageName);
     }
     return imageName;
@@ -109,8 +108,7 @@ class UserData {
           Description: tempInterest.first["Description"],
           ImageName: tempInterest.first["ImageName"],
           ImageURL: images.getPublicUrl(tempInterest.first["ImageName"]),
-          PrimaryColour:
-              Color.fromARGB(0xFF, tempInterest.first["PrimaryColourRed"], tempInterest.first["PrimaryColourGreen"], tempInterest.first["PrimaryColourBlue"])));
+          PrimaryColour: Color.fromARGB(0xFF, tempInterest.first["PrimaryColourRed"], tempInterest.first["PrimaryColourGreen"], tempInterest.first["PrimaryColourBlue"])));
     }
     return output;
   }

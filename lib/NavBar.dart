@@ -57,11 +57,7 @@ class _NavBarState extends State<NavBar> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => InterestPage(
-                            interest: Interest(
-                                ID: const Uuid().v4(),
-                                Name: "New Interest",
-                                Description: "Interest Description",
-                                PrimaryColour: const Color.fromARGB(255, 199, 143, 255)),
+                            interest: Interest(ID: const Uuid().v4(), Name: "New Interest", Description: "Interest Description", PrimaryColour: const Color.fromARGB(255, 199, 143, 255)),
                             editMode: true,
                             newInterest: true,
                           )));

@@ -64,9 +64,7 @@ class _MessagePageState extends State<MessagePage> {
 
   Widget MesagingInterface() {
     var appSize = MediaQuery.of(context).size;
-    final stream = Supabase.instance.client
-        .from("Messages")
-        .stream(primaryKey: ["MessageUID"]).inFilter("Sender", [Supabase.instance.client.auth.currentUser!.id, Recipient!.UUID]).order("Sent");
+    final stream = Supabase.instance.client.from("Messages").stream(primaryKey: ["MessageUID"]).inFilter("Sender", [Supabase.instance.client.auth.currentUser!.id, Recipient!.UUID]).order("Sent");
     var MessageController = TextEditingController();
 
     return Expanded(

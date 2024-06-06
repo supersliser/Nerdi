@@ -18,24 +18,36 @@ class SmallInterestViewer extends StatelessWidget {
       height: 50,
       child: TextButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => InterestPage(interest: interest,)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => InterestPage(
+                        interest: interest,
+                      )));
         },
         child: Card.filled(
           color: interest.PrimaryColour,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Card.outlined( clipBehavior: Clip.hardEdge, child: FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image: interest.ImageURL,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),),
+              Card.outlined(
+                clipBehavior: Clip.hardEdge,
+                child: FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: interest.ImageURL,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(interest.Name, style: const TextStyle(color: Colors.white), overflow: TextOverflow.ellipsis,),
+                  child: Text(
+                    interest.Name,
+                    style: const TextStyle(color: Colors.white),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
             ],

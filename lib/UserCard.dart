@@ -7,11 +7,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class nonInteractiveUserCard extends StatelessWidget {
-  nonInteractiveUserCard(
-      {super.key,
-      required this.User,
-      required this.hasSecondaryPictures,
-      this.liked});
+  nonInteractiveUserCard({super.key, required this.User, required this.hasSecondaryPictures, this.liked});
 
   bool? liked;
 
@@ -77,12 +73,7 @@ class nonInteractiveUserCard extends StatelessWidget {
                   if (snapshot.data == null) {
                     return const CircularProgressIndicator();
                   }
-                  return ExpandableCarousel(
-                      options: CarouselOptions(
-                          enableInfiniteScroll: false,
-                          showIndicator: true,
-                          slideIndicator: const CircularSlideIndicator()),
-                      items: snapshot.data);
+                  return ExpandableCarousel(options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()), items: snapshot.data);
                 }),
             const Padding(
               padding: EdgeInsets.all(8.0),
@@ -93,10 +84,7 @@ class nonInteractiveUserCard extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserDescPage(User: User)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: User)));
                     },
                     icon: UserIcon(ImageURL: User.ProfilePictureURL)),
                 Padding(
@@ -161,7 +149,10 @@ class SmallUserCard extends StatelessWidget {
               UserIcon(ImageURL: User.ProfilePictureURL),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(User.Username, style: const TextStyle(color: Colors.white),),
+                child: Text(
+                  User.Username,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -220,11 +211,7 @@ class _UserCardState extends State<UserCard> {
         ),
         style: TextButton.styleFrom(backgroundColor: Colors.black),
         onPressed: () async {
-          await Supabase.instance.client.from("Likes").insert({
-            "LikerID": Supabase.instance.client.auth.currentUser!.id,
-            "LikedID": widget.User.UUID,
-            "Liked": -1
-          });
+          await Supabase.instance.client.from("Likes").insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": -1});
           setState(() {
             disliked = !disliked;
           });
@@ -245,18 +232,8 @@ class _UserCardState extends State<UserCard> {
         ),
         style: TextButton.styleFrom(backgroundColor: Colors.black),
         onPressed: () async {
-          if ((await Supabase.instance.client
-                  .from("Likes")
-                  .select()
-                  .eq("LikerID", widget.User.UUID)
-                  .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
-                  .eq("Liked", 1))
-              .isEmpty) {
-            await Supabase.instance.client.from("Likes").insert({
-              "LikerID": Supabase.instance.client.auth.currentUser!.id,
-              "LikedID": widget.User.UUID,
-              "Liked": 1
-            });
+          if ((await Supabase.instance.client.from("Likes").select().eq("LikerID", widget.User.UUID).eq("LikedID", Supabase.instance.client.auth.currentUser!.id).eq("Liked", 1)).isEmpty) {
+            await Supabase.instance.client.from("Likes").insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 1});
           } else {
             await Supabase.instance.client.from("Likes").update({
               "Liked": 2,
@@ -264,11 +241,7 @@ class _UserCardState extends State<UserCard> {
               "LikedID": Supabase.instance.client.auth.currentUser!.id,
               "LikerID": widget.User.UUID,
             });
-            await Supabase.instance.client.from("Likes").insert({
-              "LikerID": Supabase.instance.client.auth.currentUser!.id,
-              "LikedID": widget.User.UUID,
-              "Liked": 2
-            });
+            await Supabase.instance.client.from("Likes").insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 2});
           }
           setState(() {
             liked = !liked;
@@ -281,6 +254,7 @@ class _UserCardState extends State<UserCard> {
 
   bool liked = false;
   bool disliked = false;
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -305,13 +279,7 @@ class _UserCardState extends State<UserCard> {
                             if (snapshot.data == null) {
                               return const CircularProgressIndicator();
                             }
-                            return ExpandableCarousel(
-                                options: CarouselOptions(
-                                    enableInfiniteScroll: false,
-                                    showIndicator: true,
-                                    slideIndicator:
-                                        const CircularSlideIndicator()),
-                                items: snapshot.data);
+                            return ExpandableCarousel(options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()), items: snapshot.data);
                           }),
                       const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -322,17 +290,11 @@ class _UserCardState extends State<UserCard> {
                         children: [
                           IconButton(
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            UserDescPage(User: widget.User)));
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: widget.User)));
                               },
                               icon: UserIcon(
                                 ImageURL: widget.User.ProfilePictureURL,
-                                size: MediaQuery.of(context).size.width <= 300
-                                    ? 30
-                                    : 50,
+                                size: MediaQuery.of(context).size.width <= 300 ? 30 : 50,
                               )),
                           Padding(
                             padding: const EdgeInsets.all(5),
@@ -353,8 +315,7 @@ class _UserCardState extends State<UserCard> {
                                 padding: const EdgeInsets.all(2.0),
                                 child: Text(
                                   GenderEnum.values[widget.User.Gender].name,
-                                  style:
-                                      const TextStyle(color: Color(0xFF161616)),
+                                  style: const TextStyle(color: Color(0xFF161616)),
                                 ),
                               ),
                             ),
@@ -378,9 +339,7 @@ class _UserCardState extends State<UserCard> {
         Row(
           children: [
             dislikeButton(),
-            Padding(
-                padding: EdgeInsets.only(
-                    left: width <= 500 ? width - 230 : 240, top: 450)),
+            Padding(padding: EdgeInsets.only(left: width <= 500 ? width - 230 : 240, top: 450)),
             likeButton(),
           ],
         )

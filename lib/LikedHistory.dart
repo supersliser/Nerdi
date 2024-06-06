@@ -72,18 +72,10 @@ class _LikedHistoryPageState extends State<LikedHistoryPage> {
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onPressed: () async {
-                                  var quickCheck = await Supabase.instance.client
-                                      .from("Likes")
-                                      .delete()
-                                      .eq("LikedID", i.first.UUID)
-                                      .eq("LikerID", Supabase.instance.client.auth.currentUser!.id)
-                                      .select();
+                                  var quickCheck =
+                                      await Supabase.instance.client.from("Likes").delete().eq("LikedID", i.first.UUID).eq("LikerID", Supabase.instance.client.auth.currentUser!.id).select();
                                   if (quickCheck.first["Liked"] == 2) {
-                                    await Supabase.instance.client
-                                        .from("Likes")
-                                        .update({"Liked": 1})
-                                        .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
-                                        .eq("LikerID", i.first.UUID);
+                                    await Supabase.instance.client.from("Likes").update({"Liked": 1}).eq("LikedID", Supabase.instance.client.auth.currentUser!.id).eq("LikerID", i.first.UUID);
                                   }
                                   setState(() {});
                                 },
