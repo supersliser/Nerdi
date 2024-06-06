@@ -267,7 +267,7 @@ class _InterestPageState extends State<InterestPage> {
                                     })
                               ],
                             ),
-                            Expanded(
+                            const Expanded(
                                 child: Column(
                               children: [Text("Gonna put posts here")],
                             )),

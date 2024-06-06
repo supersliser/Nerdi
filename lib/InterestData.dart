@@ -35,7 +35,7 @@ class SmallInterestViewer extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(interest.Name, style: TextStyle(color: Colors.white), overflow: TextOverflow.ellipsis,),
+                  child: Text(interest.Name, style: const TextStyle(color: Colors.white), overflow: TextOverflow.ellipsis,),
                 ),
               ),
             ],

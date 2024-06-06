@@ -161,7 +161,7 @@ class SmallUserCard extends StatelessWidget {
               UserIcon(ImageURL: User.ProfilePictureURL),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(User.Username, style: TextStyle(color: Colors.white),),
+                child: Text(User.Username, style: const TextStyle(color: Colors.white),),
               ),
             ],
           ),
