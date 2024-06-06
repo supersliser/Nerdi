@@ -18,7 +18,7 @@ class nonInteractiveUserCard extends StatelessWidget {
     if (hasSecondaryPictures) {
       var temp = await User.getSecondaryPictures();
       List<Widget> output = List.empty(growable: true);
-      var images = Supabase.instance.client.storage.from("SecondaryPictures");
+      var images = Supabase.instance.client.storage.from("ProfilePictures");
       output.add(Card.outlined(
           color: const Color(0xFFC78FFF),
           clipBehavior: Clip.hardEdge,
@@ -73,7 +73,9 @@ class nonInteractiveUserCard extends StatelessWidget {
                   if (snapshot.data == null) {
                     return const CircularProgressIndicator();
                   }
-                  return ExpandableCarousel(options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()), items: snapshot.data);
+                  return ExpandableCarousel(
+                      options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()),
+                      items: snapshot.data);
                 }),
             const Padding(
               padding: EdgeInsets.all(8.0),
@@ -176,7 +178,7 @@ class _UserCardState extends State<UserCard> {
   Future<List<Widget>> getImages() async {
     var temp = await widget.User.getSecondaryPictures();
     List<Widget> output = List.empty(growable: true);
-    var images = Supabase.instance.client.storage.from("SecondaryPictures");
+    var images = Supabase.instance.client.storage.from("ProfilePictures");
     output.add(Card.outlined(
         color: const Color(0xFFC78FFF),
         clipBehavior: Clip.hardEdge,
@@ -211,7 +213,9 @@ class _UserCardState extends State<UserCard> {
         ),
         style: TextButton.styleFrom(backgroundColor: Colors.black),
         onPressed: () async {
-          await Supabase.instance.client.from("Likes").insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": -1});
+          await Supabase.instance.client
+              .from("Likes")
+              .insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": -1});
           setState(() {
             disliked = !disliked;
           });
@@ -232,8 +236,16 @@ class _UserCardState extends State<UserCard> {
         ),
         style: TextButton.styleFrom(backgroundColor: Colors.black),
         onPressed: () async {
-          if ((await Supabase.instance.client.from("Likes").select().eq("LikerID", widget.User.UUID).eq("LikedID", Supabase.instance.client.auth.currentUser!.id).eq("Liked", 1)).isEmpty) {
-            await Supabase.instance.client.from("Likes").insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 1});
+          if ((await Supabase.instance.client
+                  .from("Likes")
+                  .select()
+                  .eq("LikerID", widget.User.UUID)
+                  .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
+                  .eq("Liked", 1))
+              .isEmpty) {
+            await Supabase.instance.client
+                .from("Likes")
+                .insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 1});
           } else {
             await Supabase.instance.client.from("Likes").update({
               "Liked": 2,
@@ -241,7 +253,9 @@ class _UserCardState extends State<UserCard> {
               "LikedID": Supabase.instance.client.auth.currentUser!.id,
               "LikerID": widget.User.UUID,
             });
-            await Supabase.instance.client.from("Likes").insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 2});
+            await Supabase.instance.client
+                .from("Likes")
+                .insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 2});
           }
           setState(() {
             liked = !liked;
@@ -279,7 +293,9 @@ class _UserCardState extends State<UserCard> {
                             if (snapshot.data == null) {
                               return const CircularProgressIndicator();
                             }
-                            return ExpandableCarousel(options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()), items: snapshot.data);
+                            return ExpandableCarousel(
+                                options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()),
+                                items: snapshot.data);
                           }),
                       const Padding(
                         padding: EdgeInsets.all(8.0),

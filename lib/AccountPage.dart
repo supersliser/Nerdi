@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:nerdi/NavBar.dart';
 import 'package:nerdi/StartPage.dart';
 import 'package:nerdi/UserData.dart';
+import 'package:nerdi/UserDescPage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -76,9 +78,20 @@ class _AccountPageState extends State<AccountPage> {
     String imageName = widget.User.getImageUUID();
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
-      var temp = await widget.User.uploadImage(image, imageName, image.name.split(".")[1]);
+      var temp = await widget.User.uploadImage(image, imageName, image.name.split(".").last);
       setState(() {
         widget.User.ProfilePictureName = temp;
+      });
+    }
+  }
+
+  Future<void> pickSecondaryImage(int order) async {
+    String imageName = widget.User.getImageUUID();
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      var temp = await widget.User.uploadSecondaryImage(image, imageName, image.name.split(".").last);
+      await Supabase.instance.client.from("SecondaryPictures").insert({"UserID": widget.User.UUID, "PictureName": imageName, "Order": order});
+      setState(() {
       });
     }
   }
@@ -129,16 +142,17 @@ class _AccountPageState extends State<AccountPage> {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: Wrap(
-                alignment: WrapAlignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   PrimaryImageContainer(),
+                  SecondaryImageContainer(),
                   UsernameInput(),
                   DescriptionInput(),
                   GenderSelector(),
                   InterestSelector(),
                   Column(
-                    children: [SaveButton(), ChangePasswordButton(context), SignOutButton(context), DeleteAccountButton(context)],
+                    children: [SaveButton(), ChangePasswordButton(context), SignOutButton(context), ViewProfileButton(), DeleteAccountButton(context)],
                   )
                 ],
               ),
@@ -202,6 +216,21 @@ class _AccountPageState extends State<AccountPage> {
           style: TextButton.styleFrom(backgroundColor: Colors.red),
           child: const Text(
             "Sign Out",
+            style: TextStyle(color: Colors.black),
+          )),
+    );
+  }
+
+  Padding ViewProfileButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+          onPressed: () async {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: widget.User)));
+          },
+          style: TextButton.styleFrom(backgroundColor: Colors.blue),
+          child: const Text(
+            "View Public Profile",
             style: TextStyle(color: Colors.black),
           )),
     );
@@ -383,6 +412,54 @@ class _AccountPageState extends State<AccountPage> {
           label: const Text("Username", style: TextStyle(color: Color(0xFFCCCCCC))),
         ),
       ),
+    );
+  }
+
+  List<Widget> getSecondaryImageElements(List<SecondaryPicture> item) {
+    List<Widget> output = List.empty(growable: true);
+
+    for (var i in item) {
+      output.add(Card.outlined(
+          clipBehavior: Clip.hardEdge,
+          color: const Color(0xFFC78FFF),
+          child: FadeInImage.memoryNetwork(
+            placeholder: kTransparentImage,
+            image: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(i.PictureName),
+            width: 150,
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
+    output.add(Card.outlined(
+        clipBehavior: Clip.hardEdge,
+        color: const Color(0xFFC78FFF),
+        child: IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () async {
+            await pickSecondaryImage(item.length);
+            setState(() {});
+          },
+        )));
+
+    return output;
+  }
+
+  Widget SecondaryImageContainer() {
+    return SizedBox(
+      width: 300,
+      height: 200,
+      child: FutureBuilder(
+          future: widget.User.getSecondaryPictures(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const CircularProgressIndicator();
+            }
+            return ExpandableCarousel(
+                items: getSecondaryImageElements(snapshot.data!),
+                options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, enlargeStrategy: CenterPageEnlargeStrategy.height , slideIndicator: const CircularSlideIndicator()));
+          }),
     );
   }
 

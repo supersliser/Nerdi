@@ -35,6 +35,8 @@ class _NewUserState extends State<NewUser> {
   bool BirthdayInvalid = false;
   String ImageName = "";
 
+  List<String> SecondaryImages = List.empty(growable: true);
+
   List<Interest> UserInterest = List.empty(growable: true);
 
   @override
@@ -53,6 +55,17 @@ class _NewUserState extends State<NewUser> {
       var temp = await User.uploadImage(image, imageName, image.name.split(".")[1]);
       setState(() {
         ImageName = temp;
+      });
+    }
+  }
+
+  Future<void> pickSecondaryImage() async {
+    String imageName = User.getImageUUID();
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      var temp = await User.uploadSecondaryImage(image, imageName, image.name.split(".")[1]);
+      setState(() {
+        SecondaryImages.add(temp);
       });
     }
   }
@@ -213,6 +226,9 @@ class _NewUserState extends State<NewUser> {
                     onPressed: () async {
                       if (User.Birthday!.difference(DateTime.now()).inDays * -1 > (365 * 18)) {
                         await User.upload(ImageName, Email, Password);
+                        for (int i = 0; i < SecondaryImages.length; i++) {
+                          await Supabase.instance.client.from("SecondaryPictures").insert({"UserID": User.UUID, "PictureName": SecondaryImages[i], "Order": i});
+                        }
                         await Supabase.instance.client.auth.signInWithPassword(email: Email, password: Password);
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const UserListPage()));
                       } else {
@@ -365,6 +381,7 @@ class _NewUserState extends State<NewUser> {
         padding: const EdgeInsets.all(20),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Text("We sound like we would be great friends.\nFinally, why dont you show us your beautiful face?", style: TextStyle(color: Color(0xFFCCCCCC))),
+          const Text("This first image will be your profile picture, the first one everyone sees", style: TextStyle(color: Color(0xFFCCCCCC))),
           Wrap(
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
@@ -389,6 +406,43 @@ class _NewUserState extends State<NewUser> {
                     },
                     child: const Text("Select Image")),
               )
+            ],
+          ),
+          const Text("These ones are optional, but are nice if you wanna show off stuff like your gaming setup or favourite horse", style: TextStyle(color: Color(0xFFCCCCCC))),
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              for (var i in SecondaryImages)
+                Card.outlined(
+                  clipBehavior: Clip.hardEdge,
+                  color: const Color(0xFFC78FFF),
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(i),
+                    width: 300,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              Card.outlined(
+                clipBehavior: Clip.hardEdge,
+                color: const Color(0xFFC78FFF),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          pickImage();
+                        });
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.add),
+                          Text("Select Image"),
+                        ],
+                      )),
+                )
+              ),
             ],
           ),
           Padding(

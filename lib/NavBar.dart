@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nerdi/CreatePostPage.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/InterestDiscoveryPage.dart';
 import 'package:nerdi/InterestPage.dart';
@@ -37,7 +38,8 @@ class _NavBarState extends State<NavBar> {
         NavigationRailDestination(icon: Icon(Icons.account_tree), label: Text("Interest Discovery", style: TextStyle(color: Color(0xFFCCCCCC)))),
         NavigationRailDestination(icon: Icon(Icons.add), label: Text("Create new interest", style: TextStyle(color: Color(0xFFCCCCCC)))),
         NavigationRailDestination(icon: Icon(Icons.mail), label: Text("Messages", style: TextStyle(color: Color(0xFFCCCCCC)))),
-        NavigationRailDestination(icon: Icon(Icons.thumb_up), label: Text("Liked History", style: TextStyle(color: Color(0xFFCCCCCC))))
+        NavigationRailDestination(icon: Icon(Icons.thumb_up), label: Text("Liked History", style: TextStyle(color: Color(0xFFCCCCCC)))),
+        NavigationRailDestination(icon: Icon(Icons.add_a_photo), label: Text("New Post", style: TextStyle(color: Color(0xFFCCCCCC)))),
       ],
       onDestinationSelected: (index) {
         switch (index) {
@@ -71,6 +73,10 @@ class _NavBarState extends State<NavBar> {
           case 4:
             setState(() {
               Navigator.push(context, MaterialPageRoute(builder: (context) => const LikedHistoryPage()));
+            });
+          case 5:
+            setState(() {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const CreatePostPage()));
             });
         }
       },

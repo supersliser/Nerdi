@@ -84,6 +84,17 @@ class UserData {
     return imageName;
   }
 
+  Future<String> uploadSecondaryImage(XFile Image, String imageName, String type) async {
+    await Supabase.instance.client.storage.from("ProfilePictures").remove([ProfilePictureName]);
+    if (kIsWeb) {
+      var imageB = await Image.readAsBytes();
+      await Supabase.instance.client.storage.from('ProfilePictures').uploadBinary(imageName, imageB, fileOptions: FileOptions(contentType: "image/$type"));
+    } else {
+      await Supabase.instance.client.storage.from('ProfilePictures').upload(imageName, File(Image.path), fileOptions: FileOptions(contentType: "image/${Image.path.split(".").last}"));
+    }
+    return imageName;
+  }
+
   Future<List<bool>> getGendersLookingFor() async {
     final Genders = await Supabase.instance.client.from("UserLookingForGender").select().eq("User", UUID);
 
