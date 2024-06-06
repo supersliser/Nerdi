@@ -22,9 +22,9 @@ class _UserListPageState extends State<UserListPage> {
       Username: UserDataTemp.first["Username"],
       Description: UserDataTemp.first["Description"],
       Birthday: DateTime.parse(UserDataTemp.first["Birthday"]),
-      ProfilePictureName: UserDataTemp.first["ProfilePictureName"],
+      ProfilePictureName: UserDataTemp.first["ProfilePictureName"] == "" ? "No-Image-Placeholder.png":UserDataTemp.first["ProfilePictureName"] ,
       Gender: UserDataTemp.first["Gender"],
-      ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(UserDataTemp.first["ProfilePictureName"]),
+      ProfilePictureURL: UserDataTemp.first["ProfilePictureName"] == "" ? "https://stiewffqtdtjdcgnoooy.supabase.co/storage/v1/object/public/ProfilePictures/No-Image-Placeholder.png" : Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(UserDataTemp.first["ProfilePictureName"]),
     );
     await User.getGendersLookingFor();
     var PossibleUsersTemp = await Supabase.instance.client
@@ -39,8 +39,8 @@ class _UserListPageState extends State<UserListPage> {
           Birthday: DateTime.parse(item["Birthday"]),
           Gender: item["Gender"],
           Description: item["Description"],
-          ProfilePictureName: item["ProfilePictureName"],
-          ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(item["ProfilePictureName"])));
+          ProfilePictureName: item["ProfilePictureName"] == "" ? "No-Image-Placeholder.png" : item["ProfilePictureName"],
+          ProfilePictureURL:item["ProfilePictureName"] == "" ? "https://stiewffqtdtjdcgnoooy.supabase.co/storage/v1/object/public/ProfilePictures/No-Image-Placeholder.png" : Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(item["ProfilePictureName"])));
     }
     var iterableLoop = PossibleUsers;
     for (int i = 0; i < iterableLoop.length; i++) {

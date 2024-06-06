@@ -7,6 +7,45 @@ import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:nerdi/InterestPage.dart';
 
+class SmallInterestViewer extends StatelessWidget {
+  const SmallInterestViewer({super.key, required this.interest});
+  final Interest interest;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 200,
+      height: 50,
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => InterestPage(interest: interest,)));
+        },
+        child: Card.filled(
+          color: interest.PrimaryColour,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Card.outlined( clipBehavior: Clip.hardEdge, child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: interest.ImageURL,
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(interest.Name, style: TextStyle(color: Colors.white), overflow: TextOverflow.ellipsis,),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class InterestViewer extends StatelessWidget {
   const InterestViewer({super.key, required this.interest, this.title, required this.Width});
   final Interest interest;

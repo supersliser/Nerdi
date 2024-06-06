@@ -7,7 +7,11 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class nonInteractiveUserCard extends StatelessWidget {
-  nonInteractiveUserCard({super.key, required this.User, required this.hasSecondaryPictures, this.liked});
+  nonInteractiveUserCard(
+      {super.key,
+      required this.User,
+      required this.hasSecondaryPictures,
+      this.liked});
 
   bool? liked;
 
@@ -74,7 +78,10 @@ class nonInteractiveUserCard extends StatelessWidget {
                     return const CircularProgressIndicator();
                   }
                   return ExpandableCarousel(
-                      options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()),
+                      options: CarouselOptions(
+                          enableInfiniteScroll: false,
+                          showIndicator: true,
+                          slideIndicator: const CircularSlideIndicator()),
                       items: snapshot.data);
                 }),
             const Padding(
@@ -86,7 +93,10 @@ class nonInteractiveUserCard extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: User)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserDescPage(User: User)));
                     },
                     icon: UserIcon(ImageURL: User.ProfilePictureURL)),
                 Padding(
@@ -123,6 +133,38 @@ class nonInteractiveUserCard extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class SmallUserCard extends StatelessWidget {
+  const SmallUserCard({super.key, required this.User});
+
+  final UserData User;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 200,
+      height: 50,
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: User)));
+        },
+        child: Card.filled(
+          color: Colors.black,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              UserIcon(ImageURL: User.ProfilePictureURL),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(User.Username, style: TextStyle(color: Colors.white),),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -178,9 +220,11 @@ class _UserCardState extends State<UserCard> {
         ),
         style: TextButton.styleFrom(backgroundColor: Colors.black),
         onPressed: () async {
-          await Supabase.instance.client
-              .from("Likes")
-              .insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": -1});
+          await Supabase.instance.client.from("Likes").insert({
+            "LikerID": Supabase.instance.client.auth.currentUser!.id,
+            "LikedID": widget.User.UUID,
+            "Liked": -1
+          });
           setState(() {
             disliked = !disliked;
           });
@@ -208,9 +252,11 @@ class _UserCardState extends State<UserCard> {
                   .eq("LikedID", Supabase.instance.client.auth.currentUser!.id)
                   .eq("Liked", 1))
               .isEmpty) {
-            await Supabase.instance.client
-                .from("Likes")
-                .insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 1});
+            await Supabase.instance.client.from("Likes").insert({
+              "LikerID": Supabase.instance.client.auth.currentUser!.id,
+              "LikedID": widget.User.UUID,
+              "Liked": 1
+            });
           } else {
             await Supabase.instance.client.from("Likes").update({
               "Liked": 2,
@@ -218,9 +264,11 @@ class _UserCardState extends State<UserCard> {
               "LikedID": Supabase.instance.client.auth.currentUser!.id,
               "LikerID": widget.User.UUID,
             });
-            await Supabase.instance.client
-                .from("Likes")
-                .insert({"LikerID": Supabase.instance.client.auth.currentUser!.id, "LikedID": widget.User.UUID, "Liked": 2});
+            await Supabase.instance.client.from("Likes").insert({
+              "LikerID": Supabase.instance.client.auth.currentUser!.id,
+              "LikedID": widget.User.UUID,
+              "Liked": 2
+            });
           }
           setState(() {
             liked = !liked;
@@ -258,7 +306,11 @@ class _UserCardState extends State<UserCard> {
                               return const CircularProgressIndicator();
                             }
                             return ExpandableCarousel(
-                                options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()),
+                                options: CarouselOptions(
+                                    enableInfiniteScroll: false,
+                                    showIndicator: true,
+                                    slideIndicator:
+                                        const CircularSlideIndicator()),
                                 items: snapshot.data);
                           }),
                       const Padding(
@@ -270,11 +322,17 @@ class _UserCardState extends State<UserCard> {
                         children: [
                           IconButton(
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => UserDescPage(User: widget.User)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UserDescPage(User: widget.User)));
                               },
                               icon: UserIcon(
                                 ImageURL: widget.User.ProfilePictureURL,
-                                size: MediaQuery.of(context).size.width <= 300 ? 30 : 50,
+                                size: MediaQuery.of(context).size.width <= 300
+                                    ? 30
+                                    : 50,
                               )),
                           Padding(
                             padding: const EdgeInsets.all(5),
@@ -295,7 +353,8 @@ class _UserCardState extends State<UserCard> {
                                 padding: const EdgeInsets.all(2.0),
                                 child: Text(
                                   GenderEnum.values[widget.User.Gender].name,
-                                  style: const TextStyle(color: Color(0xFF161616)),
+                                  style:
+                                      const TextStyle(color: Color(0xFF161616)),
                                 ),
                               ),
                             ),
@@ -319,7 +378,9 @@ class _UserCardState extends State<UserCard> {
         Row(
           children: [
             dislikeButton(),
-            Padding(padding: EdgeInsets.only(left: width <= 500 ? width - 230 : 240, top: 450)),
+            Padding(
+                padding: EdgeInsets.only(
+                    left: width <= 500 ? width - 230 : 240, top: 450)),
             likeButton(),
           ],
         )
