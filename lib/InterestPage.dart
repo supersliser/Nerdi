@@ -135,94 +135,101 @@ class _InterestPageState extends State<InterestPage> {
               ),
             ),
             body: SingleChildScrollView(
-              child: Column(children: [
-                SizedBox(
-                  width: appSize.width,
-                  height: 100,
-                  child: FadeInImage.memoryNetwork(fit: BoxFit.cover, placeholder: kTransparentImage, image: widget.interest.ImageURL),
-                ),
-                Row(
-                  children: [
-                    TextButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.editMode = !widget.editMode;
-                          });
-                        },
-                        child: const Text("Edit")),
-                    Expanded(
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(25),
-                          child: Text(
-                            widget.interest.Name,
-                            style: const TextStyle(
-                              color: Color(0xFFCCCCCC),
-                              fontSize: 50,
-                            ),
-                          ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    width: appSize.width,
+                    height: 100,
+                    child: FadeInImage.memoryNetwork(fit: BoxFit.cover, placeholder: kTransparentImage, image: widget.interest.ImageURL),
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(25),
+                      child: Text(
+                        widget.interest.Name,
+                        style: const TextStyle(
+                          color: Color(0xFFCCCCCC),
+                          fontSize: 50,
                         ),
                       ),
                     ),
-                    TextButton(
-                        onPressed: () async {
-                          await Supabase.instance.client
-                              .from("UserInterest")
-                              .insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": widget.interest.ID});
-                        },
-                        child: const Text("I'm interested in this")),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(widget.interest.Description,
-                          style: const TextStyle(
-                            color: Color(0xFFCCCCCC),
-                            fontSize: 20,
-                          )),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30, bottom: 30),
-                        child: Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      TextButton(
+                          onPressed: () {
+                            setState(() {
+                              widget.editMode = !widget.editMode;
+                            });
+                          },
+                          child: const Text("Edit")),
+                      TextButton(
+                          onPressed: () async {
+                            await Supabase.instance.client
+                                .from("UserInterest")
+                                .insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": widget.interest.ID});
+                          },
+                          child: const Text("I'm interested in this")),
+                    ],
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(children: [
+                        Text(widget.interest.Description,
+                            style: const TextStyle(
+                              color: Color(0xFFCCCCCC),
+                              fontSize: 20,
+                            )),
+                      ])),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30, bottom: 30),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.start,
+                      alignment: WrapAlignment.center,
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
                           children: [
-                            Column(
-                              children: [
-                                const Text(
-                                  "Others interested in this",
-                                  style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 20),
-                                ),
-                                FutureBuilder(
-                                    future: getUsersWithInterest(),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return const Center(child: CircularProgressIndicator());
-                                      }
-                                      return Column(
-                                        children: [
-                                          for (int i = 0; i < snapshot.data!.length; i++)
-                                            SmallUserCard(
-                                              User: snapshot.data![i],
-                                            )
-                                        ],
-                                      );
-                                    })
-                              ],
+                            const Text(
+                              "Others interested in this",
+                              style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 20),
                             ),
-                            Expanded(
-                                child: FutureBuilder(
-                                    future: PostData.getPostsForInterest(widget.interest),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return CircularProgressIndicator();
-                                      }
-                                      return SingleChildScrollView(
-                                          child: Column(
-                                              children: snapshot.data!.map((i) {
-                                        return
-                                          Card.filled(
+                            FutureBuilder(
+                                future: getUsersWithInterest(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  }
+                                  return Column(
+                                    children: [
+                                      for (int i = 0; i < snapshot.data!.length; i++)
+                                        SmallUserCard(
+                                          User: snapshot.data![i],
+                                        )
+                                    ],
+                                  );
+                                })
+                          ],
+                        ),
+                        SizedBox(
+                          width: appSize.width >= 1200 ? appSize.width - 800 : 1200,
+                          child: Column(
+                            children: [
+    const Text(
+    "Posts in this interest",
+    style: TextStyle(color: Color(0xFFCCCCCC), fontSize: 20)),
+                              FutureBuilder(
+                                      future: PostData.getPostsForInterest(widget.interest),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return CircularProgressIndicator();
+                                        }
+                                        return SingleChildScrollView(
+                                            child: Column(
+                                                children: snapshot.data!.map((i) {
+                                          return Card.filled(
                                             color: Colors.black,
                                             child: Column(
                                               children: [
@@ -231,71 +238,74 @@ class _InterestPageState extends State<InterestPage> {
                                                     SmallUserCard(User: i.Author),
                                                     Padding(
                                                       padding: const EdgeInsets.all(8.0),
-                                                      child: Text("Says: ", style: TextStyle(color: Colors.white),),
+                                                      child: Text(
+                                                        "Says: ",
+                                                        style: TextStyle(color: Colors.white),
+                                                      ),
                                                     )
                                                   ],
                                                 ),
                                                 Text(i.Message, style: TextStyle(color: Colors.white)),
                                                 i.ImageNames.isNotEmpty
                                                     ? Padding(
-                                                      padding: const EdgeInsets.all(20),
-                                                      child: Card.filled(
-                                                          clipBehavior: Clip.hardEdge,
-                                                          color: Colors.black,
-                                                          child: ExpandableCarousel(
-                                                              items: i.ImageURLs.map((j) {
-                                                                return FadeInImage.memoryNetwork(
-                                                                  placeholder: kTransparentImage,
-                                                                  image: j,
-                                                                  width: 200,
-                                                                  fit: BoxFit.cover,
-                                                                );
-                                                              }).toList(),
-                                                              options: CarouselOptions(
-                                                                  enableInfiniteScroll: false,
-                                                                  showIndicator: true,
-                                                                  slideIndicator: const CircularSlideIndicator()))),
-                                                    )
+                                                        padding: const EdgeInsets.all(20),
+                                                        child: Card.filled(
+                                                            clipBehavior: Clip.hardEdge,
+                                                            color: Colors.black,
+                                                            child: ExpandableCarousel(
+                                                                items: i.ImageURLs.map((j) {
+                                                                  return FadeInImage.memoryNetwork(
+                                                                    placeholder: kTransparentImage,
+                                                                    image: j,
+                                                                    width: 200,
+                                                                    fit: BoxFit.cover,
+                                                                  );
+                                                                }).toList(),
+                                                                options: CarouselOptions(
+                                                                    enableInfiniteScroll: false,
+                                                                    showIndicator: true,
+                                                                    slideIndicator: const CircularSlideIndicator()))),
+                                                      )
                                                     : const Padding(padding: EdgeInsets.zero),
                                                 Text(
                                                   "${i.PostedAt.day}/${i.PostedAt.month}/${i.PostedAt.year} ${i.PostedAt.hour}:${i.PostedAt.minute}",
-                                                  style: const TextStyle(fontSize: 10, color: Color.fromARGB(64, 255,255, 255)),
+                                                  style: const TextStyle(fontSize: 10, color: Color.fromARGB(64, 255, 255, 255)),
                                                 ),
                                               ],
                                             ),
-
-                                        );
-                                      }).toList()));
-                                    })),
-                            SizedBox(
-                              width: 200,
-                              child: Column(
-                                children: [
-                                  const Text("Related interests",
-                                      style: TextStyle(
-                                        color: Color(0xFFCCCCCC),
-                                      )),
-                                  FutureBuilder(
-                                      future: getChildrenInterests(),
-                                      builder: (context, snapshop) {
-                                        if (!snapshop.hasData) {
-                                          return const Center(child: CircularProgressIndicator());
-                                        }
-                                        var data = snapshop.data!;
-                                        return Column(
-                                          children: [for (int i = 0; i < snapshop.data!.length; i++) SmallInterestViewer(interest: data[i])],
-                                        );
+                                          );
+                                        }).toList()));
                                       }),
-                                ],
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 200,
+                          child: Column(
+                            children: [
+                              const Text("Related interests",
+                                  style: TextStyle(
+                                    color: Color(0xFFCCCCCC), fontSize: 20
+                                  )),
+                              FutureBuilder(
+                                  future: getChildrenInterests(),
+                                  builder: (context, snapshop) {
+                                    if (!snapshop.hasData) {
+                                      return const Center(child: CircularProgressIndicator());
+                                    }
+                                    var data = snapshop.data!;
+                                    return Column(
+                                      children: [for (int i = 0; i < snapshop.data!.length; i++) SmallInterestViewer(interest: data[i])],
+                                    );
+                                  }),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
           ),
         ),

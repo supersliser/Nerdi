@@ -15,7 +15,7 @@ class SmallInterestViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 200,
-      height: 50,
+      height: 75,
       child: TextButton(
         onPressed: () {
           Navigator.push(
