@@ -146,7 +146,7 @@ class SmallUserCard extends StatelessWidget {
         child: Card.filled(
           color: Colors.black,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               UserIcon(ImageURL: User.ProfilePictureURL),
               Padding(

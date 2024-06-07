@@ -83,18 +83,18 @@ class PostItem extends StatelessWidget {
     super.key,
     required this.Post,
     required this.Width,
-});
+  });
 
   final PostData Post;
   final double Width;
 
   @override
   Widget build(BuildContext context) {
-
     List<Widget> Images = List.empty(growable: true);
 
     for (var i in Post.ImageURLs) {
-      Images.add( FadeInImage.memoryNetwork(
+      Images.add(
+        FadeInImage.memoryNetwork(
           placeholder: kTransparentImage,
           image: i,
           width: Width,
@@ -114,8 +114,20 @@ class PostItem extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Center(child: Text(Post.Message)),
             ),
-            Post.ImageNames.isNotEmpty ? Card.outlined(clipBehavior: Clip.hardEdge, color: Colors.white, child: SizedBox(width: Width, child: ExpandableCarousel(items: Images, options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator())))): const Padding(padding: EdgeInsets.zero),
-            Text("${Post.PostedAt.day}/${Post.PostedAt.month}/${Post.PostedAt.year} ${Post.PostedAt.hour}:${Post.PostedAt.minute}", style: const TextStyle(fontSize: 10,color: Color.fromARGB(64, 0, 0, 0)),),
+            Post.ImageNames.isNotEmpty
+                ? Card.outlined(
+                    clipBehavior: Clip.hardEdge,
+                    color: Colors.white,
+                    child: SizedBox(
+                        width: Width,
+                        child: ExpandableCarousel(
+                            items: Images,
+                            options: CarouselOptions(enableInfiniteScroll: false, showIndicator: true, slideIndicator: const CircularSlideIndicator()))))
+                : const Padding(padding: EdgeInsets.zero),
+            Text(
+              "${Post.PostedAt.day}/${Post.PostedAt.month}/${Post.PostedAt.year} ${Post.PostedAt.hour}:${Post.PostedAt.minute}",
+              style: const TextStyle(fontSize: 10, color: Color.fromARGB(64, 0, 0, 0)),
+            ),
           ],
         ),
       ),

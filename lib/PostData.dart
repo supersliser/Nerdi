@@ -58,28 +58,30 @@ class PostData {
     return output;
   }
 
-  static Future<List<PostData>> getPostsForInterest(String InterestID) async {
-    var postInterests = await Supabase.instance.client.from("PostInterest").select("*").eq("InterestID", InterestID);
+  static Future<List<PostData>> getPostsForInterest(Interest Interest) async {
+    var postInterests = await Supabase.instance.client.from("PostInterest").select("*").eq("InterestID", Interest.ID);
     var output = List<PostData>.empty(growable: true);
+
 
     for (var i in postInterests) {
       var postData = await Supabase.instance.client.from("Posts").select("*").eq("ID", i["PostID"]);
+      var authorData = await Supabase.instance.client.from("UserInfo").select().eq("UserUID", postData.first["Author"]);
 
-      var interests = List<Interest>.empty(growable: true);
+      // var interests = List<Interest>.empty(growable: true);
       var images = List<String>.empty(growable: true);
       var urls = List<String>.empty(growable: true);
 
-      var interestData = await Supabase.instance.client.from("PostInterest").select("*").eq("PostID", postData.first["ID"]);
-      for (var k in interestData) {
-        var temp = await Supabase.instance.client.from("Interest").select("*").eq("ID", k["InterestID"]);
-        interests.add(Interest(
-            ID: temp.first["ID"],
-            Name: temp.first["Name"],
-            ImageName: temp.first["ImageName"],
-            ImageURL: Supabase.instance.client.storage.from("PostImages").getPublicUrl(temp.first["ImageName"]),
-            Description: temp.first["Description"],
-            PrimaryColour: Color.fromARGB(255, temp.first["PrimaryColourRed"], temp.first["PrimaryColourGreen"], temp.first["PrimaryColourBlue"])));
-      }
+      // var interestData = await Supabase.instance.client.from("PostInterest").select("*").eq("PostID", postData.first["ID"]);
+      // for (var k in interestData) {
+      //   var temp = await Supabase.instance.client.from("Interest").select("*").eq("ID", k["InterestID"]);
+      //   interests.add(Interest(
+      //       ID: temp.first["ID"],
+      //       Name: temp.first["Name"],
+      //       ImageName: temp.first["ImageName"],
+      //       ImageURL: Supabase.instance.client.storage.from("PostImages").getPublicUrl(temp.first["ImageName"]),
+      //       Description: temp.first["Description"],
+      //       PrimaryColour: Color.fromARGB(255, temp.first["PrimaryColourRed"], temp.first["PrimaryColourGreen"], temp.first["PrimaryColourBlue"])));
+      // }
 
       var imageData = await Supabase.instance.client.from("PostImages").select("*").eq("PostID", postData.first["ID"]);
       for (var j in imageData) {
@@ -87,23 +89,21 @@ class PostData {
         urls.add(Supabase.instance.client.storage.from("PostImages").getPublicUrl(j["ImageName"]));
       }
 
-      var authorData = await Supabase.instance.client.from("UserInfo").select("*").eq("ID", postData.first["Author"]);
-
       var author = UserData(
-          UUID: authorData.first["ID"],
+          UUID: authorData.first["UserUID"],
           Username: authorData.first["Username"],
           Description: authorData.first["Description"],
-          Birthday: authorData.first["Birthday"],
+          Birthday: DateTime.parse(authorData.first["Birthday"]),
           Gender: authorData.first["Gender"],
           ProfilePictureName: authorData.first["ProfilePictureName"],
           ProfilePictureURL: Supabase.instance.client.storage.from("ProfilePictures").getPublicUrl(authorData.first["ProfilePictureName"]));
 
       output.add(PostData(
           ID: postData.first["ID"],
-          PostedAt: postData.first["PostedAt"],
+          PostedAt: DateTime.parse(postData.first["PostedAt"]),
           Message: postData.first["Message"],
           Author: author,
-          Interests: interests,
+          Interests: [Interest],
           ImageNames: images,
           ImageURLs: urls));
     }

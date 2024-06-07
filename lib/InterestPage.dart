@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import "package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:nerdi/InterestData.dart';
 import 'package:nerdi/Login.dart';
 import 'package:nerdi/NavBar.dart';
+import 'package:nerdi/PostData.dart';
 import 'package:nerdi/UserCard.dart';
 import 'package:nerdi/UserData.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -41,7 +43,8 @@ class _InterestPageState extends State<InterestPage> {
           Description: interestItem.first["Description"],
           ImageName: interestItem.first["ImageName"],
           ImageURL: images.getPublicUrl(interestItem.first["ImageName"]),
-          PrimaryColour: Color.fromARGB(0xFF, interestItem.first["PrimaryColourRed"], interestItem.first["PrimaryColourGreen"], interestItem.first["PrimaryColourBlue"])));
+          PrimaryColour:
+              Color.fromARGB(0xFF, interestItem.first["PrimaryColourRed"], interestItem.first["PrimaryColourGreen"], interestItem.first["PrimaryColourBlue"])));
     }
     return output;
   }
@@ -85,7 +88,8 @@ class _InterestPageState extends State<InterestPage> {
           Description: tempInterest.first["Description"],
           ImageName: tempInterest.first["ImageName"],
           ImageURL: Supabase.instance.client.storage.from("Interests").getPublicUrl(tempInterest.first["ImageName"]),
-          PrimaryColour: Color.fromARGB(0xFF, tempInterest.first["PrimaryColourRed"], tempInterest.first["PrimaryColourGreen"], tempInterest.first["PrimaryColourBlue"])));
+          PrimaryColour:
+              Color.fromARGB(0xFF, tempInterest.first["PrimaryColourRed"], tempInterest.first["PrimaryColourGreen"], tempInterest.first["PrimaryColourBlue"])));
     }
     var childInterestGetter = await Supabase.instance.client.from("InterestSubInterest").select().eq("InterestID", widget.interest.ID);
     for (int i = 0; i < childInterestGetter.length; i++) {
@@ -96,7 +100,8 @@ class _InterestPageState extends State<InterestPage> {
           Description: tempInterest.first["Description"],
           ImageName: tempInterest.first["ImageName"],
           ImageURL: Supabase.instance.client.storage.from("Interests").getPublicUrl(tempInterest.first["ImageName"]),
-          PrimaryColour: Color.fromARGB(0xFF, tempInterest.first["PrimaryColourRed"], tempInterest.first["PrimaryColourGreen"], tempInterest.first["PrimaryColourBlue"])));
+          PrimaryColour:
+              Color.fromARGB(0xFF, tempInterest.first["PrimaryColourRed"], tempInterest.first["PrimaryColourGreen"], tempInterest.first["PrimaryColourBlue"])));
     }
 
     return output;
@@ -161,7 +166,9 @@ class _InterestPageState extends State<InterestPage> {
                     ),
                     TextButton(
                         onPressed: () async {
-                          await Supabase.instance.client.from("UserInterest").insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": widget.interest.ID});
+                          await Supabase.instance.client
+                              .from("UserInterest")
+                              .insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": widget.interest.ID});
                         },
                         child: const Text("I'm interested in this")),
                   ],
@@ -204,10 +211,62 @@ class _InterestPageState extends State<InterestPage> {
                                     })
                               ],
                             ),
-                            const Expanded(
-                                child: Column(
-                              children: [Text("Gonna put posts here")],
-                            )),
+                            Expanded(
+                                child: FutureBuilder(
+                                    future: PostData.getPostsForInterest(widget.interest),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return CircularProgressIndicator();
+                                      }
+                                      return SingleChildScrollView(
+                                          child: Column(
+                                              children: snapshot.data!.map((i) {
+                                        return
+                                          Card.filled(
+                                            color: Colors.black,
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    SmallUserCard(User: i.Author),
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Text("Says: ", style: TextStyle(color: Colors.white),),
+                                                    )
+                                                  ],
+                                                ),
+                                                Text(i.Message, style: TextStyle(color: Colors.white)),
+                                                i.ImageNames.isNotEmpty
+                                                    ? Padding(
+                                                      padding: const EdgeInsets.all(20),
+                                                      child: Card.filled(
+                                                          clipBehavior: Clip.hardEdge,
+                                                          color: Colors.black,
+                                                          child: ExpandableCarousel(
+                                                              items: i.ImageURLs.map((j) {
+                                                                return FadeInImage.memoryNetwork(
+                                                                  placeholder: kTransparentImage,
+                                                                  image: j,
+                                                                  width: 200,
+                                                                  fit: BoxFit.cover,
+                                                                );
+                                                              }).toList(),
+                                                              options: CarouselOptions(
+                                                                  enableInfiniteScroll: false,
+                                                                  showIndicator: true,
+                                                                  slideIndicator: const CircularSlideIndicator()))),
+                                                    )
+                                                    : const Padding(padding: EdgeInsets.zero),
+                                                Text(
+                                                  "${i.PostedAt.day}/${i.PostedAt.month}/${i.PostedAt.year} ${i.PostedAt.hour}:${i.PostedAt.minute}",
+                                                  style: const TextStyle(fontSize: 10, color: Color.fromARGB(64, 255,255, 255)),
+                                                ),
+                                              ],
+                                            ),
+
+                                        );
+                                      }).toList()));
+                                    })),
                             SizedBox(
                               width: 200,
                               child: Column(
@@ -387,7 +446,9 @@ class _InterestPageState extends State<InterestPage> {
                             widget.interest.Description = _DescController.text;
                             widget.interest.upload(parentInterests, childInterests, snapshot.data!);
                             if (widget.newInterest) {
-                              Supabase.instance.client.from("UserInterest").insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": widget.interest.ID});
+                              Supabase.instance.client
+                                  .from("UserInterest")
+                                  .insert({"UserID": Supabase.instance.client.auth.currentUser!.id, "InterestID": widget.interest.ID});
                             }
                             setState(() {
                               widget.editMode = !widget.editMode;
